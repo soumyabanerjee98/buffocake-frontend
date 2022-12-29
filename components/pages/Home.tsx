@@ -1,8 +1,13 @@
 import React from 'react'
+import BasicLayout from '../UI/BasicLayout'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <>
+      <BasicLayout>
+        <div className='home-screen'>Home</div>
+      </BasicLayout>
+    </>
   )
 }
 
