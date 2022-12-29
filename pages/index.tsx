@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { metaConfig } from '../Components/Config/siteConfig';
+import { metaConfig } from '../Config/siteConfig';
 import Home from '../Components/Pages/Home';
 
 const App = () => {
