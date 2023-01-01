@@ -2,18 +2,17 @@ import axios from "axios";
 import { processIDs } from "../../Config/processID";
 import { serverConfig } from "../../Config/siteConfig";
 
-export const callApi = (processid: string, datajson: object, config: any) => {
+export const callApi = async (processid: string, datajson: object) => {
     let url = process?.env?.NODE_ENV === 'development' ? serverConfig?.backend_url_test : serverConfig?.backend_url_server
     let data = {
-        processid: processid,
+        processId: processid,
         datajson: datajson
     }
-    if(config){
-    return axios.post(url, data, config)
-    }
-    else{
-    return axios.post(url, data)
-    }
+    return axios.post(url, JSON.stringify(data), {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    })
 }
 
 export const uploadMedia = (filesArr: any) => {
@@ -21,12 +20,11 @@ export const uploadMedia = (filesArr: any) => {
      filesArr.map((i: any) => {
         let fData = new FormData();
         fData.append('uploadedFile', i, i?.name);
-        let config = {
-        headers: {
-            'content-type': 'multipart/form-data',
-        },
-        };
-        callApi(processIDs?.upload_media, fData, config)
+        let content_type = 'multipart/form-data'
+        callApi(processIDs?.upload_media_photos, fData)
+        .then((res: any) => {
+            console.log(res?.data, 'res');
+        })
     })     
     } catch (error) {  
         console.log(`Problem with uploading files: ${error}`);
