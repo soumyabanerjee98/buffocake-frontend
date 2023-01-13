@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Footer from './Footer';
 import Header from './Header';
 
 const BasicLayout = (props: any) => {
     const { children } = props;
-    const [showLayout, setShowLayout] = useState(true);
   return (
     <>
-    {showLayout && <Header/>}
+    <Header/>
     {children}
-    {showLayout && <Footer/>}
+    <Footer/>
     </>
   )
 }
