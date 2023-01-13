@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import { metaConfig } from '../Config/siteConfig';
-import Home from '../Components/Pages/Home';
-import BasicLayout from '../Components/UI/BasicLayout';
+import Contact from '../../Components/Pages/Contact';
+import BasicLayout from '../../Components/UI/BasicLayout';
+import { metaConfig } from '../../Config/siteConfig';
 
-const HomePage = () => {
+const ContactPage = () => {
   return (
     <>
       <Head>
@@ -12,10 +12,10 @@ const HomePage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <BasicLayout>
-        <Home/>
+        <Contact/>
       </BasicLayout>
     </>
   )
 }
 
-export default HomePage;
+export default ContactPage;
