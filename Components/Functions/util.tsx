@@ -30,3 +30,11 @@ export const uploadMedia = (filesArr: any) => {
         console.log(`Problem with uploading files: ${error}`);
     }
 }
+
+export const getSessionData = (key: string) => {
+    try {
+        return sessionStorage.getItem(key)
+    } catch (error) {
+        return null   
+    }
+}

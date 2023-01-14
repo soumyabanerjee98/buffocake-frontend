@@ -7,8 +7,8 @@ const ContactPage = () => {
   return (
     <>
       <Head>
-        <title>{metaConfig?.home_title}</title>
-        <meta name="description" content={metaConfig?.home_desc} />
+        <title>{metaConfig?.contact_title}</title>
+        <meta name="description" content={metaConfig?.contact_desc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <BasicLayout>
