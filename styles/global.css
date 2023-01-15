@@ -48,6 +48,7 @@ body::-webkit-scrollbar {
     height: 3rem;
     font-size: 15px;
     font-family: 'Montserrat', sans-serif;
+    padding: 0 1rem;
 }
 .search-button{
     background-color: rgb(224, 135, 168);
@@ -94,4 +95,39 @@ body::-webkit-scrollbar {
     min-height: 100vh;
 }
 
-/* body end */
+/* body end **************** */
+
+/* footer start ************** */
+.main-footer{
+    background-color: rgb(169, 194, 205);
+    padding: 1rem;
+}
+.main-footer .first-row{
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    width: 100%;
+}
+.main-footer .row-item{
+    width: 33.33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: rgb(107, 39, 51);
+    text-align: center;
+}
+
+.main-footer .title {
+    font-size: large;
+    font-weight: 600;
+    padding: 0 0 4px 0;
+}
+
+.footer-banner-icon{
+    height: 50px;
+    width: 50px;
+    padding: 1rem 0;
+}
+
+/* footer end *************** */
