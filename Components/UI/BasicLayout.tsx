@@ -7,7 +7,9 @@ const BasicLayout = (props: any) => {
   return (
     <>
     <Header/>
-    {children}
+    <div className='main-body'>
+      {children}
+    </div>
     <Footer/>
     </>
   )

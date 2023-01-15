@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 import { labelConfig, storageConfig } from '../../Config/siteConfig'
 import Logo from '../Assets/Images/boffocake-logo.png'
 import SearchIcon from '../Assets/Images/search-icon.svg'
-import Cart from '../Assets/Images/cart-icon.svg'
 import { getSessionData } from '../Functions/util'
+import CartIcon from './Icons/CartIcon'
+import NameIcon from './Icons/NameIcon'
+import ProfileIcon from './Icons/ProfileIcon'
 
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState('')
@@ -36,11 +38,13 @@ const Header = () => {
         </div>
       </div>
       <div className='right-col'>
-        <div className='cart-image-container'>
-          <Image src={Cart} alt='Cart' className='cart-image'/>
-        </div>
-        <div className='signin-container'>
-          {/* sign up / log in UI */}
+        <CartIcon fill='rgb(107, 39, 51)' className='cart-image'/>
+        <div className='profile-container'>
+          {userLoggedIn ?
+            <NameIcon firstName='Soumya' lastName='Banerjee' className='name-icon'/>
+          :
+            <ProfileIcon fill='rgb(107, 39, 51)' className='profile-icon'/>
+          }
         </div>
       </div>
     </header>

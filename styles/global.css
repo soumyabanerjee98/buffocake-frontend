@@ -1,6 +1,16 @@
+/* global *********************** */
+
 body{
     margin: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* header start ***************** */
+
 .main-header{
     padding: 0.2rem 2rem;
     background-color: rgb(124, 242, 227);
@@ -12,6 +22,11 @@ body{
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+.main-header .right-col {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 .logo-image{
     cursor: pointer;
@@ -52,17 +67,31 @@ body{
     max-width: 15px;
     max-height: 15px;
 }
-.cart-image {
+.cart-image, .profile-icon {
     height: 20px;
     width: 20px;
+    cursor: pointer;
 }
-.cart-image-container{
-    height: 40px;
-    width: 40px;
+.profile-container{
+    cursor: pointer;
+}
+.name-icon{
+    background-color: rgb(107, 39, 51);
+    height: 2rem;
+    width: 2rem;
     border-radius: 50%;
-    background-color: rgb(224, 135, 168);
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
+    color: whitesmoke;
 }
+
+/* header end **************** */
+
+/* body start *************** */
+
+.main-body{
+    min-height: 100vh;
+}
+
+/* body end */
