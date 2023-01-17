@@ -7,7 +7,7 @@ export const metaConfig = {
 
 export const serverConfig = {
     backend_url_test: 'http://localhost:9000/',
-    backend_url_server: ''
+    backend_url_server: 'https://buffocake-backend.vercel.app/'
 }
 
 export const labelConfig = {
