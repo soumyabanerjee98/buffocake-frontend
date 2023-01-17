@@ -66,10 +66,12 @@ const Home = () => {
               }
             </div>
             <div className='catagory-body'>
-              {modelData?.filter((v) => v?.catagory === i).filter((w, ind) => ind <= 3).map((val) => {
+              {modelData?.filter((v) => v?.catagory === i).filter((w, ind) => ind <= 3).map((val, ind) => {
                 return (
-                  <div className='product-card'>
-                    <Image src={DummyCake} alt='Image' className='product-image'/>
+                  <div key={`product-card-${ind}`} className='product-card'>
+                    <div className='product-image-container'>
+                      <img src={'https://www.boffocakes.com/admin_area/product_images/Sweet%20pink%20and%20gold%20cake-1.jpg'} alt='Image' className='product-image'/>
+                    </div>
                     <div className='product-name'>
                       {val?.item_name}
                     </div>
