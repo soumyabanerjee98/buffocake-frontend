@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { metaConfig } from '../Config/siteConfig';
+import { metaConfig } from '../config/siteConfig';
 import Home from '../Components/Pages/Home';
 import BasicLayout from '../Components/UI/BasicLayout';
 
