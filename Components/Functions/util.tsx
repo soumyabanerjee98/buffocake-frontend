@@ -1,6 +1,6 @@
 import axios from "axios";
-import { processIDs } from "../../Config/processID";
-import { serverConfig } from "../../Config/siteConfig";
+import { processIDs } from "../../config/processID";
+import { serverConfig } from "../../config/siteConfig";
 
 export const callApi = async (processid: string, datajson: object) => {
     let url = process?.env?.NODE_ENV === 'development' ? serverConfig?.backend_url_test : serverConfig?.backend_url_server

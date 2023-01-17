@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import { labelConfig, storageConfig } from '../../Config/siteConfig'
+import { labelConfig, storageConfig } from '../../config/siteConfig'
 import Logo from '../Assets/Images/boffocake-logo.png'
 import SearchIcon from '../Assets/Images/search-icon.svg'
 import { getSessionData } from '../Functions/util'

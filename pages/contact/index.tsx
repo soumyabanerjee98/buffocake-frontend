@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Contact from '../../Components/Pages/Contact';
 import BasicLayout from '../../Components/UI/BasicLayout';
-import { metaConfig } from '../../Config/siteConfig';
+import { metaConfig } from '../../config/siteConfig';
 
 const ContactPage = () => {
   return (
