@@ -1,6 +1,33 @@
 import axios from "axios";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { processIDs } from "../../config/processID";
-import { serverConfig } from "../../config/siteConfig";
+import { serverConfig, firebaseConfig } from "../../config/siteConfig";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+export const gSignInWithPopup = () => signInWithPopup(auth, provider)
+.then((res) =>{
+    let userInfo = {
+        fullName: res?.user?.displayName,
+        email: res?.user?.email,
+        phone: res?.user?.phoneNumber,
+        profileImage: res?.user?.photoURL
+    }
+    return userInfo
+})
+.catch((err) => {
+    console.log(err?.message);
+})
+
+export const gSignOut = () => signOut(auth)
+.then(() => {
+})
+.catch((err) => {
+    console.log(err?.message);
+});
 
 export const callApi = async (processid: string, datajson: object) => {
     let url = process?.env?.NODE_ENV === 'development' ? serverConfig?.backend_url_test : serverConfig?.backend_url_server

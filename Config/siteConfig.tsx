@@ -21,3 +21,12 @@ export const storageConfig = {
 export const colorPalette = {
     
 }
+
+export const firebaseConfig = {
+    apiKey: "AIzaSyBugAXf4QGSq2Mzhvtaskj9u3B_vUuXkJk",
+    authDomain: "boffocake.firebaseapp.com",
+    projectId: "boffocake",
+    storageBucket: "boffocake.appspot.com",
+    messagingSenderId: "1097452226849",
+    appId: "1:1097452226849:web:c7f8f4f313b74d1d34d660"
+}
