@@ -10,6 +10,8 @@ body::-webkit-scrollbar {
 }
 button{
     cursor: pointer;
+    outline: none;
+    border: 1px solid transparent;
 }
 button, input{
     font-family: inherit;
@@ -217,6 +219,20 @@ button, input{
 }
 .login-card .google-button:hover{
     border: 1px solid #4285F4;
+    transition: all 200ms ease-in-out;
+}
+
+/* paytm button */
+.paytm-button{
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 4px;
+    background-color: rgb(0, 191, 0);
+    transition: all 200ms ease-in-out;
+}
+.paytm-button:hover{
+    background-color: rgb(211, 211, 211);
+    color: rgb(0, 191, 0);
     transition: all 200ms ease-in-out;
 }
 

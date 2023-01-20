@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
+import { paytmConfig } from '../../config/siteConfig'
 import DummyCake from '../Assets/Images/dummy-photo.jpg'
+import PaytmPayment from '../UI/PaytmPayment'
 
 const Home = () => {
   const modelData = [
@@ -78,6 +80,11 @@ const Home = () => {
                     <div className='product-price'>
                       &#8377;{val?.item_price}
                     </div>
+                    <PaytmPayment
+                      MID={paytmConfig?.mid}
+                      MKEY={paytmConfig?.mkey}
+                      Total={parseInt(val?.item_price)}
+                    />
                   </div>
                 )
               })}
