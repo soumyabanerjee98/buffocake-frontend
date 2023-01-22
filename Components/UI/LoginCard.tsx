@@ -663,7 +663,7 @@ const LoginCard = () => {
               )}
             </button>
             <div className="sign-up-text">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <span
                 className="sign-up-link"
                 onClick={() => {
