@@ -84,9 +84,20 @@ const LoginCard = () => {
         email: res?.user?.email,
       }).then((res: any) => {
         if (res?.data?.returnCode) {
+          setSessionObjectData(
+            storageConfig?.userProfile,
+            res?.data?.returnData
+          );
+          messageService?.sendMessage(
+            "login-card",
+            // @ts-ignore
+            { action: "refresh-profile" },
+            "header"
+          );
           setLoading((prev: any) => {
             return { ...prev, loginMail: false };
           });
+          closePopUp();
         } else {
           setLoading((prev: any) => {
             return { ...prev, loginMail: false };
