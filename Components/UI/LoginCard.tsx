@@ -84,7 +84,6 @@ const LoginCard = () => {
         email: res?.user?.email,
       }).then((res: any) => {
         if (res?.data?.returnCode) {
-          console.log(res?.data);
           setLoading((prev: any) => {
             return { ...prev, loginMail: false };
           });
@@ -446,7 +445,6 @@ const LoginCard = () => {
       })
         .then((res: any) => {
           if (res?.data?.returnCode) {
-            console.log(res?.data);
             closePopUp();
           } else {
             setLoading((prev: any) => {
