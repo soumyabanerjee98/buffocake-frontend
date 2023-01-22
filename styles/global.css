@@ -20,6 +20,11 @@ button, input{
     outline: none;
     padding: 0.4rem;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
 /* header start ***************** */
 
@@ -189,6 +194,14 @@ button, input{
 .login-card .form-input{
     padding-bottom: 0.8rem;
 }
+.login-card .error {
+    color: red;
+    font-size: small;
+}
+.login-card .error.globalError {
+    text-align: center;
+    padding-bottom: 0.5rem;
+}
 .login-card .form-input input, .login-card .form-input button{
     padding: 0.4rem;
     outline: none;
@@ -221,6 +234,51 @@ button, input{
     border: 1px solid #4285F4;
     transition: all 200ms ease-in-out;
 }
+.login-card .sign-up-text{
+    font-size: small;
+    padding-top: 1rem;
+    text-align: center;
+}
+.login-card .sign-up-link {
+    cursor: pointer;
+}
+.login-card .sign-up-link:hover {
+    color: #4285F4;
+}
+.login-card .greetings {
+    text-align: center;
+    padding-bottom: 1rem;
+}
+.login-card .otp-error {
+    text-align: center;
+    padding-top: 0.4rem;
+}
+.login-card .resend-otp {
+    text-align: center;
+}
+.login-card .resend-otp-link{
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+}
+.login-card .resend-otp-link:hover {
+    color: #4285F4;
+    transition: all 200ms ease-in-out;
+}
+
+/* OTP Field */
+
+.otp-field{
+ display: flex;
+ gap: 1rem;
+ justify-content: center;
+ align-items: center;
+ padding-top: 1rem;
+}
+.otp-field input{
+    width: 0.5rem !important;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
 
 /* paytm button */
 .paytm-button{
@@ -236,6 +294,63 @@ button, input{
     transition: all 200ms ease-in-out;
 }
 
+/* loader */
+.loader-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loader.dot-flashing {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: white;
+    color: white;
+    animation: dot-flashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+}
+
+.loader.dot-flashing::before,
+.loader.dot-flashing::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+
+.loader.dot-flashing::before {
+    left: -15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: white;
+    color: white;
+    animation: dot-flashing 1s infinite alternate;
+    animation-delay: 0s;
+}
+
+.loader.dot-flashing::after {
+    left: 15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: white;
+    color: white;
+    animation: dot-flashing 1s infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+    0% {
+        background-color: white;
+    }
+
+    50%,
+    100% {
+        background-color: rgba(152, 128, 255, 0.2);
+    }
+}
 /* body end **************** */
 
 /* footer start ************** */

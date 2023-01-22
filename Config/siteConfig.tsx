@@ -34,6 +34,6 @@ export const firebaseConfig = {
 
 export const paytmConfig = {
   host: "https://securegw.paytm.in",
-  mid: "",
-  mkey: "",
+  mid: "WotNCM52358571558082",
+  mkey: "!Q1oy4s9yV8trfja",
 };
