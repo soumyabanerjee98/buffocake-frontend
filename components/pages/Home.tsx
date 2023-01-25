@@ -1,12 +1,13 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { paytmConfig } from "../../config/siteConfig";
-import DummyCake from "../Assets/Images/dummy-photo.jpg";
 import PaytmPayment from "../UI/PaytmPayment";
 
 const Home = () => {
   const redirect = useRouter();
+  const [loader, setLoader] = useState(false);
   const modelData = [
     {
       id: 1,
@@ -67,59 +68,67 @@ const Home = () => {
   );
 
   const navigate = (path: string) => {
+    setLoader(true);
+    window.scrollTo(0, 0);
     redirect.push(path);
   };
 
   return (
     <>
       <div className="home-screen">
-        {catagorySet?.map((i) => {
-          return (
-            <div key={`catagory-${i}`} className="product-catagory">
-              <div className="catagory-header">
-                <div className="title">Category {i}</div>
-                {modelData?.filter((v) => v?.catagory === i).length > 4 && (
-                  <button className="view-all">View all</button>
-                )}
-              </div>
-              <div className="catagory-body">
-                {modelData
-                  ?.filter((v) => v?.catagory === i)
-                  .filter((w, ind) => ind <= 3)
-                  .map((val, ind) => {
-                    return (
-                      <div
-                        key={`product-card-${ind}`}
-                        className="product-card"
-                        onClick={() => {
-                          navigate(`product/${val?.id}`);
-                        }}
-                      >
-                        <div className="product-image-container">
-                          <img
-                            src={
-                              "https://www.boffocakes.com/admin_area/product_images/Sweet%20pink%20and%20gold%20cake-1.jpg"
-                            }
-                            alt="Image"
-                            className="product-image"
-                          />
-                        </div>
-                        <div className="product-name">{val?.item_name}</div>
-                        <div className="product-price">
-                          &#8377;{val?.item_price}
-                        </div>
-                        {/* <PaytmPayment
+        {loader ? (
+          <Skeleton count={5} />
+        ) : (
+          <>
+            {catagorySet?.map((i) => {
+              return (
+                <div key={`catagory-${i}`} className="product-catagory">
+                  <div className="catagory-header">
+                    <div className="title">Category {i}</div>
+                    {modelData?.filter((v) => v?.catagory === i).length > 4 && (
+                      <button className="view-all">View all</button>
+                    )}
+                  </div>
+                  <div className="catagory-body">
+                    {modelData
+                      ?.filter((v) => v?.catagory === i)
+                      .filter((w, ind) => ind <= 3)
+                      .map((val, ind) => {
+                        return (
+                          <div
+                            key={`product-card-${ind}`}
+                            className="product-card"
+                            onClick={() => {
+                              navigate(`product/${val?.id}`);
+                            }}
+                          >
+                            <div className="product-image-container">
+                              <img
+                                src={
+                                  "https://www.boffocakes.com/admin_area/product_images/Sweet%20pink%20and%20gold%20cake-1.jpg"
+                                }
+                                alt="Image"
+                                className="product-image"
+                              />
+                            </div>
+                            <div className="product-name">{val?.item_name}</div>
+                            <div className="product-price">
+                              &#8377;{val?.item_price}
+                            </div>
+                            {/* <PaytmPayment
                           MID={paytmConfig?.mid}
                           MKEY={paytmConfig?.mkey}
                           Total={parseInt(val?.item_price)}
                         /> */}
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          );
-        })}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </>
   );

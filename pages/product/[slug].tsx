@@ -28,7 +28,11 @@ const Product = (props: any) => {
   );
 };
 
-export async function getServerSideProps({ params }: any) {
+export async function getServerSideProps({ params, res }: any) {
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
   let data = await callApi(processIDs?.get_product_details, {
     productId: params.slug,
   }).then((res: any) => {
