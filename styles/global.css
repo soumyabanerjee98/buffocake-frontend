@@ -36,6 +36,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 5;
 }
 .main-header .left-col{
     display: flex;

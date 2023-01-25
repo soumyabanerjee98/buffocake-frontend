@@ -1,15 +1,8 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React from 'react'
+import React from "react";
+import PageNotFound from "../Components/Pages/PageNotFound";
 
-const PageNotFound = () => {
-  const redirect = useRouter();
-  return (
-    <div>
-      Oops! Page not found
-      <div style={{cursor: 'pointer'}} onClick={() => redirect.push('/')}>Go back to Home</div>
-    </div>
-  )
-}
+const NoPage = () => {
+  return <PageNotFound />;
+};
 
-export default PageNotFound
+export default NoPage;
