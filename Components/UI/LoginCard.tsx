@@ -6,6 +6,7 @@ import {
   callApi,
   gSignInWithPopup,
   gSignOut,
+  setLocalStringData,
   setSessionObjectData,
 } from "../Functions/util";
 import { processIDs } from "../../config/processID";
@@ -86,7 +87,11 @@ const LoginCard = () => {
         if (res?.data?.returnCode) {
           setSessionObjectData(
             storageConfig?.userProfile,
-            res?.data?.returnData
+            res?.data?.returnData?.profileData
+          );
+          setLocalStringData(
+            storageConfig?.jwtToken,
+            res?.data?.returnData?.accessToken
           );
           messageService?.sendMessage(
             "login-card",
@@ -155,9 +160,13 @@ const LoginCard = () => {
         password: md5(formData?.password),
       }).then((res: any) => {
         if (res?.data?.returnCode) {
+          setLocalStringData(
+            storageConfig?.jwtToken,
+            res?.data?.returnData?.accessToken
+          );
           setSessionObjectData(
             storageConfig?.userProfile,
-            res?.data?.returnData
+            res?.data?.returnData?.profileData
           );
           messageService?.sendMessage(
             "login-card",
@@ -648,7 +657,11 @@ const LoginCard = () => {
               </div>
               <div className="form-input">
                 <button type="submit" className="login-button">
-                  {loading?.loginPhone ? <Loading /> : <>Log in</>}
+                  {loading?.loginPhone ? (
+                    <Loading className="dot-flashing" />
+                  ) : (
+                    <>Log in</>
+                  )}
                 </button>
               </div>
               <div className="or">Or</div>
@@ -659,7 +672,7 @@ const LoginCard = () => {
               onClick={signInWithGoogle}
             >
               {loading?.loginMail ? (
-                <Loading />
+                <Loading className="dot-flashing" />
               ) : (
                 <>
                   Sign in with <span style={{ color: "#4285F4" }}>G</span>
@@ -795,7 +808,11 @@ const LoginCard = () => {
                   </div>
                   <div className="form-input">
                     <button type="submit" className="login-button">
-                      {loading?.signupPhone ? <Loading /> : <>Sign up</>}
+                      {loading?.signupPhone ? (
+                        <Loading className="dot-flashing" />
+                      ) : (
+                        <>Sign up</>
+                      )}
                     </button>
                   </div>
                   <div className="or">Or</div>
@@ -806,7 +823,7 @@ const LoginCard = () => {
                   onClick={signUpWithGoogle}
                 >
                   {loading?.signupmMail ? (
-                    <Loading />
+                    <Loading className="dot-flashing" />
                   ) : (
                     <>
                       Sign up with <span style={{ color: "#4285F4" }}>G</span>
@@ -862,7 +879,7 @@ const LoginCard = () => {
                   <div className="form-input">
                     <button type="submit" className="login-button">
                       {loading?.otpSend ? (
-                        <Loading />
+                        <Loading className="dot-flashing" />
                       ) : (
                         <>Verify phone number</>
                       )}
@@ -891,13 +908,21 @@ const LoginCard = () => {
                   </div>
                   <div className="form-input">
                     <button type="submit" className="login-button">
-                      {loading?.otpVeri ? <Loading /> : <>Verify OTP</>}
+                      {loading?.otpVeri ? (
+                        <Loading className="dot-flashing" />
+                      ) : (
+                        <>Verify OTP</>
+                      )}
                     </button>
                   </div>
                   <div className="form-input resend-otp">
                     {resendOtp?.state ? (
                       <div className="resend-otp-link" onClick={resendOTP}>
-                        {loading?.resendOtp ? <Loading /> : <>Resend OTP</>}
+                        {loading?.resendOtp ? (
+                          <Loading className="dot-flashing" />
+                        ) : (
+                          <>Resend OTP</>
+                        )}
                       </div>
                     ) : (
                       <>Resend OTP in {resendOtp?.timer}s</>
@@ -955,7 +980,11 @@ const LoginCard = () => {
                   </div>
                   <div className="form-input">
                     <button type="submit" className="login-button">
-                      {loading?.createAcc ? <Loading /> : <>Create account</>}
+                      {loading?.createAcc ? (
+                        <Loading className="dot-flashing" />
+                      ) : (
+                        <>Create account</>
+                      )}
                     </button>
                   </div>
                 </form>

@@ -1,6 +1,7 @@
 export const processIDs = {
   phone_verify: "phone-verify",
   otp_verify: "otp-verify",
+  verify_login_token: "verify-login-token",
   user_login_with_phone: "user-login-with-phone",
   user_login_with_email: "user-login-with-email",
   user_email_check: "user-email-check",

@@ -76,7 +76,11 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         crossOrigin="anonymous"
       />
       <button className="paytm-button" type="button" onClick={InitiatePayment}>
-        {loading ? <Loading /> : <>Pay &#8377;{Total}</>}
+        {loading ? (
+          <Loading className="dot-flashing" />
+        ) : (
+          <>Pay &#8377;{Total}</>
+        )}
       </button>
     </>
   );

@@ -1,9 +1,13 @@
 import React from "react";
 
-const Loading = () => {
+export type LoadingProps = {
+  className: string;
+};
+const Loading = (props: LoadingProps) => {
+  const { className } = props;
   return (
     <div className="loader-container">
-      <div className="loader dot-flashing"></div>
+      <div className={`loader ${className}`}></div>
     </div>
   );
 };

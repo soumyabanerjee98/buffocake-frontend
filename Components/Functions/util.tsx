@@ -42,7 +42,6 @@ export const getSessionStringData = (key: string) => {
 
 export const setSessionStringData = (key: string, value: any) => {
   try {
-    console.log(value);
     return sessionStorage.setItem(key, value);
   } catch (error) {
     return null;
@@ -61,6 +60,55 @@ export const getSessionObjectData = (key: string) => {
 export const setSessionObjectData = (key: string, value: any) => {
   try {
     return sessionStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    return null;
+  }
+};
+
+export const removeSessionData = (key: string) => {
+  try {
+    return sessionStorage?.removeItem(key);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getLocalStringData = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const setLocalStringData = (key: string, value: any) => {
+  try {
+    return localStorage.setItem(key, value);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getLocalObjectData = (key: string) => {
+  try {
+    let value: any = localStorage.getItem(key);
+    return JSON.parse(value);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const setLocalObjectData = (key: string, value: any) => {
+  try {
+    return localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    return null;
+  }
+};
+
+export const removeLocalData = (key: string) => {
+  try {
+    return localStorage?.removeItem(key);
   } catch (error) {
     return null;
   }

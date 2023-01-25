@@ -19,6 +19,7 @@ export const labelConfig = {
 
 export const storageConfig = {
   userProfile: "userProfile",
+  jwtToken: "accessToken",
 };
 
 export const colorPalette = {};
