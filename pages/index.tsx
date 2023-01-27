@@ -1,9 +1,12 @@
-import Head from 'next/head'
-import { metaConfig } from '../config/siteConfig';
-import Home from '../Components/Pages/Home';
-import BasicLayout from '../Components/UI/BasicLayout';
+import Head from "next/head";
+import { metaConfig } from "../config/siteConfig";
+import Home from "../Components/Pages/Home";
+import BasicLayout from "../Components/UI/BasicLayout";
+import { callApi } from "../Components/Functions/util";
+import { processIDs } from "../config/processID";
 
-const HomePage = () => {
+const HomePage = (props: any) => {
+  const { allProducts } = props;
   return (
     <>
       <Head>
@@ -12,10 +15,26 @@ const HomePage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <BasicLayout>
-        <Home/>
+        <Home allProducts={allProducts} />
       </BasicLayout>
     </>
-  )
+  );
+};
+export async function getStaticProps() {
+  let data = await callApi(processIDs?.get_all_products, {}).then(
+    (res: any) => {
+      if (res?.data?.returnCode) {
+        return res?.data?.returnData;
+      } else {
+        return null;
+      }
+    }
+  );
+  return {
+    props: {
+      allProducts: data,
+    },
+    revalidate: 10,
+  };
 }
-
 export default HomePage;
