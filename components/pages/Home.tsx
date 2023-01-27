@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { paytmConfig } from "../../config/siteConfig";
+import { uploadImage } from "../Functions/util";
 import PaytmPayment from "../UI/PaytmPayment";
 
 const Home = () => {
@@ -73,6 +74,13 @@ const Home = () => {
     redirect.push(path);
   };
 
+  // const uploadImageFunc = (e: any) => {
+  //   const fileArr = Array.from(e.target.files);
+  //   uploadImage(fileArr).then((res: any) => {
+  //     console.log(res?.data);
+  //   });
+  // };
+
   return (
     <>
       <div className="home-screen">
@@ -80,6 +88,12 @@ const Home = () => {
           <Skeleton count={5} />
         ) : (
           <>
+            {/* <input
+              type={"file"}
+              multiple={true}
+              accept={"image/*"}
+              onChange={uploadImageFunc}
+            /> */}
             {catagorySet?.map((i) => {
               return (
                 <div key={`catagory-${i}`} className="product-catagory">

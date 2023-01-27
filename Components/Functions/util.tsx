@@ -32,6 +32,24 @@ export const callApi = async (processid: string, datajson: object) => {
   });
 };
 
+export const uploadImage = async (filesArr: any) => {
+  if (filesArr?.length > 0) {
+    const formData = new FormData();
+    let url =
+      process?.env?.NODE_ENV === "development"
+        ? serverConfig?.backend_url_test
+        : serverConfig?.backend_url_server;
+    filesArr.map((i: any) => {
+      formData.append("files", i);
+    });
+    return axios.post(`${url}imageUpload/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+};
+
 export const getSessionStringData = (key: string) => {
   try {
     return sessionStorage.getItem(key);
