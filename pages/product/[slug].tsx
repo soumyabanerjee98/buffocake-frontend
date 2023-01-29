@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import React from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { callApi } from "../../Components/Functions/util";
-import PageNotFound from "../../Components/Pages/PageNotFound";
-import BasicLayout from "../../Components/UI/BasicLayout";
 import { processIDs } from "../../config/processID";
+import { callApi } from "../../projectComponents/Functions/util";
+import PageNotFound from "../../projectComponents/Pages/PageNotFound";
+import BasicLayout from "../../projectComponents/UI/BasicLayout";
 
 const Product = (props: any) => {
   const { productDetails } = props;

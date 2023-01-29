@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { metaConfig } from "../config/siteConfig";
-import Home from "../Components/Pages/Home";
-import BasicLayout from "../Components/UI/BasicLayout";
-import { callApi } from "../Components/Functions/util";
 import { processIDs } from "../config/processID";
+import BasicLayout from "../projectComponents/UI/BasicLayout";
+import Home from "../projectComponents/Pages/Home";
+import { callApi } from "../projectComponents/Functions/util";
 
 const HomePage = (props: any) => {
   const { allProducts } = props;

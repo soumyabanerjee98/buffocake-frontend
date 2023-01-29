@@ -1,5 +1,5 @@
 import React from "react";
-import PageNotFound from "../Components/Pages/PageNotFound";
+import PageNotFound from "../projectComponents/Pages/PageNotFound";
 
 const NoPage = () => {
   return <PageNotFound />;

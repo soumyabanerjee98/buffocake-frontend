@@ -1,7 +1,7 @@
-import Head from 'next/head'
-import Contact from '../../Components/Pages/Contact';
-import BasicLayout from '../../Components/UI/BasicLayout';
-import { metaConfig } from '../../config/siteConfig';
+import Head from "next/head";
+import { metaConfig } from "../../config/siteConfig";
+import Contact from "../../projectComponents/Pages/Contact";
+import BasicLayout from "../../projectComponents/UI/BasicLayout";
 
 const ContactPage = () => {
   return (
@@ -12,10 +12,10 @@ const ContactPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <BasicLayout>
-        <Contact/>
+        <Contact />
       </BasicLayout>
     </>
-  )
-}
+  );
+};
 
 export default ContactPage;
