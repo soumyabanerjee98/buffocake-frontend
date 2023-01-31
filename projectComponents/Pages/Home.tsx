@@ -1,10 +1,16 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 // import Skeleton from "react-loading-skeleton";
 // import "react-loading-skeleton/dist/skeleton.css";
-import { paytmConfig } from "../../config/siteConfig";
+import {
+  labelConfig,
+  paytmConfig,
+  serverConfig,
+} from "../../config/siteConfig";
 import { uploadImage } from "../Functions/util";
 import PaytmPayment from "../UI/PaytmPayment";
+import NoIMage from "../Assets/Images/no-image.png";
 
 export type HomeProps = {
   allProducts: any;
@@ -13,7 +19,10 @@ export type HomeProps = {
 const Home = (props: HomeProps) => {
   const { allProducts } = props;
   const redirect = useRouter();
-
+  const url =
+    process?.env?.NODE_ENV === "development"
+      ? serverConfig?.backend_url_test
+      : serverConfig?.backend_url_server;
   const catagorySet = Array.from(
     new Set(
       allProducts.map((i: any) => {
@@ -37,18 +46,24 @@ const Home = (props: HomeProps) => {
     <>
       <div className="home-screen">
         {/* <input
-              type={"file"}
-              multiple={true}
-              accept={"image/*"}
-              onChange={uploadImageFunc}
-            /> */}
+          type={"file"}
+          multiple={true}
+          accept={"image/*"}
+          onChange={uploadImageFunc}
+        /> */}
         {catagorySet?.map((i: any) => {
           return (
             <div key={`catagory-${i}`} className="product-catagory">
               <div className="catagory-header">
-                <div className="title">Category {i}</div>
+                <div className="title">
+                  {labelConfig?.home_catagory_header_title} {i}
+                </div>
                 {allProducts?.filter((v: any) => v?.catagory === i).length >
-                  4 && <button className="view-all">View all</button>}
+                  4 && (
+                  <button className="view-all">
+                    {labelConfig?.home_view_all_button}
+                  </button>
+                )}
               </div>
               <div className="catagory-body">
                 {allProducts
@@ -64,13 +79,19 @@ const Home = (props: HomeProps) => {
                         }}
                       >
                         <div className="product-image-container">
-                          <img
-                            src={
-                              "https://www.boffocakes.com/admin_area/product_images/Sweet%20pink%20and%20gold%20cake-1.jpg"
-                            }
-                            alt="Image"
-                            className="product-image"
-                          />
+                          {val?.productImage ? (
+                            <img
+                              src={`${url}${val?.productImage}`}
+                              alt={labelConfig?.image_not_loaded}
+                              className="product-image"
+                            />
+                          ) : (
+                            <Image
+                              src={NoIMage}
+                              alt={labelConfig?.image_not_loaded}
+                              className="product-image"
+                            />
+                          )}
                         </div>
                         <div className="product-name">{val?.title}</div>
                         <div className="product-price">

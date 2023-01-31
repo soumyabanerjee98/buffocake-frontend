@@ -6,9 +6,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { processIDs } from "../../config/processID";
 import { callApi } from "../../projectComponents/Functions/util";
 import PageNotFound from "../../projectComponents/Pages/PageNotFound";
-import BasicLayout from "../../projectComponents/UI/BasicLayout";
+import Products from "../../projectComponents/Pages/Products";
 
-const Product = (props: any) => {
+const ProductPage = (props: any) => {
   const { productDetails } = props;
   const router = useRouter();
   if (router.isFallback) {
@@ -20,17 +20,14 @@ const Product = (props: any) => {
         <>
           <Head>
             <title>{productDetails?.metaHead}</title>
+            <link rel="icon" href="../boffocake-logo.png" />
             <meta name="description" content={productDetails?.metaDesc} />
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1"
             />
           </Head>
-          <BasicLayout>
-            <div>{productDetails?.title}</div>
-            <div>{productDetails?.description}</div>
-            <div>{productDetails?.unitValue}</div>
-          </BasicLayout>
+          <Products productDetails={productDetails} />
         </>
       ) : (
         <PageNotFound />
@@ -73,4 +70,4 @@ export async function getStaticPaths() {
   return { paths, fallback: true };
 }
 
-export default Product;
+export default ProductPage;

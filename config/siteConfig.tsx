@@ -14,7 +14,33 @@ export const serverConfig = {
 };
 
 export const labelConfig = {
+  // global
+  image_not_loaded: "Image not loaded!",
+  inr_code: <span>&#8377;</span>,
+  // header
   header_search_placeholder: "Search by typing...",
+  login_label: "Log in",
+  cart_label: "Cart",
+  // home page
+  home_catagory_header_title: "Catagory",
+  home_view_all_button: "View All",
+  // product page
+  product_qty_label: "Quantity",
+  product_weight_label: "Weight",
+  product_available_flavours_label: "Available flavours",
+  product_no_flavours_label: "No flavour found!",
+  product_message_label: "Message on cake",
+  product_message_placeholder: "e.g. Happy Birthday David!",
+  product_available_custom_label: "Available Customizations",
+  product_no_custom_label: "No customization available!",
+  product_allergy_label: "Any allergy?",
+  product_allergy_placeholder: "e.g. Lactos intolerance",
+  product_delivery_label: "Delivery time and date",
+  product_weight_unit: "lbs",
+  product_unit_add: "+",
+  product_unit_deduct: "-",
+  product_add_to_cart: "Add to Cart",
+  product_buy_now: "Buy Now",
 };
 
 export const storageConfig = {
@@ -37,4 +63,11 @@ export const paytmConfig = {
   host: "https://securegw.paytm.in",
   mid: "WotNCM52358571558082",
   mkey: "!Q1oy4s9yV8trfja",
+};
+
+export const productConfig = {
+  qtyAdjustUnit: 1,
+  weightAdjustUnit: 0.5,
+  messageFieldLimit: 50,
+  allergyFieldLimit: 200,
 };

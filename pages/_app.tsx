@@ -1,5 +1,6 @@
 import { Montserrat } from "@next/font/google";
 import Head from "next/head";
+import BasicLayout from "../projectComponents/UI/BasicLayout";
 import "../styles/global.css";
 
 const montserrat = Montserrat({
@@ -13,7 +14,9 @@ const _App = (props: any) => {
       <Head>
         <link rel="icon" href="./boffocake-logo.png" />
       </Head>
-      <Component {...pageProps} />
+      <BasicLayout>
+        <Component {...pageProps} />
+      </BasicLayout>
     </main>
   );
 };

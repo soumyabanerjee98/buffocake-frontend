@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import Script from "next/script";
-import { paytmConfig } from "../../config/siteConfig";
+import { labelConfig, paytmConfig } from "../../config/siteConfig";
 import { callApi } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
@@ -79,7 +79,10 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         {loading ? (
           <Loading className="dot-flashing" />
         ) : (
-          <>Pay &#8377;{Total}</>
+          <>
+            Pay {labelConfig?.inr_code}
+            {Total}
+          </>
         )}
       </button>
     </>
