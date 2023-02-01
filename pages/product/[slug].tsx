@@ -50,30 +50,33 @@ export async function getStaticProps({ params }: any) {
       return null;
     }
   });
-  let wishData;
-  if (getSessionObjectData(storageConfig?.userProfile)?.id) {
-    wishData = await callApi(processIDs?.get_wishlist, {
-      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-    }).then((res: any) => {
-      if (res?.data?.returnCode) {
-        let returnStatement;
-        if (res?.data?.returnData) {
-          returnStatement = res?.data?.returnData?.includes(params.slug);
+  const wishData = async () => {
+    let returndata;
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      returndata = await callApi(processIDs?.get_wishlist, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }).then((res: any) => {
+        if (res?.data?.returnCode) {
+          let returnStatement;
+          if (res?.data?.returnData) {
+            returnStatement = res?.data?.returnData?.includes(params.slug);
+          } else {
+            returnStatement = false;
+          }
+          return returnStatement;
         } else {
-          returnStatement = false;
+          return false;
         }
-        return returnStatement;
-      } else {
-        return false;
-      }
-    });
-  } else {
-    wishData = false;
-  }
+      });
+    } else {
+      returndata = false;
+    }
+    return returndata;
+  };
   return {
     props: {
       productDetails: data,
-      wishData: wishData,
+      wishData: wishData(),
     },
     revalidate: 10,
   };
