@@ -15,7 +15,6 @@ import { messageService } from "../Functions/messageService";
 
 export type ProductProps = {
   productDetails: any;
-  wishData: boolean;
 };
 
 const getLocalDateTime = () => {
@@ -27,8 +26,40 @@ const getLocalDateTime = () => {
 };
 
 const Products = (props: ProductProps) => {
-  const { productDetails, wishData } = props;
-  const [fav, setFav] = useState(wishData);
+  const { productDetails } = props;
+  const wishlistFetcher = async () => {
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      let data = await callApi(processIDs?.get_wishlist, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }).then((res: any) => {
+        if (res?.data?.returnCode) {
+          let returnStatement;
+          if (res?.data?.returnData) {
+            returnStatement = res?.data?.returnData?.includes(
+              productDetails?._id
+            );
+          } else {
+            returnStatement = false;
+          }
+          return returnStatement;
+        } else {
+          return false;
+        }
+      });
+      return data;
+    } else {
+      return false;
+    }
+  };
+  const {
+    data: favourite,
+    error,
+    isLoading,
+  } = useSwr(
+    `${processIDs?.get_wishlist}${productDetails?._id}`,
+    wishlistFetcher
+  );
+  const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
     weight: productDetails?.minWeight,
@@ -49,6 +80,10 @@ const Products = (props: ProductProps) => {
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
       : serverConfig?.backend_url_server;
+
+  useEffect(() => {
+    setFav(favourite);
+  }, [favourite]);
 
   const loginCardOpen = () => {
     messageService?.sendMessage(
@@ -264,9 +299,11 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        <div className="fav" onClick={favSelect}>
-          <HeartIcon className="heart" fill={fav ? "red" : "white"} />
-        </div>
+        {isLoading || fav === undefined ? null : (
+          <div className="fav" onClick={favSelect}>
+            <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+          </div>
+        )}
       </div>
       <div className="details-section">
         <div className="info-section">

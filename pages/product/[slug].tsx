@@ -4,16 +4,12 @@ import React from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { processIDs } from "../../config/processID";
-import { storageConfig } from "../../config/siteConfig";
-import {
-  callApi,
-  getSessionObjectData,
-} from "../../projectComponents/Functions/util";
+import { callApi } from "../../projectComponents/Functions/util";
 import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Products from "../../projectComponents/Pages/Products";
 
 const ProductPage = (props: any) => {
-  const { productDetails, wishData } = props;
+  const { productDetails } = props;
   const router = useRouter();
   if (router.isFallback) {
     return <Skeleton count={5} />;
@@ -31,7 +27,7 @@ const ProductPage = (props: any) => {
               content="width=device-width, initial-scale=1"
             />
           </Head>
-          <Products productDetails={productDetails} wishData={wishData} />
+          <Products productDetails={productDetails} />
         </>
       ) : (
         <PageNotFound />
@@ -50,32 +46,9 @@ export async function getStaticProps({ params }: any) {
       return null;
     }
   });
-  const wishData = async () => {
-    if (getSessionObjectData(storageConfig?.userProfile)) {
-      let data = await callApi(processIDs?.get_wishlist, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          let returnStatement;
-          if (res?.data?.returnData) {
-            returnStatement = res?.data?.returnData?.includes(params.slug);
-          } else {
-            returnStatement = false;
-          }
-          return returnStatement;
-        } else {
-          return false;
-        }
-      });
-      return data;
-    } else {
-      return false;
-    }
-  };
   return {
     props: {
       productDetails: data,
-      wishData: wishData(),
     },
     revalidate: 10,
   };
