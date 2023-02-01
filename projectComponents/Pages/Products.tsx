@@ -56,12 +56,10 @@ const Products = (props: ProductProps) => {
     error,
     isLoading,
   } = useSwr(
-    `${processIDs?.get_wishlist}${productDetails?._id}${Math.floor(
-      Math.random()
-    )}`,
+    `${processIDs?.get_wishlist}${productDetails?._id}`,
     wishlistFetcher
   );
-  const [fav, setFav] = useState(favourite);
+  const [fav, setFav] = useState<any>();
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
     weight: productDetails?.minWeight,
@@ -301,7 +299,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {!isLoading && (
+        {!isLoading && fav !== undefined && (
           <div className="fav" onClick={favSelect}>
             <HeartIcon className="heart" fill={fav ? "red" : "white"} />
           </div>
