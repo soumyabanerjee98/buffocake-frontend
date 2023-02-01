@@ -299,7 +299,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {isLoading ? null : (
+        {isLoading === false && (
           <div className="fav" onClick={favSelect}>
             <HeartIcon className="heart" fill={fav ? "red" : "white"} />
           </div>
