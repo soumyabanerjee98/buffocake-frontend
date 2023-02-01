@@ -185,6 +185,31 @@ input::-webkit-inner-spin-button {
     border-radius: 4px;
     justify-content: center;
     display: flex;
+    position: relative;
+}
+.product-screen .fav{
+    padding: 1rem;
+    background-color: rgb(224, 135, 168);
+    position: absolute;
+    bottom: 0.8rem;
+    right: 0.8rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 200ms ease-in-out;
+}
+.product-screen .fav:hover .heart{
+    height: 1.8rem;
+    transition: all 200ms ease-in-out;
+}
+.product-screen .heart{
+    height: 1.4rem;
+    width: auto;
+    transition: all 200ms ease-in-out;
 }
 .product-screen .details-section {
     min-height: 25rem;

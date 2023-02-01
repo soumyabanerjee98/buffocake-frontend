@@ -13,6 +13,7 @@ import { processIDs } from "../../config/processID";
 import OTPField from "./OTPField";
 import Loading from "./Loading";
 import { storageConfig } from "../../config/siteConfig";
+import { useRouter } from "next/router";
 const LoginCard = () => {
   const [loginState, setLoginState] = useState("Login");
   const [loading, setLoading] = useState({
@@ -55,6 +56,7 @@ const LoginCard = () => {
   });
   const timer = useRef<any>();
   const md5 = require("md5");
+  const router = useRouter();
   const closePopUp = () => {
     messageService?.sendMessage(
       "login-card",
@@ -102,6 +104,7 @@ const LoginCard = () => {
           setLoading((prev: any) => {
             return { ...prev, loginMail: false };
           });
+          router.push("/");
           closePopUp();
         } else {
           setLoading((prev: any) => {
@@ -177,6 +180,7 @@ const LoginCard = () => {
           setLoading((prev: any) => {
             return { ...prev, loginPhone: false };
           });
+          router.push("/");
           closePopUp();
         } else {
           setLoading((prev: any) => {

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import { labelConfig, storageConfig } from "../../config/siteConfig";
@@ -19,12 +20,40 @@ import ProfileIcon from "./Icons/ProfileIcon";
 import Loading from "./Loading";
 import LoginCard from "./LoginCard";
 
+const dataFetcher = async () => {
+  if (getSessionObjectData(storageConfig?.userProfile)) {
+    return getSessionObjectData(storageConfig?.userProfile);
+  } else {
+    if (getLocalStringData(storageConfig?.jwtToken)) {
+      let data = await callApi(processIDs?.verify_login_token, {
+        token: getLocalStringData(storageConfig?.jwtToken),
+      }).then((res: any) => {
+        if (res?.data?.returnCode) {
+          setSessionObjectData(
+            storageConfig?.userProfile,
+            res?.data?.returnData
+          );
+          return res?.data?.returnData;
+        } else {
+          removeLocalData(storageConfig?.jwtToken);
+          return null;
+        }
+      });
+      return data;
+    } else {
+      return null;
+    }
+  }
+};
+
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
-  const [userProfile, setUserProfile] = useState<any>({
-    loaded: false,
-    profile: null,
-  });
+  const {
+    data: userData,
+    error,
+    isLoading,
+  } = useSwr(processIDs?.verify_login_token, dataFetcher);
+  const [userProfile, setUserProfile] = useState(userData);
   const [loginCardOpen, setLoginCardOpen] = useState(false);
   const redirect = useRouter();
   const navigate = (url: string) => {
@@ -38,67 +67,24 @@ const Header = () => {
     setLoginCardOpen(true);
   };
   useEffect(() => {
-    if (getSessionObjectData(storageConfig?.userProfile)) {
-      setUserProfile((prev: any) => {
-        return {
-          ...prev,
-          loaded: true,
-          profile: getSessionObjectData(storageConfig?.userProfile),
-        };
-      });
-    } else {
-      if (getLocalStringData(storageConfig?.jwtToken)) {
-        callApi(processIDs?.verify_login_token, {
-          token: getLocalStringData(storageConfig?.jwtToken),
-        }).then((res: any) => {
-          if (res?.data?.returnCode) {
-            setUserProfile((prev: any) => {
-              return {
-                ...prev,
-                loaded: true,
-                profile: res?.data?.returnData,
-              };
-            });
-            setSessionObjectData(
-              storageConfig?.userProfile,
-              res?.data?.returnData
-            );
-          } else {
-            setUserProfile((prev: any) => {
-              return {
-                ...prev,
-                loaded: true,
-              };
-            });
-            removeLocalData(storageConfig?.jwtToken);
-          }
-        });
-      } else {
-        setUserProfile((prev: any) => {
-          return {
-            ...prev,
-            loaded: true,
-          };
-        });
-      }
-    }
     messageService?.onReceive().subscribe((m: any) => {
       if (m?.sender === "login-card" && m?.target === "header") {
         if (m?.message?.action === "close-popup") {
           setLoginCardOpen(false);
         }
         if (m?.message?.action === "refresh-profile") {
-          setUserProfile((prev: any) => {
-            return {
-              ...prev,
-              loaded: true,
-              profile: getSessionObjectData(storageConfig?.userProfile),
-            };
-          });
+          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
+        }
+      } else if (m?.sender === "product-page" && m?.target === "header") {
+        if (m?.message?.action === "login-popup") {
+          setLoginCardOpen(true);
         }
       }
     });
   }, []);
+  useEffect(() => {
+    setUserProfile(userData);
+  }, [userData]);
   return (
     <header className="main-header">
       <div className="left-col">
@@ -128,12 +114,14 @@ const Header = () => {
           textColor="rgb(107, 39, 51)"
         />
         <div className="profile-container">
-          {userProfile?.loaded ? (
+          {isLoading ? (
+            <Loading className="spinner" />
+          ) : (
             <>
-              {userProfile?.profile !== null ? (
+              {userProfile !== null ? (
                 <NameIcon
-                  firstName={userProfile?.profile?.firstName}
-                  lastName={userProfile?.profile?.lastName}
+                  firstName={userProfile?.firstName}
+                  lastName={userProfile?.lastName}
                   className="name-icon"
                 />
               ) : (
@@ -145,8 +133,6 @@ const Header = () => {
                 />
               )}
             </>
-          ) : (
-            <Loading className="spinner" />
           )}
         </div>
       </div>

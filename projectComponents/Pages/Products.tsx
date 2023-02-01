@@ -1,11 +1,17 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import useSwr from "swr";
+import React, { useEffect, useState } from "react";
+import { processIDs } from "../../config/processID";
 import {
   labelConfig,
   productConfig,
   serverConfig,
+  storageConfig,
 } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
+import { callApi, getSessionObjectData } from "../Functions/util";
+import HeartIcon from "../UI/Icons/HeartIcon";
+import { messageService } from "../Functions/messageService";
 
 export type ProductProps = {
   productDetails: any;
@@ -21,6 +27,39 @@ const getLocalDateTime = () => {
 
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
+  const wishlistFetcher = async () => {
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      let data = await callApi(processIDs?.get_wishlist, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }).then((res: any) => {
+        if (res?.data?.returnCode) {
+          let returnStatement;
+          if (res?.data?.returnData) {
+            returnStatement = res?.data?.returnData?.includes(
+              productDetails?._id
+            );
+          } else {
+            returnStatement = false;
+          }
+          return returnStatement;
+        } else {
+          return false;
+        }
+      });
+      return data;
+    } else {
+      return false;
+    }
+  };
+  const {
+    data: favourite,
+    error,
+    isLoading,
+  } = useSwr(
+    `${processIDs?.get_wishlist}${productDetails?._id}`,
+    wishlistFetcher
+  );
+  const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
     weight: productDetails?.minWeight,
@@ -41,6 +80,19 @@ const Products = (props: ProductProps) => {
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
       : serverConfig?.backend_url_server;
+
+  useEffect(() => {
+    setFav(favourite);
+  }, [favourite]);
+
+  const loginCardOpen = () => {
+    messageService?.sendMessage(
+      "product-page",
+      // @ts-ignore
+      { action: "login-popup" },
+      "header"
+    );
+  };
 
   const changeQty = (action: string) => {
     switch (action) {
@@ -205,6 +257,32 @@ const Products = (props: ProductProps) => {
     }
   };
 
+  const favSelect = () => {
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      if (fav) {
+        callApi(processIDs?.remove_item_from_wishlist, {
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+          itemId: productDetails?._id,
+        }).then((res: any) => {
+          if (res?.data?.returnCode) {
+            setFav(false);
+          }
+        });
+      } else {
+        callApi(processIDs?.add_item_to_wishlist, {
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+          itemId: productDetails?._id,
+        }).then((res: any) => {
+          if (res?.data?.returnCode) {
+            setFav(true);
+          }
+        });
+      }
+    } else {
+      loginCardOpen();
+    }
+  };
+
   return (
     <div className="product-screen">
       <div className="image-section">
@@ -220,6 +298,11 @@ const Products = (props: ProductProps) => {
             alt={labelConfig?.image_not_loaded}
             className="product-image"
           />
+        )}
+        {!isLoading && (
+          <div className="fav" onClick={favSelect}>
+            <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+          </div>
         )}
       </div>
       <div className="details-section">

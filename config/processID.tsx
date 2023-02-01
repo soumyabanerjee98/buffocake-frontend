@@ -10,4 +10,7 @@ export const processIDs = {
   paytm_transaction_token_generate: "paytm-transaction-token-generate",
   get_all_products: "get-all-products",
   get_product_details: "get-product-details",
+  add_item_to_wishlist: "add-item-to-wishlist",
+  remove_item_from_wishlist: "remove-item-from-wishlist",
+  get_wishlist: "get-wishlist",
 };
