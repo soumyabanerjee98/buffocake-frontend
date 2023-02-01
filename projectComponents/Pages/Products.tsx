@@ -59,7 +59,7 @@ const Products = (props: ProductProps) => {
     `${processIDs?.get_wishlist}${productDetails?._id}`,
     wishlistFetcher
   );
-  const [fav, setFav] = useState<any>();
+  const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
     weight: productDetails?.minWeight,
@@ -299,7 +299,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {!isLoading && fav !== undefined && (
+        {!isLoading && (
           <div className="fav" onClick={favSelect}>
             <HeartIcon className="heart" fill={fav ? "red" : "white"} />
           </div>
