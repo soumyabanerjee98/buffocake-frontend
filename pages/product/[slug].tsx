@@ -51,8 +51,9 @@ export async function getStaticProps({ params }: any) {
     }
   });
   const wishData = async () => {
+    let returndata;
     if (getSessionObjectData(storageConfig?.userProfile)) {
-      let data = await callApi(processIDs?.get_wishlist, {
+      returndata = await callApi(processIDs?.get_wishlist, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       }).then((res: any) => {
         if (res?.data?.returnCode) {
@@ -67,10 +68,10 @@ export async function getStaticProps({ params }: any) {
           return false;
         }
       });
-      return data;
     } else {
-      return false;
+      returndata = false;
     }
+    return returndata;
   };
   return {
     props: {
