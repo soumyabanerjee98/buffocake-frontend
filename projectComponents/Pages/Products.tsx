@@ -56,7 +56,9 @@ const Products = (props: ProductProps) => {
     error,
     isLoading,
   } = useSwr(
-    `${processIDs?.get_wishlist}${productDetails?._id}`,
+    `${processIDs?.get_wishlist}${productDetails?._id}${Math.floor(
+      Math.random()
+    )}`,
     wishlistFetcher
   );
   const [fav, setFav] = useState(favourite);
