@@ -57,7 +57,8 @@ const Products = (props: ProductProps) => {
     isLoading,
   } = useSwr(
     `${processIDs?.get_wishlist}${productDetails?._id}`,
-    wishlistFetcher
+    wishlistFetcher,
+    { refreshInterval: 1000 }
   );
   const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({
