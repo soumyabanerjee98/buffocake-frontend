@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { labelConfig, paytmConfig } from "../../config/siteConfig";
-import { callApi } from "../Functions/util";
+import { callApiSSR } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
 
@@ -19,43 +21,47 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
     try {
       setLoading(true);
       let oid = Math.floor(Math.random() * Date.now());
-      callApi(processIDs?.paytm_transaction_token_generate, {
-        mid: MID,
-        mkey: MKEY,
-        oid: oid,
-        value: Total,
-        userId: "001",
-      })
+      let data = await callApiSSR(
+        processIDs?.paytm_transaction_token_generate,
+        {
+          mid: MID,
+          mkey: MKEY,
+          oid: oid,
+          value: Total,
+          userId: "001",
+        }
+      )
         .then((res: any) => {
-          let config = {
-            root: "",
-            flow: "DEFAULT",
-            data: {
-              orderId: oid,
-              token: res?.data?.returnData?.txnToken,
-              tokenType: "TXN_TOKEN",
-              amount: Total,
-            },
-            handler: {
-              notifyMerchant: function (eventName: any, data: any) {
-                setLoading(false);
-                console.log("eventName => ", eventName);
-                console.log("data => ", data);
-              },
-            },
-          };
-          (window as any).Paytm.CheckoutJS.init(config)
-            .then(function onSuccess() {
-              (window as any).Paytm.CheckoutJS.invoke();
-            })
-            .catch(function onError(error: any) {
-              setLoading(false);
-              console.log("error => ", error);
-            });
+          return res.json();
         })
         .catch((err: any) => {
           setLoading(false);
           console.log(err);
+        });
+      let config = {
+        root: "",
+        flow: "DEFAULT",
+        data: {
+          orderId: oid,
+          token: data?.returnData?.txnToken,
+          tokenType: "TXN_TOKEN",
+          amount: Total,
+        },
+        handler: {
+          notifyMerchant: function (eventName: any, data: any) {
+            setLoading(false);
+            console.log("eventName => ", eventName);
+            console.log("data => ", data);
+          },
+        },
+      };
+      (window as any).Paytm.CheckoutJS.init(config)
+        .then(function onSuccess() {
+          (window as any).Paytm.CheckoutJS.invoke();
+        })
+        .catch(function onError(error: any) {
+          setLoading(false);
+          console.log("error => ", error);
         });
     } catch (error) {
       setLoading(false);

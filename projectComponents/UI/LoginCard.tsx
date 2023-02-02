@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { messageService } from "../Functions/messageService";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import {
-  callApi,
+  callApiSSR,
   gSignInWithPopup,
   gSignOut,
   setLocalStringData,
@@ -13,7 +15,7 @@ import { processIDs } from "../../config/processID";
 import OTPField from "./OTPField";
 import Loading from "./Loading";
 import { storageConfig } from "../../config/siteConfig";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 const LoginCard = () => {
   const [loginState, setLoginState] = useState("Login");
   const [loading, setLoading] = useState({
@@ -81,47 +83,48 @@ const LoginCard = () => {
     setLoading((prev: any) => {
       return { ...prev, loginMail: true };
     });
-    gSignInWithPopup().then((res: any) => {
+    gSignInWithPopup().then(async (res: any) => {
       gSignOut();
-      callApi(processIDs?.user_login_with_email, {
+      let data = await callApiSSR(processIDs?.user_login_with_email, {
         email: res?.user?.email,
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          setSessionObjectData(
-            storageConfig?.userProfile,
-            res?.data?.returnData?.profileData
-          );
-          setLocalStringData(
-            storageConfig?.jwtToken,
-            res?.data?.returnData?.accessToken
-          );
-          messageService?.sendMessage(
-            "login-card",
-            // @ts-ignore
-            { action: "refresh-profile" },
-            "header"
-          );
-          setLoading((prev: any) => {
-            return { ...prev, loginMail: false };
-          });
-          router.push("/");
-          closePopUp();
-        } else {
-          setLoading((prev: any) => {
-            return { ...prev, loginMail: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
+        return res.json();
       });
+      if (data?.returnCode) {
+        setSessionObjectData(
+          storageConfig?.userProfile,
+          data?.returnData?.profileData
+        );
+        setLocalStringData(
+          storageConfig?.jwtToken,
+          data?.returnData?.accessToken
+        );
+        messageService?.sendMessage(
+          "login-card",
+          // @ts-ignore
+          { action: "refresh-profile" },
+          "header"
+        );
+        setLoading((prev: any) => {
+          return { ...prev, loginMail: false };
+        });
+        router.push("/");
+        closePopUp();
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, loginMail: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     });
   };
-  const LoginUser = (e: any) => {
+  const LoginUser = async (e: any) => {
     e.preventDefault();
     if (
       formData?.password === "" ||
@@ -158,46 +161,47 @@ const LoginCard = () => {
       setLoading((prev: any) => {
         return { ...prev, loginPhone: true };
       });
-      callApi(processIDs?.user_login_with_phone, {
+      let data = await callApiSSR(processIDs?.user_login_with_phone, {
         phone: formData?.phoneNumber,
         password: md5(formData?.password),
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          setLocalStringData(
-            storageConfig?.jwtToken,
-            res?.data?.returnData?.accessToken
-          );
-          setSessionObjectData(
-            storageConfig?.userProfile,
-            res?.data?.returnData?.profileData
-          );
-          messageService?.sendMessage(
-            "login-card",
-            // @ts-ignore
-            { action: "refresh-profile" },
-            "header"
-          );
-          setLoading((prev: any) => {
-            return { ...prev, loginPhone: false };
-          });
-          router.push("/");
-          closePopUp();
-        } else {
-          setLoading((prev: any) => {
-            return { ...prev, loginPhone: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
+        return res.json();
       });
+      if (data?.returnCode) {
+        setLocalStringData(
+          storageConfig?.jwtToken,
+          data?.returnData?.accessToken
+        );
+        setSessionObjectData(
+          storageConfig?.userProfile,
+          data?.returnData?.profileData
+        );
+        messageService?.sendMessage(
+          "login-card",
+          // @ts-ignore
+          { action: "refresh-profile" },
+          "header"
+        );
+        setLoading((prev: any) => {
+          return { ...prev, loginPhone: false };
+        });
+        router.push("/");
+        closePopUp();
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, loginPhone: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     }
   };
-  const SignupUser = (e: any) => {
+  const SignupUser = async (e: any) => {
     e.preventDefault();
     if (
       formData?.firstName === "" ||
@@ -244,31 +248,35 @@ const LoginCard = () => {
       setLoading((prev: any) => {
         return { ...prev, signupPhone: true };
       });
-      callApi(processIDs?.user_phone_check, {
+      let data = await callApiSSR(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          callApi(processIDs?.phone_verify, {
-            phone: formData?.phoneNumber,
-          }).then((res: any) => {
-            setLoading((prev: any) => {
-              return { ...prev, signupPhone: false };
-            });
-            setSignUpStep(3);
-          });
-        } else {
+        return res.json();
+      });
+      if (data?.returnCode) {
+        let data = await callApiSSR(processIDs?.phone_verify, {
+          phone: formData?.phoneNumber,
+        }).then((res: any) => {
+          return res.json();
+        });
+        if (data?.returnCode) {
           setLoading((prev: any) => {
             return { ...prev, signupPhone: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
+          setSignUpStep(3);
         }
-      });
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, signupPhone: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     }
   };
   const signUpWithGoogle = () => {
@@ -278,42 +286,43 @@ const LoginCard = () => {
     setError((prev: any) => {
       return { ...prev, globalError: false, globalErrorText: "" };
     });
-    gSignInWithPopup().then((res: any) => {
+    gSignInWithPopup().then(async (res: any) => {
       gSignOut();
-      callApi(processIDs?.user_email_check, {
+      let data = await callApiSSR(processIDs?.user_email_check, {
         firstName: res?.user?.displayName?.split(" ")[0].toString(),
         lastName: res?.user?.displayName?.split(" ")[1].toString(),
         email: res?.user?.email,
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          setFormData((prev: any) => {
-            return {
-              ...prev,
-              firstName: res?.data?.returnData?.firstName,
-              lastName: res?.data?.returnData?.lastName,
-              email: res?.data?.returnData?.email,
-            };
-          });
-          setLoading((prev: any) => {
-            return { ...prev, signupmMail: false };
-          });
-          setSignUpStep(2);
-        } else {
-          setLoading((prev: any) => {
-            return { ...prev, signupmMail: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
+        return res.json();
       });
+      if (data?.returnCode) {
+        setFormData((prev: any) => {
+          return {
+            ...prev,
+            firstName: data?.returnData?.firstName,
+            lastName: data?.returnData?.lastName,
+            email: data?.returnData?.email,
+          };
+        });
+        setLoading((prev: any) => {
+          return { ...prev, signupmMail: false };
+        });
+        setSignUpStep(2);
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, signupmMail: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     });
   };
-  const phoneVerify = (e: any) => {
+  const phoneVerify = async (e: any) => {
     e.preventDefault();
     if (formData?.phoneNumber === "" || formData?.phoneNumber === undefined) {
       setError((prev: any) => {
@@ -335,31 +344,22 @@ const LoginCard = () => {
       setLoading((prev: any) => {
         return { ...prev, otpSend: true };
       });
-      callApi(processIDs?.user_phone_check, {
+      let data = await callApiSSR(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          callApi(processIDs?.phone_verify, {
-            phone: formData?.phoneNumber,
-          }).then((res: any) => {
-            if (res?.data?.returnCode) {
-              setLoading((prev: any) => {
-                return { ...prev, otpSend: false };
-              });
-              setSignUpStep(3);
-            } else {
-              setLoading((prev: any) => {
-                return { ...prev, otpSend: false };
-              });
-              setError((prev: any) => {
-                return {
-                  ...prev,
-                  globalError: true,
-                  globalErrorText: res?.data?.msg,
-                };
-              });
-            }
+        return res.json();
+      });
+      if (data?.returnCode) {
+        let data = await callApiSSR(processIDs?.phone_verify, {
+          phone: formData?.phoneNumber,
+        }).then((res: any) => {
+          return res.json();
+        });
+        if (data?.returnCode) {
+          setLoading((prev: any) => {
+            return { ...prev, otpSend: false };
           });
+          setSignUpStep(3);
         } else {
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
@@ -368,14 +368,25 @@ const LoginCard = () => {
             return {
               ...prev,
               globalError: true,
-              globalErrorText: res?.data?.msg,
+              globalErrorText: data?.msg,
             };
           });
         }
-      });
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, otpSend: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     }
   };
-  const OTPVerify = (e: any) => {
+  const OTPVerify = async (e: any) => {
     e.preventDefault();
     if (formData?.otp === "") {
       setError((prev: any) => {
@@ -397,32 +408,33 @@ const LoginCard = () => {
       setLoading((prev: any) => {
         return { ...prev, otpVeri: true };
       });
-      callApi(processIDs?.otp_verify, {
+      let data = await callApiSSR(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, otpVeri: false };
-          });
-          setSignUpStep(4);
-        } else {
-          setLoading((prev: any) => {
-            return { ...prev, otpVeri: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
+        return res.json();
       });
+      if (data?.returnCode) {
+        setLoading((prev: any) => {
+          return { ...prev, otpVeri: false };
+        });
+        setSignUpStep(4);
+      } else {
+        setLoading((prev: any) => {
+          return { ...prev, otpVeri: false };
+        });
+        setError((prev: any) => {
+          return {
+            ...prev,
+            globalError: true,
+            globalErrorText: data?.msg,
+          };
+        });
+      }
     }
   };
 
-  const createAccount = (e: any) => {
+  const createAccount = async (e: any) => {
     e.preventDefault();
     if (formData?.password === "") {
       setError((prev: any) => {
@@ -460,7 +472,7 @@ const LoginCard = () => {
       setLoading((prev: any) => {
         return { ...prev, createAcc: true };
       });
-      callApi(processIDs?.create_new_account, {
+      let data = await callApiSSR(processIDs?.create_new_account, {
         firstName: formData?.firstName,
         lastName: formData?.lastName,
         phoneNumber: formData?.phoneNumber,
@@ -468,20 +480,7 @@ const LoginCard = () => {
         password: md5(formData?.password),
       })
         .then((res: any) => {
-          if (res?.data?.returnCode) {
-            closePopUp();
-          } else {
-            setLoading((prev: any) => {
-              return { ...prev, createAcc: false };
-            });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
-            });
-          }
+          return res.json();
         })
         .catch((err: any) => {
           setLoading((prev: any) => {
@@ -489,40 +488,55 @@ const LoginCard = () => {
           });
           console.log(err);
         });
-    }
-  };
-
-  const resendOTP = () => {
-    setLoading((prev: any) => {
-      return { ...prev, resendOtp: true };
-    });
-    callApi(processIDs?.phone_verify, {
-      phone: formData?.phoneNumber,
-    }).then((res: any) => {
-      if (res?.data?.returnCode) {
-        setLoading((prev: any) => {
-          return { ...prev, resendOtp: false };
-        });
-        setResendOtp((prev: any) => {
-          return {
-            ...prev,
-            state: false,
-          };
-        });
-        startTimer();
+      if (data?.returnCode) {
+        closePopUp();
       } else {
         setLoading((prev: any) => {
-          return { ...prev, resendOtp: false };
+          return { ...prev, createAcc: false };
         });
         setError((prev: any) => {
           return {
             ...prev,
             globalError: true,
-            globalErrorText: res?.data?.msg,
+            globalErrorText: data?.msg,
           };
         });
       }
+    }
+  };
+
+  const resendOTP = async () => {
+    setLoading((prev: any) => {
+      return { ...prev, resendOtp: true };
     });
+    let data = await callApiSSR(processIDs?.phone_verify, {
+      phone: formData?.phoneNumber,
+    }).then((res: any) => {
+      return res.json();
+    });
+    if (data?.returnCode) {
+      setLoading((prev: any) => {
+        return { ...prev, resendOtp: false };
+      });
+      setResendOtp((prev: any) => {
+        return {
+          ...prev,
+          state: false,
+        };
+      });
+      startTimer();
+    } else {
+      setLoading((prev: any) => {
+        return { ...prev, resendOtp: false };
+      });
+      setError((prev: any) => {
+        return {
+          ...prev,
+          globalError: true,
+          globalErrorText: data?.msg,
+        };
+      });
+    }
   };
 
   const switchPage = () => {

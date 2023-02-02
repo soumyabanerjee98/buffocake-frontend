@@ -1,5 +1,7 @@
+"use client";
+
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
@@ -8,7 +10,7 @@ import Logo from "../Assets/Images/boffocake-logo.png";
 import SearchIcon from "../Assets/Images/search-icon.svg";
 import { messageService } from "../Functions/messageService";
 import {
-  callApi,
+  callApiSSR,
   getLocalStringData,
   getSessionObjectData,
   removeLocalData,
@@ -25,21 +27,18 @@ const dataFetcher = async () => {
     return getSessionObjectData(storageConfig?.userProfile);
   } else {
     if (getLocalStringData(storageConfig?.jwtToken)) {
-      let data = await callApi(processIDs?.verify_login_token, {
+      let data = await callApiSSR(processIDs?.verify_login_token, {
         token: getLocalStringData(storageConfig?.jwtToken),
       }).then((res: any) => {
-        if (res?.data?.returnCode) {
-          setSessionObjectData(
-            storageConfig?.userProfile,
-            res?.data?.returnData
-          );
-          return res?.data?.returnData;
-        } else {
-          removeLocalData(storageConfig?.jwtToken);
-          return null;
-        }
+        return res.json();
       });
-      return data;
+      if (data?.returnCode) {
+        setSessionObjectData(storageConfig?.userProfile, data?.returnData);
+        return data?.returnData;
+      } else {
+        removeLocalData(storageConfig?.jwtToken);
+        return null;
+      }
     } else {
       return null;
     }

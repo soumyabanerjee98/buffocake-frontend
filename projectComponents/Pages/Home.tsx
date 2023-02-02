@@ -1,6 +1,8 @@
+"use client";
+
 import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React from "react";
 // import Skeleton from "react-loading-skeleton";
 // import "react-loading-skeleton/dist/skeleton.css";
 import {
@@ -38,7 +40,7 @@ const Home = (props: HomeProps) => {
   // const uploadImageFunc = (e: any) => {
   //   const fileArr = Array.from(e.target.files);
   //   uploadImage(fileArr).then((res: any) => {
-  //     console.log(res?.data);
+  //     console.log(res.json());
   //   });
   // };
 
