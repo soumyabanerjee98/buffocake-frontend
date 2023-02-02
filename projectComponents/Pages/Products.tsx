@@ -48,7 +48,7 @@ const Products = (props: ProductProps) => {
       });
       return data;
     } else {
-      return false;
+      return undefined;
     }
   };
   const {
@@ -58,7 +58,7 @@ const Products = (props: ProductProps) => {
   } = useSwr(
     `${processIDs?.get_wishlist}${productDetails?._id}`,
     wishlistFetcher,
-    { refreshInterval: 1, revalidateOnMount: true }
+    { refreshInterval: 1 }
   );
   const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({

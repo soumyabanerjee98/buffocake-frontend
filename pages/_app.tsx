@@ -9,9 +9,11 @@ const montserrat = Montserrat({
 
 const _App = (props: any) => {
   const { Component, pageProps } = props;
-  if (process.env.NODE_ENV === "production") {
-    console.log = console.warn = console.error = () => {};
-  }
+  // if (process.env.NODE_ENV === "production") {
+  //   console.log = console.warn = console.error = () => {};
+  // }
+  console.log(process.env.NODE_ENV);
+
   return (
     <main className={montserrat.className}>
       <Head>
