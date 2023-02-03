@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React from "react";
+import React, { Suspense } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { processIDs } from "../../config/processID";
@@ -10,12 +9,8 @@ import Products from "../../projectComponents/Pages/Products";
 
 const ProductPage = (props: any) => {
   const { productDetails } = props;
-  const router = useRouter();
-  if (router.isFallback) {
-    return <Skeleton count={5} />;
-  }
   return (
-    <>
+    <Suspense fallback={<Skeleton count={5} />}>
       {productDetails ? (
         <>
           <Head>
@@ -32,7 +27,7 @@ const ProductPage = (props: any) => {
       ) : (
         <PageNotFound />
       )}
-    </>
+    </Suspense>
   );
 };
 
