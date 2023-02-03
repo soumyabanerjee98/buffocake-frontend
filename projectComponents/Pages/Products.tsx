@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import useSwr from "swr";
 import React, { useEffect, useState } from "react";
@@ -11,7 +9,7 @@ import {
   storageConfig,
 } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
-import { callApiSSR, getSessionObjectData } from "../Functions/util";
+import { callApi, getSessionObjectData } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 
@@ -31,22 +29,24 @@ const Products = (props: ProductProps) => {
   const { productDetails } = props;
   const wishlistFetcher = async () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
-      let data = await callApiSSR(processIDs?.get_wishlist, {
+      let data = await callApi(processIDs?.get_wishlist, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       }).then((res: any) => {
-        return res.json();
-      });
-      if (data?.returnCode) {
-        let returnStatement;
-        if (data?.returnData) {
-          returnStatement = data?.returnData?.includes(productDetails?._id);
+        if (res?.data?.returnCode) {
+          let returnStatement;
+          if (res?.data?.returnData) {
+            returnStatement = res?.data?.returnData?.includes(
+              productDetails?._id
+            );
+          } else {
+            returnStatement = false;
+          }
+          return returnStatement;
         } else {
-          returnStatement = false;
+          return false;
         }
-        return returnStatement;
-      } else {
-        return false;
-      }
+      });
+      return data;
     } else {
       return undefined;
     }
@@ -258,28 +258,26 @@ const Products = (props: ProductProps) => {
     }
   };
 
-  const favSelect = async () => {
+  const favSelect = () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       if (fav) {
-        let data = await callApiSSR(processIDs?.remove_item_from_wishlist, {
+        callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: any) => {
-          return res.json();
+          if (res?.data?.returnCode) {
+            setFav(false);
+          }
         });
-        if (data?.returnCode) {
-          setFav(false);
-        }
       } else {
-        let data = await callApiSSR(processIDs?.add_item_to_wishlist, {
+        callApi(processIDs?.add_item_to_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: any) => {
-          return res.json();
+          if (res?.data?.returnCode) {
+            setFav(true);
+          }
         });
-        if (data?.returnCode) {
-          setFav(true);
-        }
       }
     } else {
       loginCardOpen();

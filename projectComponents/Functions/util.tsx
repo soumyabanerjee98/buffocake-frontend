@@ -1,3 +1,4 @@
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -15,7 +16,7 @@ export const gSignInWithPopup = () => signInWithPopup(auth, provider);
 
 export const gSignOut = () => signOut(auth);
 
-export const callApiISR = async (processid: string, datajson: object) => {
+export const callApi = async (processid: string, datajson: object) => {
   let url =
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
@@ -24,57 +25,11 @@ export const callApiISR = async (processid: string, datajson: object) => {
     processId: processid,
     datajson: datajson,
   };
-  let returnData = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(data),
+  return axios.post(url, JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
-    next: {
-      revalidate: 10,
-    },
   });
-  return returnData;
-};
-
-export const callApiSSG = async (processid: string, datajson: object) => {
-  let url =
-    process?.env?.NODE_ENV === "development"
-      ? serverConfig?.backend_url_test
-      : serverConfig?.backend_url_server;
-  let data = {
-    processId: processid,
-    datajson: datajson,
-  };
-  let returnData = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "force-cache",
-  });
-  return returnData;
-};
-
-export const callApiSSR = async (processid: string, datajson: object) => {
-  let url =
-    process?.env?.NODE_ENV === "development"
-      ? serverConfig?.backend_url_test
-      : serverConfig?.backend_url_server;
-  let data = {
-    processId: processid,
-    datajson: datajson,
-  };
-  let returnData = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "no-cache",
-  });
-  return returnData;
 };
 
 export const uploadImage = async (filesArr: any) => {
@@ -87,14 +42,11 @@ export const uploadImage = async (filesArr: any) => {
     filesArr.map((i: any) => {
       formData.append("files", i);
     });
-    let returnData = await fetch(url, {
-      method: "POST",
-      body: formData,
+    return axios.post(`${url}imageUpload/`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    return returnData;
   }
 };
 
