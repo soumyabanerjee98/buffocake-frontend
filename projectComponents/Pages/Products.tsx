@@ -157,12 +157,12 @@ const Products = (props: ProductProps) => {
     }
   };
 
-  const selectFlavour = (opt: string, index: number) => {
+  const selectFlavour = (opt: any, index: number) => {
     setCheckOutDetails((prev: any) => {
       return {
         ...prev,
-        selectedFlavour: opt?.split("~")[0]?.toString(),
-        additionalValueFlavour: parseInt(opt?.split("~")[1]?.toString()),
+        selectedFlavour: opt?.flavour,
+        additionalValueFlavour: opt?.value,
       };
     });
     let element = document.getElementById(`product-flavour-${index}`);
@@ -191,7 +191,7 @@ const Products = (props: ProductProps) => {
     }
   };
 
-  const selectCustom = (opt: string, index: number) => {
+  const selectCustom = (opt: any, index: number) => {
     let element = document.getElementById(`product-custom-${index}`);
     if (element?.className.includes("selected-option")) {
       productDetails?.customOptions?.map((i: any, idx: number) => {
@@ -201,7 +201,7 @@ const Products = (props: ProductProps) => {
       setCheckOutDetails((prev: any) => {
         return {
           ...prev,
-          customOption: opt?.split("~")[0]?.toString(),
+          customOption: null,
           additionalValueCustom: 0,
         };
       });
@@ -214,8 +214,8 @@ const Products = (props: ProductProps) => {
       setCheckOutDetails((prev: any) => {
         return {
           ...prev,
-          customOption: opt?.split("~")[0]?.toString(),
-          additionalValueCustom: parseInt(opt?.split("~")[1]?.toString()),
+          customOption: opt?.option,
+          additionalValueCustom: opt?.value,
         };
       });
     }
@@ -378,7 +378,7 @@ const Products = (props: ProductProps) => {
                           selectFlavour(i, idx);
                         }}
                       >
-                        {i?.split("~")[0]?.toString()}
+                        {i?.flavour}
                       </div>
                     )
                   )}
@@ -419,7 +419,7 @@ const Products = (props: ProductProps) => {
                         selectCustom(i, idx);
                       }}
                     >
-                      {i?.split("~")[0]?.toString()}
+                      {i?.option}
                     </div>
                   ))}
                 </div>
