@@ -3,6 +3,7 @@ import { metaConfig } from "../config/siteConfig";
 import { processIDs } from "../config/processID";
 import Home from "../projectComponents/Pages/Home";
 import { callApi } from "../projectComponents/Functions/util";
+import { responseType } from "../typings";
 
 const HomePage = (props: any) => {
   const { allProducts } = props;
@@ -19,7 +20,7 @@ const HomePage = (props: any) => {
 };
 export async function getStaticProps() {
   let data = await callApi(processIDs?.get_all_products, {}).then(
-    (res: any) => {
+    (res: responseType) => {
       if (res?.data?.returnCode) {
         return res?.data?.returnData;
       } else {

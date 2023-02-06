@@ -1,22 +1,20 @@
-import React from 'react'
+import React from "react";
 
 export type NameIconProps = {
-    firstName: string
-    lastName: string
-    className: string
-}
+  firstName: string;
+  lastName: string;
+  className: string;
+  onClick: any;
+};
 
 const NameIcon = (props: NameIconProps) => {
-    const { 
-        firstName,
-        lastName,
-        className
-    } = props
+  const { firstName, lastName, className, onClick } = props;
   return (
-    <div className={className}>
-        {firstName?.split('')[0]}{lastName?.split('')[0]}
+    <div className={className} onClick={onClick}>
+      {firstName?.split("")[0]}
+      {lastName?.split("")[0]}
     </div>
-  )
-}
+  );
+};
 
-export default NameIcon
+export default NameIcon;

@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
-import { labelConfig, storageConfig } from "../../config/siteConfig";
+import {
+  labelConfig,
+  serverConfig,
+  storageConfig,
+} from "../../config/siteConfig";
 import Logo from "../Assets/Images/boffocake-logo.png";
 import SearchIcon from "../Assets/Images/search-icon.svg";
 import { messageService } from "../Functions/messageService";
@@ -19,6 +23,7 @@ import NameIcon from "./Icons/NameIcon";
 import ProfileIcon from "./Icons/ProfileIcon";
 import Loading from "./Loading";
 import LoginCard from "./LoginCard";
+import { responseType } from "../../typings";
 
 const dataFetcher = async () => {
   if (getSessionObjectData(storageConfig?.userProfile)) {
@@ -27,7 +32,7 @@ const dataFetcher = async () => {
     if (getLocalStringData(storageConfig?.jwtToken)) {
       let data = await callApi(processIDs?.verify_login_token, {
         token: getLocalStringData(storageConfig?.jwtToken),
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           setSessionObjectData(
             storageConfig?.userProfile,
@@ -53,6 +58,10 @@ const Header = () => {
     error,
     isLoading,
   } = useSwr(processIDs?.verify_login_token, dataFetcher);
+  const url =
+    process.env.NODE_ENV === "production"
+      ? serverConfig?.backend_url_server
+      : serverConfig?.backend_url_test;
   const [userProfile, setUserProfile] = useState(userData);
   const [loginCardOpen, setLoginCardOpen] = useState(false);
   const redirect = useRouter();
@@ -66,6 +75,9 @@ const Header = () => {
   const openPopUp = () => {
     setLoginCardOpen(true);
   };
+  const openProfile = () => {
+    navigate("/profile");
+  };
   useEffect(() => {
     messageService?.onReceive().subscribe((m: any) => {
       if (m?.sender === "login-card" && m?.target === "header") {
@@ -78,6 +90,10 @@ const Header = () => {
       } else if (m?.sender === "product-page" && m?.target === "header") {
         if (m?.message?.action === "login-popup") {
           setLoginCardOpen(true);
+        }
+      } else if (m?.sender === "profile-page" && m?.target === "global") {
+        if (m?.message?.action === "refresh-profile") {
+          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
         }
       }
     });
@@ -119,11 +135,20 @@ const Header = () => {
           ) : (
             <>
               {userProfile !== null ? (
-                <NameIcon
-                  firstName={userProfile?.firstName}
-                  lastName={userProfile?.lastName}
-                  className="name-icon"
-                />
+                userProfile?.profilePhoto ? (
+                  <img
+                    src={`${url}${userProfile?.profilePhoto}`}
+                    className="profile-icon-photo"
+                    onClick={openProfile}
+                  />
+                ) : (
+                  <NameIcon
+                    firstName={userProfile?.firstName}
+                    lastName={userProfile?.lastName}
+                    className="name-icon"
+                    onClick={openProfile}
+                  />
+                )
               ) : (
                 <ProfileIcon
                   fill="rgb(107, 39, 51)"

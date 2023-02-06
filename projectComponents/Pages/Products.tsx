@@ -12,6 +12,7 @@ import NoIMage from "../Assets/Images/no-image.png";
 import { callApi, getSessionObjectData } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
+import { responseType } from "../../typings";
 
 export type ProductProps = {
   productDetails: any;
@@ -31,7 +32,7 @@ const Products = (props: ProductProps) => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           let returnStatement;
           if (res?.data?.returnData) {
@@ -264,7 +265,7 @@ const Products = (props: ProductProps) => {
         callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
-        }).then((res: any) => {
+        }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(false);
           }
@@ -273,7 +274,7 @@ const Products = (props: ProductProps) => {
         callApi(processIDs?.add_item_to_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
-        }).then((res: any) => {
+        }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(true);
           }

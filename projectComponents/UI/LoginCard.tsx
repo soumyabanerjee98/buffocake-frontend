@@ -14,6 +14,7 @@ import OTPField from "./OTPField";
 import Loading from "./Loading";
 import { storageConfig } from "../../config/siteConfig";
 import { useRouter } from "next/router";
+import { responseType } from "../../typings";
 const LoginCard = () => {
   const [loginState, setLoginState] = useState("Login");
   const [loading, setLoading] = useState({
@@ -85,7 +86,7 @@ const LoginCard = () => {
       gSignOut();
       callApi(processIDs?.user_login_with_email, {
         email: res?.user?.email,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           setSessionObjectData(
             storageConfig?.userProfile,
@@ -161,7 +162,7 @@ const LoginCard = () => {
       callApi(processIDs?.user_login_with_phone, {
         phone: formData?.phoneNumber,
         password: md5(formData?.password),
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           setLocalStringData(
             storageConfig?.jwtToken,
@@ -246,11 +247,11 @@ const LoginCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           callApi(processIDs?.phone_verify, {
             phone: formData?.phoneNumber,
-          }).then((res: any) => {
+          }).then((res: responseType) => {
             setLoading((prev: any) => {
               return { ...prev, signupPhone: false };
             });
@@ -284,7 +285,7 @@ const LoginCard = () => {
         firstName: res?.user?.displayName?.split(" ")[0].toString(),
         lastName: res?.user?.displayName?.split(" ")[1].toString(),
         email: res?.user?.email,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           setFormData((prev: any) => {
             return {
@@ -337,11 +338,11 @@ const LoginCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           callApi(processIDs?.phone_verify, {
             phone: formData?.phoneNumber,
-          }).then((res: any) => {
+          }).then((res: responseType) => {
             if (res?.data?.returnCode) {
               setLoading((prev: any) => {
                 return { ...prev, otpSend: false };
@@ -400,7 +401,7 @@ const LoginCard = () => {
       callApi(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
-      }).then((res: any) => {
+      }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
@@ -467,7 +468,7 @@ const LoginCard = () => {
         email: formData?.email,
         password: md5(formData?.password),
       })
-        .then((res: any) => {
+        .then((res: responseType) => {
           if (res?.data?.returnCode) {
             closePopUp();
           } else {
@@ -498,7 +499,7 @@ const LoginCard = () => {
     });
     callApi(processIDs?.phone_verify, {
       phone: formData?.phoneNumber,
-    }).then((res: any) => {
+    }).then((res: responseType) => {
       if (res?.data?.returnCode) {
         setLoading((prev: any) => {
           return { ...prev, resendOtp: false };
@@ -641,18 +642,20 @@ const LoginCard = () => {
                   autoComplete={"off"}
                   placeholder="Password"
                   onChange={(e: any) => {
-                    setError((prev: any) => {
-                      return {
-                        ...prev,
-                        password: false,
-                        passwordText: "",
-                        globalError: false,
-                        globalErrorText: "",
-                      };
-                    });
-                    setFormData((prev: any) => {
-                      return { ...prev, password: e.target.value };
-                    });
+                    if (e.nativeEvent.data !== " ") {
+                      setError((prev: any) => {
+                        return {
+                          ...prev,
+                          password: false,
+                          passwordText: "",
+                          globalError: false,
+                          globalErrorText: "",
+                        };
+                      });
+                      setFormData((prev: any) => {
+                        return { ...prev, password: e.target.value };
+                      });
+                    }
                   }}
                 />
                 {error?.password && (

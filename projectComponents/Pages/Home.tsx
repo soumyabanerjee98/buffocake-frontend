@@ -11,6 +11,7 @@ import {
 import { uploadImage } from "../Functions/util";
 import PaytmPayment from "../UI/PaytmPayment";
 import NoIMage from "../Assets/Images/no-image.png";
+import { responseType } from "../../typings";
 
 export type HomeProps = {
   allProducts: any;
@@ -37,7 +38,8 @@ const Home = (props: HomeProps) => {
 
   // const uploadImageFunc = (e: any) => {
   //   const fileArr = Array.from(e.target.files);
-  //   uploadImage(fileArr).then((res: any) => {
+  //   // @ts-ignore
+  //   uploadImage(fileArr).then((res: responseType) => {
   //     console.log(res?.data);
   //   });
   // };

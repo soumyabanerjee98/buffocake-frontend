@@ -5,6 +5,7 @@ import { labelConfig, paytmConfig } from "../../config/siteConfig";
 import { callApi } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
+import { responseType } from "../../typings";
 
 export type PaytmPaymentProps = {
   MID: string;
@@ -26,7 +27,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         value: Total,
         userId: "001",
       })
-        .then((res: any) => {
+        .then((res: responseType) => {
           let config = {
             root: "",
             flow: "DEFAULT",

@@ -1,110 +1,118 @@
 /* global *********************** */
 
-body{
-    margin: 0;
-    overflow-x: hidden;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+body {
+  margin: 0;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 body::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
-button{
-    cursor: pointer;
-    outline: none;
-    border: 1px solid transparent;
+button {
+  cursor: pointer;
+  outline: none;
+  border: 1px solid transparent;
 }
-button, input, textarea{
-    font-family: inherit;
+button,
+input,
+textarea {
+  font-family: inherit;
 }
-.PhoneInputInput{
-    outline: none;
-    padding: 0.4rem;
+.PhoneInputInput {
+  outline: none;
+  padding: 0.4rem;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* header start ***************** */
 
-.main-header{
-    position: sticky;
-    top: 0;
-    padding: 0.2rem 2rem;
-    background-color: rgb(124, 242, 227);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
+.main-header {
+  position: sticky;
+  top: 0;
+  padding: 0.2rem 2rem;
+  background-color: rgb(124, 242, 227);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
 }
-.main-header .left-col{
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.main-header .left-col {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .main-header .right-col {
-    display: flex;
-    align-items: center;
-    gap: 2.8rem;
+  display: flex;
+  align-items: center;
+  gap: 2.8rem;
 }
-.logo-image{
-    cursor: pointer;
-    border-radius: 50%;
-    height: 100px;
-    width: 100px;
+.logo-image {
+  cursor: pointer;
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
 }
-.header-search{
-    display: flex;
-    overflow: hidden;
-    border-radius: 4px;
-    width: max-content;
-    height: max-content;
+.header-search {
+  display: flex;
+  overflow: hidden;
+  border-radius: 4px;
+  width: max-content;
+  height: max-content;
 }
-.header-search input{
-    border: none;
-    outline: none;
-    width: 40rem;
-    height: 3rem;
-    font-size: 15px;
-    padding: 0 1rem;
+.header-search input {
+  border: none;
+  outline: none;
+  width: 40rem;
+  height: 3rem;
+  font-size: 15px;
+  padding: 0 1rem;
 }
-.search-button{
-    background-color: rgb(224, 135, 168);
-    transition: all 300ms ease-in-out;
-    padding: 0.5rem;
-    width: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+.search-button {
+  background-color: rgb(224, 135, 168);
+  transition: all 300ms ease-in-out;
+  padding: 0.5rem;
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
-.search-button:hover{
-    background-color: rgb(223, 174, 192);
-    transition: all 300ms ease-in-out;
+.search-button:hover {
+  background-color: rgb(223, 174, 192);
+  transition: all 300ms ease-in-out;
 }
-.search-button img{
-    max-width: 15px;
-    max-height: 15px;
+.search-button img {
+  max-width: 15px;
+  max-height: 15px;
 }
-.cart-image, .profile-icon {
-    height: 24px;
-    width: 24px;
-    cursor: pointer;
+.cart-image,
+.profile-icon {
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
 }
-.profile-container{
-    cursor: pointer;
+.profile-container {
+  cursor: pointer;
 }
 .name-icon{
     background-color: rgb(107, 39, 51);
-    height: 2rem;
-    width: 2rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: whitesmoke;
+}
+.profile-icon-photo {
+    height: 2.5rem;
+    width: 2.5rem;
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: whitesmoke;
 }
 
 /* header end **************** */
@@ -112,450 +120,619 @@ input::-webkit-inner-spin-button {
 /* body start *************** */
 
 /* basic layout */
-.main-body{
-    min-height: 100vh;
+.main-body {
+  min-height: 100vh;
 }
 
 /* home page */
-.home-screen .product-catagory{
-    margin: 0.5rem 1rem;
-    border-radius: 4px;
-    padding: 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.25);
+.home-screen .product-catagory {
+  margin: 0.5rem 1rem;
+  border-radius: 4px;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
-.home-screen .catagory-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0.5rem;
+.home-screen .catagory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.5rem;
 }
-.home-screen .catagory-header>.title {
-    font-weight: 600;
+.home-screen .catagory-header > .title {
+  font-weight: 600;
 }
 .home-screen .catagory-body {
-    display: flex;
-    width: 100%;
-    align-items: center;
+  display: flex;
+  width: 100%;
+  align-items: center;
 }
 .home-screen .product-card {
-    width: 20%;
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    margin: 0.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    text-align: center;
+  width: 20%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-align: center;
 }
 .home-screen .product-image-container {
-    height: 10rem;
-    width: 100%;
-    margin-bottom: 1rem;
-    border-radius: 4px;
+  height: 10rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 4px;
 }
 .home-screen .product-image {
-    height: 100%;
-    width: max-content;
-    max-width: 100%;
-    border-radius: 4px;
+  height: 100%;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 4px;
 }
-.home-screen .product-card>.product-price {
-    color: rgb(60, 132, 132);
-    font-weight: 500;
+.home-screen .product-card > .product-price {
+  color: rgb(60, 132, 132);
+  font-weight: 500;
 }
-.home-screen .view-all{
-    border: 0;
-    font-size: medium;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 2px;
-    background-color: rgb(224, 135, 168);
-    color: rgb(107, 39, 51);
+.home-screen .view-all {
+  border: 0;
+  font-size: medium;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 2px;
+  background-color: rgb(224, 135, 168);
+  color: rgb(107, 39, 51);
 }
 
 /* product page */
-.product-screen{
-    padding: 1rem 5rem;
-    display: flex;
-    gap: 5rem;
-    width: 100%;
+.product-screen {
+  padding: 1rem 5rem;
+  display: flex;
+  gap: 5rem;
+  width: 100%;
 }
-.product-screen .image-section{
-    height: 25rem;
-    width: 40%;
-    border-radius: 4px;
-    justify-content: center;
-    display: flex;
-    position: relative;
+.product-screen .image-section {
+  height: 25rem;
+  width: 40%;
+  border-radius: 4px;
+  justify-content: center;
+  display: flex;
+  position: relative;
 }
-.product-screen .fav{
-    padding: 1rem;
-    background-color: rgb(224, 135, 168);
-    position: absolute;
-    bottom: 0.8rem;
-    right: 0.8rem;
-    height: 1.5rem;
-    width: 1.5rem;
-    cursor: pointer;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 200ms ease-in-out;
+.product-screen .fav {
+  padding: 1rem;
+  background-color: rgb(224, 135, 168);
+  position: absolute;
+  bottom: 0.8rem;
+  right: 0.8rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 200ms ease-in-out;
 }
-.product-screen .fav:hover .heart{
-    height: 1.8rem;
-    transition: all 200ms ease-in-out;
+.product-screen .fav:hover .heart {
+  height: 1.8rem;
+  transition: all 200ms ease-in-out;
 }
-.product-screen .heart{
-    height: 1.4rem;
-    width: auto;
-    transition: all 200ms ease-in-out;
+.product-screen .heart {
+  height: 1.4rem;
+  width: auto;
+  transition: all 200ms ease-in-out;
 }
 .product-screen .details-section {
-    min-height: 25rem;
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  min-height: 25rem;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.product-screen .product-image{
-    height: 100%;
-    width: max-content;
-    max-width: 100%;
-    border-radius: 4px;
+.product-screen .product-image {
+  height: 100%;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 4px;
 }
 .product-screen .title {
-    font-size: 30px;
-    font-weight: 600;
-    padding-bottom: 1rem;
+  font-size: 30px;
+  font-weight: 600;
+  padding-bottom: 1rem;
 }
 .product-screen .description {
-    padding: 2rem 0;
+  padding: 2rem 0;
 }
-.product-screen .label{
-    padding-right: 1rem;
+.product-screen .label {
+  padding-right: 1rem;
 }
-.product-screen .section{
-    display: flex;
-    gap: 0.8rem;
-    padding-bottom: 0.5rem;
+.product-screen .section {
+  display: flex;
+  gap: 0.8rem;
+  padding-bottom: 0.5rem;
 }
-.product-screen .no-option{
-    opacity: 0.6;
+.product-screen .no-option {
+  opacity: 0.6;
 }
-.product-screen .available-options{
-    display: grid;
-    row-gap: 0.8rem;
-    grid-template-columns: repeat(3, 10rem);
-    justify-items: center;
+.product-screen .available-options {
+  display: grid;
+  row-gap: 0.8rem;
+  grid-template-columns: repeat(3, 10rem);
+  justify-items: center;
 }
-.product-screen .options{
-    width: max-content;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: rgba(107, 39, 51, 0.25);
-    cursor: pointer;
-    transition: all 200ms ease-in-out;
+.product-screen .options {
+  width: max-content;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: rgba(107, 39, 51, 0.25);
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
 }
-.product-screen .options:hover{
-    background-color: rgba(107, 39, 51);
-    color: white;
-    transition: all 200ms ease-in-out;
+.product-screen .options:hover {
+  background-color: rgba(107, 39, 51);
+  color: white;
+  transition: all 200ms ease-in-out;
 }
-.product-screen .selected-option{
-    background-color: rgba(107, 39, 51);
-    color: white;
+.product-screen .selected-option {
+  background-color: rgba(107, 39, 51);
+  color: white;
 }
-.product-screen .text{
-    resize: none;
-    outline: none;
-    border-radius: 4px;
-    width: 30vw;
-    height: 5rem;
+.product-screen .text {
+  resize: none;
+  outline: none;
+  border-radius: 4px;
+  width: 30vw;
+  height: 5rem;
 }
-.product-screen .text-section{
-    position: relative;
+.product-screen .text-section {
+  position: relative;
 }
-.product-screen .text-limit{
-    font-size: small;
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
+.product-screen .text-limit {
+  font-size: small;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
 }
 .product-screen .section .section-button {
-    background-color: rgb(224, 135, 168);
+  background-color: rgb(224, 135, 168);
 }
-.product-screen .subtotal{
-    padding-top: 1rem;
-    color: rgb(0, 191, 0);
-    font-size: 26px;
+.product-screen .subtotal {
+  padding-top: 1rem;
+  color: rgb(0, 191, 0);
+  font-size: 26px;
 }
-.product-screen .button-section{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 0.8rem;
+.product-screen .button-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.8rem;
 }
-.product-screen .action-button{
-    width: 30rem;
-    padding: 1rem;
-    border-radius: 6px;
+.product-screen .action-button {
+  width: 30rem;
+  padding: 1rem;
+  border-radius: 6px;
 }
-.product-screen .add-cart{
-    background-color: rgb(255, 216, 20);
-    transition: all 200ms ease-in-out;
+.product-screen .add-cart {
+  background-color: rgb(255, 216, 20);
+  transition: all 200ms ease-in-out;
 }
 .product-screen .add-cart:hover {
-    background-color: rgb(213, 178, 0);
-    transition: all 200ms ease-in-out;
+  background-color: rgb(213, 178, 0);
+  transition: all 200ms ease-in-out;
 }
-.product-screen .buy-now{
-    background-color: rgb(0, 191, 0);
-    transition: all 200ms ease-in-out;
+.product-screen .buy-now {
+  background-color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
 }
 .product-screen .buy-now:hover {
-    background-color: rgb(50, 224, 50);
-    transition: all 200ms ease-in-out;
+  background-color: rgb(50, 224, 50);
+  transition: all 200ms ease-in-out;
+}
+
+/* profile page */
+.profile-screen {
+  display: flex;
+  width: 100%;
+}
+.profile-screen .left-col {
+  width: 10%;
+}
+.profile-screen .left-col .section {
+  color: rgba(107, 39, 51);
+  padding: 1rem;
+  border-radius: 0 4px 4px 0;
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+}
+.profile-screen .left-col .section:hover {
+  background-color: rgb(223, 174, 192);
+  transition: all 200ms ease-in-out;
+  color: whitesmoke;
+}
+.profile-screen .active {
+  background-color: rgb(224, 135, 168);
+  color: whitesmoke;
+}
+.profile-screen .right-col {
+  width: 90%;
+  padding: 1rem;
+}
+.profile-screen .right-col .label {
+  font-weight: 600;
+}
+.profile-screen .right-col .logout {
+  border-color: red;
+  border-radius: 4px;
+  color: red;
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.8rem;
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .right-col .logout:hover {
+  color: whitesmoke;
+  background-color: red;
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .right-col .edit-profile {
+  border-color: rgb(0, 191, 0);
+  border-radius: 4px;
+  color: rgb(0, 191, 0);
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.8rem;
+  transition: all 200ms ease-in-out;
+}
+
+.profile-screen .right-col .edit-profile:hover {
+  color: whitesmoke;
+  background-color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .right-col .cancel-edit {
+  border-color: rgb(255, 216, 20);
+  border-radius: 4px;
+  color: rgb(255, 216, 20);
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.8rem;
+  transition: all 200ms ease-in-out;
+}
+
+.profile-screen .right-col .cancel-edit:hover {
+  color: whitesmoke;
+  background-color: rgb(255, 216, 20);
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .right-col .section,
+.profile-screen .right-col .section .col {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.profile-screen .right-col .section {
+  padding: 1rem;
+}
+.profile-screen .right-col .section.l-1 {
+  gap: 5vw;
+}
+.profile-screen .right-col .section .input-block {
+  position: relative;
+}
+.profile-screen .right-col .section .error {
+  position: absolute;
+  color: red;
+}
+.profile-screen .right-col .section input {
+  outline: none;
+  padding: 0.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+.profile-screen .right-col .section .google-button {
+  border: 1px solid transparent;
+  padding: 0.4rem;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+
+.profile-screen .right-col .section .google-button:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .right-col .profile-photo-container {
+  padding: 0 1rem;
+  width: fit-content;
+  height: 10rem;
+  position: relative;
+}
+.profile-screen .right-col .profile-photo {
+  height: 100%;
+  max-width: 10rem;
+  border-radius: 50%;
+}
+.profile-screen .right-col .edit-photo-button {
+  display: flex;
+  flex-direction: row-reverse;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.profile-screen .right-col .edit-photo-button>div {
+    cursor: pointer;
+}
+.profile-screen .right-col .edit-profile, .profile-screen .right-col .cancel-edit{
+    min-width: 5rem;
 }
 
 /* modals */
-.modal{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.25);
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* login card */
 
-.login-card{
-    position: absolute;
-    padding: 1.2rem 2rem;
-    background-color: white;
-    border-radius: 4px;
+.login-card {
+  position: absolute;
+  padding: 1.2rem 2rem;
+  background-color: white;
+  border-radius: 4px;
 }
-.login-card .form-label{
-    padding-bottom: 0.1rem;
+.login-card .form-label {
+  padding-bottom: 0.1rem;
 }
-.login-card .form-input{
-    padding-bottom: 0.8rem;
+.login-card .form-input {
+  padding-bottom: 0.8rem;
 }
 .login-card .error {
-    color: red;
-    font-size: small;
+  color: red;
+  font-size: small;
 }
 .login-card .error.globalError {
-    text-align: center;
-    padding-bottom: 0.5rem;
+  text-align: center;
+  padding-bottom: 0.5rem;
 }
-.login-card .form-input input, .login-card .form-input button{
-    padding: 0.4rem;
-    outline: none;
-    width: -webkit-fill-available;
+.login-card .form-input input,
+.login-card .form-input button {
+  padding: 0.4rem;
+  outline: none;
+  width: -webkit-fill-available;
 }
-.login-button{
-    background-color: rgb(0, 191, 0);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 200ms ease-in-out;
+.login-button {
+  background-color: rgb(0, 191, 0);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
 }
-.login-button:hover{
-    background-color: rgb(211, 211, 211);
-    color: rgb(0, 191, 0);
-    transition: all 200ms ease-in-out;
+.login-button:hover {
+  background-color: rgb(211, 211, 211);
+  color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
 }
-.login-card .or{
-    text-align: center;
-    padding-bottom: 0.8rem;
+.login-card .or {
+  text-align: center;
+  padding-bottom: 0.8rem;
 }
-.login-card .google-button{
-    width: 100%;
-    border: 1px solid transparent;
-    padding: 0.4rem;
-    border-radius: 4px;
-    transition: all 200ms ease-in-out;
+.login-card .google-button {
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 0.4rem;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
 }
-.login-card .google-button:hover{
-    border: 1px solid #4285F4;
-    transition: all 200ms ease-in-out;
+.login-card .google-button:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
 }
-.login-card .sign-up-text{
-    font-size: small;
-    padding-top: 1rem;
-    text-align: center;
+.login-card .sign-up-text {
+  font-size: small;
+  padding-top: 1rem;
+  text-align: center;
 }
 .login-card .sign-up-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 .login-card .sign-up-link:hover {
-    color: #4285F4;
+  color: #4285f4;
 }
 .login-card .greetings {
-    text-align: center;
-    padding-bottom: 1rem;
+  text-align: center;
+  padding-bottom: 1rem;
 }
 .login-card .otp-error {
-    text-align: center;
-    padding-top: 0.4rem;
+  text-align: center;
+  padding-top: 0.4rem;
 }
 .login-card .resend-otp {
-    text-align: center;
+  text-align: center;
 }
-.login-card .resend-otp-link{
-    cursor: pointer;
-    transition: all 200ms ease-in-out;
+.login-card .resend-otp-link {
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
 }
 .login-card .resend-otp-link:hover {
-    color: #4285F4;
-    transition: all 200ms ease-in-out;
+  color: #4285f4;
+  transition: all 200ms ease-in-out;
+}
+
+/* phone verify card */
+.phone-verify-card {
+  position: absolute;
+  padding: 1.2rem 2rem;
+  background-color: white;
+  border-radius: 4px;
+}
+.phone-verify-card .form-label {
+  padding-bottom: 0.1rem;
+}
+
+.phone-verify-card .form-input {
+  padding-bottom: 0.8rem;
+}
+
+.phone-verify-card .error {
+  color: red;
+  font-size: small;
+}
+
+.phone-verify-card .error.globalError {
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+
+.phone-verify-card .form-input input,
+.phone-verify-card .form-input button {
+  padding: 0.4rem;
+  outline: none;
+  width: -webkit-fill-available;
 }
 
 /* OTP Field */
 
-.otp-field{
- display: flex;
- gap: 1rem;
- justify-content: center;
- align-items: center;
- padding-top: 1rem;
+.otp-field {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
 }
-.otp-field input{
-    width: 0.5rem !important;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.5);
+.otp-field input {
+  width: 0.5rem !important;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 /* paytm button */
-.paytm-button{
-    width: 100%;
-    padding: 0.4rem;
-    border-radius: 4px;
-    background-color: rgb(0, 191, 0);
-    transition: all 200ms ease-in-out;
+.paytm-button {
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 4px;
+  background-color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
 }
-.paytm-button:hover{
-    background-color: rgb(211, 211, 211);
-    color: rgb(0, 191, 0);
-    transition: all 200ms ease-in-out;
+.paytm-button:hover {
+  background-color: rgb(211, 211, 211);
+  color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
 }
 
 /* loader */
-.loader-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .loader.dot-flashing {
-    position: relative;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: white;
-    color: white;
-    animation: dot-flashing 1s infinite linear alternate;
-    animation-delay: 0.5s;
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: white;
+  color: white;
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
 }
 
 .loader.dot-flashing::before,
 .loader.dot-flashing::after {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    top: 0;
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
 }
 
 .loader.dot-flashing::before {
-    left: -15px;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: white;
-    color: white;
-    animation: dot-flashing 1s infinite alternate;
-    animation-delay: 0s;
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: white;
+  color: white;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
 }
 
 .loader.dot-flashing::after {
-    left: 15px;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: white;
-    color: white;
-    animation: dot-flashing 1s infinite alternate;
-    animation-delay: 1s;
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: white;
+  color: white;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
 }
 
 .loader.spinner {
-    border: 4px solid transparent;
-    border-top: 4px solid rgb(107, 39, 51);
-    border-radius: 50%;
-    width: 1rem;
-    height: 1rem;
-    animation: spin 2s linear infinite;
+  border: 4px solid transparent;
+  border-top: 4px solid rgb(107, 39, 51);
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes dot-flashing {
-    0% {
-        background-color: white;
-    }
+  0% {
+    background-color: white;
+  }
 
-    50%,
-    100% {
-        background-color: rgba(152, 128, 255, 0.2);
-    }
+  50%,
+  100% {
+    background-color: rgba(152, 128, 255, 0.2);
+  }
 }
 /* body end **************** */
 
 /* footer start ************** */
-.main-footer{
-    background-color: rgb(169, 194, 205);
-    padding: 1rem;
+.main-footer {
+  background-color: rgb(169, 194, 205);
+  padding: 1rem;
 }
-.main-footer .first-row{
-    display: flex;
-    justify-content: space-around;
-    align-items: baseline;
-    width: 100%;
+.main-footer .first-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+  width: 100%;
 }
-.main-footer .row-item{
-    width: 33.33%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: rgb(107, 39, 51);
-    text-align: center;
+.main-footer .row-item {
+  width: 33.33%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(107, 39, 51);
+  text-align: center;
 }
 
 .main-footer .title {
-    font-size: large;
-    font-weight: 600;
-    padding: 0 0 4px 0;
+  font-size: large;
+  font-weight: 600;
+  padding: 0 0 4px 0;
 }
 
-.footer-banner-icon{
-    height: 50px;
-    width: 50px;
-    padding: 1rem 0;
+.footer-banner-icon {
+  height: 50px;
+  width: 50px;
+  padding: 1rem 0;
 }
 
 /* footer end *************** */

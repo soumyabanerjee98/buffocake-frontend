@@ -7,6 +7,7 @@ import { processIDs } from "../../config/processID";
 import { callApi } from "../../projectComponents/Functions/util";
 import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Products from "../../projectComponents/Pages/Products";
+import { responseType } from "../../typings";
 
 const ProductPage = (props: any) => {
   const { productDetails } = props;
@@ -39,7 +40,7 @@ const ProductPage = (props: any) => {
 export async function getStaticProps({ params }: any) {
   let data = await callApi(processIDs?.get_product_details, {
     productId: params.slug,
-  }).then((res: any) => {
+  }).then((res: responseType) => {
     if (res?.data?.returnCode) {
       return res?.data?.returnData;
     } else {
@@ -56,7 +57,7 @@ export async function getStaticProps({ params }: any) {
 
 export async function getStaticPaths() {
   let data = await callApi(processIDs?.get_all_products, {}).then(
-    (res: any) => {
+    (res: responseType) => {
       if (res?.data?.returnCode) {
         return res?.data?.returnData;
       } else {
