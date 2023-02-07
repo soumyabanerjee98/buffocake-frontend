@@ -27,6 +27,7 @@ export const callApi = async (processid: string, datajson: object) => {
   };
   return axios.post(url, JSON.stringify(data), {
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
   });
@@ -44,6 +45,7 @@ export const uploadImage = async (filesArr: any) => {
     });
     return axios.post(`${url}imageUpload/`, formData, {
       headers: {
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "multipart/form-data",
       },
     });
