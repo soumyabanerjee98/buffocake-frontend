@@ -233,6 +233,16 @@ const Profile = (props: ProfileProps) => {
       }
     });
   }, []);
+  useEffect(() => {
+    setEditState(false);
+    setLoading(false);
+    setImage((prev: any) => {
+      return { ...prev, deleted: false, image: [], preview: null };
+    });
+    setError((prev: any) => {
+      return { ...prev, firstName: false, lastName: false, phoneNumber: false };
+    });
+  }, [section]);
   const SectionRender = () => {
     let active: number = NaN;
     section?.map((i: any) => {
