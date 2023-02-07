@@ -210,7 +210,7 @@ const Profile = (props: ProfileProps) => {
       "profile-page",
       // @ts-ignore
       { action: "refresh-profile" },
-      "header"
+      "global"
     );
     router.push("/");
   };
