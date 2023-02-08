@@ -133,7 +133,7 @@ const PhoneVerifyCard = () => {
           });
         } else {
           setLoading((prev: any) => {
-            return { ...prev, signupPhone: false };
+            return { ...prev, otpSend: false };
           });
           setError((prev: any) => {
             return {
