@@ -443,7 +443,7 @@ const Profile = (props: ProfileProps) => {
           <div className="label">Phone number</div>
           {editState ? (
             <>
-              {profile?.phoneNumber}
+              {profileData?.phoneNumber}
               <button
                 type="button"
                 className="google-button"

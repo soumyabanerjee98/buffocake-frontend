@@ -4,9 +4,10 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Loading from "./Loading";
 import OTPField from "./OTPField";
-import { callApi } from "../Functions/util";
+import { callApi, getSessionObjectData } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
+import { storageConfig } from "../../config/siteConfig";
 
 const PhoneVerifyCard = () => {
   const [verifyStep, setVerifyStep] = useState(1);
@@ -90,21 +91,49 @@ const PhoneVerifyCard = () => {
           phoneText: "Please enter 10 digit phone number",
         };
       });
+    } else if (
+      formData?.phoneNumber ===
+      getSessionObjectData(storageConfig?.userProfile)?.phoneNumber
+    ) {
+      setError((prev: any) => {
+        return {
+          ...prev,
+          phone: true,
+          phoneText: "Your number is already verified!",
+        };
+      });
     } else {
       setLoading((prev: any) => {
         return { ...prev, otpSend: true };
       });
-      callApi(processIDs?.phone_verify, {
-        phone: formData?.phoneNumber,
+      callApi(processIDs?.user_phone_check, {
+        phoneNumber: formData?.phoneNumber,
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, otpSend: false };
+          callApi(processIDs?.phone_verify, {
+            phone: formData?.phoneNumber,
+          }).then((res: responseType) => {
+            if (res?.data?.returnCode) {
+              setLoading((prev: any) => {
+                return { ...prev, otpSend: false };
+              });
+              setVerifyStep(2);
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, otpSend: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           });
-          setVerifyStep(2);
         } else {
           setLoading((prev: any) => {
-            return { ...prev, otpSend: false };
+            return { ...prev, signupPhone: false };
           });
           setError((prev: any) => {
             return {
