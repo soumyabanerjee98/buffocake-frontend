@@ -113,6 +113,7 @@ input::-webkit-inner-spin-button {
     height: 2.5rem;
     width: 2.5rem;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 /* header end **************** */
@@ -440,14 +441,15 @@ input::-webkit-inner-spin-button {
 }
 .profile-screen .right-col .profile-photo-container {
   padding: 0 1rem;
-  width: fit-content;
+  width: 10rem;
   height: 10rem;
   position: relative;
 }
 .profile-screen .right-col .profile-photo {
-  height: 100%;
-  max-width: 10rem;
+  height: 10rem;
+  width: 10rem;
   border-radius: 50%;
+  object-fit: cover;
 }
 .profile-screen .right-col .edit-photo-button {
   display: flex;
