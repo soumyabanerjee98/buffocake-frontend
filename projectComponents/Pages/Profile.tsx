@@ -40,7 +40,7 @@ const Profile = (props: ProfileProps) => {
       ? serverConfig?.backend_url_server
       : serverConfig?.backend_url_test;
   const router = useRouter();
-  const sectionArr = ["General", "Security"];
+  const sectionArr = ["General"]; //"Security"
   const [loading, setLoading] = useState(false);
   const [editState, setEditState] = useState(false);
   const [openPopUp, setOpenPopUp] = useState(false);
