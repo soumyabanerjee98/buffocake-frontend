@@ -446,7 +446,7 @@ const LoginCard = () => {
         return {
           ...prev,
           globalError: true,
-          globalErrorText: "Passwords don't match!",
+          globalErrorText: "Confirmed password doesn't match!",
         };
       });
     } else if (formData?.password?.length < 8) {
@@ -524,6 +524,15 @@ const LoginCard = () => {
         });
       }
     });
+  };
+
+  const ForgotPassword = () => {
+    messageService?.sendMessage(
+      "login-card",
+      // @ts-ignore
+      { action: "forgot-password" },
+      "header"
+    );
   };
 
   const switchPage = () => {
@@ -661,6 +670,11 @@ const LoginCard = () => {
                 {error?.password && (
                   <div className="error">{error?.passwordText}</div>
                 )}
+              </div>
+              <div className="forgot-password">
+                <span className="forgot-password-text" onClick={ForgotPassword}>
+                  Forgot password?
+                </span>
               </div>
               <div className="form-input">
                 <button type="submit" className="login-button">

@@ -1,19 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
-import { messageService } from "../Functions/messageService";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { processIDs } from "../../config/processID";
+import { storageConfig } from "../../config/siteConfig";
+import { responseType } from "../../typings";
+import { messageService } from "../Functions/messageService";
+import { callApi, getSessionObjectData } from "../Functions/util";
 import Loading from "./Loading";
 import OTPField from "./OTPField";
-import { callApi } from "../Functions/util";
-import { processIDs } from "../../config/processID";
-import { responseType } from "../../typings";
 
-const PhoneVerifyCard = () => {
-  const [verifyStep, setVerifyStep] = useState(1);
+const ForgotPasswordCard = () => {
   const timer = useRef<any>();
+  const md5 = require("md5");
+  const [steps, setSteps] = useState(1);
   const [formData, setFormData] = useState({
     phoneNumber: "",
     otp: "",
+    password: "",
+    confPassword: "",
+  });
+  const [loading, setLoading] = useState({
+    otpSend: false,
+    otpVeri: false,
+    resendOtp: false,
+    changePass: false,
   });
   const [error, setError] = useState({
     phone: false,
@@ -23,21 +33,16 @@ const PhoneVerifyCard = () => {
     globalError: false,
     globalErrorText: "",
   });
-  const [loading, setLoading] = useState({
-    otpSend: false,
-    otpVeri: false,
-    resendOtp: false,
-  });
   const [resendOtp, setResendOtp] = useState({
     state: false,
     timer: 59,
   });
   const closePopUp = () => {
     messageService?.sendMessage(
-      "phone-verify-card",
+      "forgot-password-card",
       // @ts-ignore
       { action: "close-popup" },
-      "global"
+      "header"
     );
   };
   const clickOutSide = (e: any) => {
@@ -45,41 +50,6 @@ const PhoneVerifyCard = () => {
       closePopUp();
     }
   };
-  const verifySuccess = () => {
-    messageService?.sendMessage(
-      "phone-verify-card",
-      // @ts-ignore
-      { action: "success-verify", params: formData?.phoneNumber },
-      "global"
-    );
-  };
-  const startTimer = () => {
-    timer.current = setInterval(() => {
-      setResendOtp((prev: any) => {
-        return { ...prev, timer: prev?.timer - 1 };
-      });
-    }, 1000);
-  };
-  useEffect(() => {
-    if (verifyStep === 2) {
-      setResendOtp((prev: any) => {
-        return {
-          ...prev,
-          state: false,
-          timer: 59,
-        };
-      });
-      startTimer();
-    }
-  }, [verifyStep]);
-  useEffect(() => {
-    if (resendOtp?.timer === 0) {
-      clearInterval(timer.current);
-      setResendOtp((prev: any) => {
-        return { ...prev, timer: 59, state: true };
-      });
-    }
-  }, [resendOtp]);
   const phoneVerify = (e: any) => {
     e.preventDefault();
     if (formData?.phoneNumber === "" || formData?.phoneNumber === undefined) {
@@ -102,14 +72,28 @@ const PhoneVerifyCard = () => {
       setLoading((prev: any) => {
         return { ...prev, otpSend: true };
       });
-      callApi(processIDs?.phone_verify, {
-        phone: formData?.phoneNumber,
+      callApi(processIDs?.user_phone_check, {
+        phoneNumber: formData?.phoneNumber,
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, otpSend: false };
+        if (!res?.data?.returnCode) {
+          callApi(processIDs?.phone_verify, {
+            phone: formData?.phoneNumber,
+          }).then((res: responseType) => {
+            setLoading((prev: any) => {
+              return { ...prev, otpSend: false };
+            });
+            if (res?.data?.returnCode) {
+              setSteps(2);
+            } else {
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           });
-          setVerifyStep(2);
         } else {
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
@@ -118,7 +102,7 @@ const PhoneVerifyCard = () => {
             return {
               ...prev,
               globalError: true,
-              globalErrorText: res?.data?.msg,
+              globalErrorText: "User not found!",
             };
           });
         }
@@ -155,7 +139,7 @@ const PhoneVerifyCard = () => {
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
           });
-          verifySuccess();
+          setSteps(3);
         } else {
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
@@ -163,14 +147,92 @@ const PhoneVerifyCard = () => {
           setError((prev: any) => {
             return {
               ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
+              otp: true,
+              otpText: res?.data?.msg,
             };
           });
         }
       });
     }
   };
+  const changePassword = (e: any) => {
+    e.preventDefault();
+    if (formData?.password === "") {
+      setError((prev: any) => {
+        return {
+          ...prev,
+          globalError: true,
+          globalErrorText: "Please enter new password",
+        };
+      });
+    } else if (formData?.confPassword === "") {
+      setError((prev: any) => {
+        return {
+          ...prev,
+          globalError: true,
+          globalErrorText: "Please confirm new password",
+        };
+      });
+    } else if (formData?.password?.length < 8) {
+      setError((prev: any) => {
+        return {
+          ...prev,
+          globalError: true,
+          globalErrorText: "Password must be 8 characters long!",
+        };
+      });
+    } else if (formData?.password !== formData?.confPassword) {
+      setError((prev: any) => {
+        return {
+          ...prev,
+          globalError: true,
+          globalErrorText: "Confirmed password doesn't match!",
+        };
+      });
+    } else {
+      setLoading((prev: any) => {
+        return { ...prev, changePass: true };
+      });
+      callApi(processIDs?.forgot_password, {
+        phoneNumber: formData?.phoneNumber,
+        newPass: md5(formData?.confPassword),
+      }).then((res: responseType) => {
+        setLoading((prev: any) => {
+          return { ...prev, changePass: false };
+        });
+        if (res?.data?.returnCode) {
+          closePopUp();
+        }
+      });
+    }
+  };
+  const startTimer = () => {
+    timer.current = setInterval(() => {
+      setResendOtp((prev: any) => {
+        return { ...prev, timer: prev?.timer - 1 };
+      });
+    }, 1000);
+  };
+  useEffect(() => {
+    if (steps === 2) {
+      setResendOtp((prev: any) => {
+        return {
+          ...prev,
+          state: false,
+          timer: 59,
+        };
+      });
+      startTimer();
+    }
+  }, [steps]);
+  useEffect(() => {
+    if (resendOtp?.timer === 0) {
+      clearInterval(timer.current);
+      setResendOtp((prev: any) => {
+        return { ...prev, timer: 59, state: true };
+      });
+    }
+  }, [resendOtp]);
   const resendOTP = () => {
     setLoading((prev: any) => {
       return { ...prev, resendOtp: true };
@@ -205,8 +267,8 @@ const PhoneVerifyCard = () => {
   };
   return (
     <div className="modal" onClick={clickOutSide}>
-      <div className="phone-verify-card">
-        {verifyStep === 1 && (
+      <div className="forgot-password-card">
+        {steps === 1 && (
           <>
             <div className="header">Please Enter your phone number</div>
             {error?.globalError && (
@@ -255,7 +317,7 @@ const PhoneVerifyCard = () => {
             </form>
           </>
         )}
-        {verifyStep === 2 && (
+        {steps === 2 && (
           <>
             <div className="header">Please Enter OTP</div>
             {error?.globalError && (
@@ -296,9 +358,66 @@ const PhoneVerifyCard = () => {
             </form>
           </>
         )}
+        {steps === 3 && (
+          <>
+            <div className="header">Enter new password</div>
+            {error?.globalError && (
+              <div className="error globalError">{error?.globalErrorText}</div>
+            )}
+            <form onSubmit={changePassword}>
+              <div className="form-label">New Password</div>
+              <div className="form-input">
+                <input
+                  type={"password"}
+                  value={formData?.password}
+                  onChange={(e: any) => {
+                    setError((prev: any) => {
+                      return {
+                        ...prev,
+                        globalError: false,
+                        globalErrorText: "",
+                      };
+                    });
+                    setFormData((prev: any) => {
+                      return { ...prev, password: e.target.value };
+                    });
+                  }}
+                />
+              </div>
+              <div className="form-label">Confirm Password</div>
+              <div className="form-input">
+                <input
+                  type={"password"}
+                  value={formData?.confPassword}
+                  onChange={(e: any) => {
+                    setError((prev: any) => {
+                      return {
+                        ...prev,
+                        globalError: false,
+                        globalErrorText: "",
+                      };
+                    });
+                    setFormData((prev: any) => {
+                      return { ...prev, confPassword: e.target.value };
+                    });
+                  }}
+                />
+              </div>
+              <div className="form-input">
+                <button type="submit" className="login-button">
+                  {loading?.changePass ? (
+                    <Loading className="dot-flashing" />
+                  ) : (
+                    <>Change Password</>
+                  )}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export default PhoneVerifyCard;
+export default ForgotPasswordCard;

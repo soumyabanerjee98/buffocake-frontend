@@ -6,8 +6,8 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { serverConfig, firebaseConfig } from "../../config/siteConfig";
-
+import { serverConfig, firebaseConfig, EncKey } from "../../config/siteConfig";
+const CryptoJS = require("crypto-js");
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
@@ -52,7 +52,9 @@ export const uploadImage = async (filesArr: any) => {
 
 export const getSessionStringData = (key: string) => {
   try {
-    return sessionStorage.getItem(key);
+    const bytes = CryptoJS.AES.decrypt(sessionStorage.getItem(key), EncKey);
+    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    return originalText;
   } catch (error) {
     return null;
   }
@@ -60,7 +62,8 @@ export const getSessionStringData = (key: string) => {
 
 export const setSessionStringData = (key: string, value: any) => {
   try {
-    return sessionStorage.setItem(key, value);
+    const ciphertext = CryptoJS.AES.encrypt(value, EncKey).toString();
+    return sessionStorage.setItem(key, ciphertext);
   } catch (error) {
     return null;
   }
@@ -68,8 +71,9 @@ export const setSessionStringData = (key: string, value: any) => {
 
 export const getSessionObjectData = (key: string) => {
   try {
-    let value: any = sessionStorage.getItem(key);
-    return JSON.parse(value);
+    const bytes = CryptoJS.AES.decrypt(sessionStorage.getItem(key), EncKey);
+    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    return decryptedData;
   } catch (error) {
     return null;
   }
@@ -77,7 +81,11 @@ export const getSessionObjectData = (key: string) => {
 
 export const setSessionObjectData = (key: string, value: any) => {
   try {
-    return sessionStorage.setItem(key, JSON.stringify(value));
+    const ciphertext = CryptoJS.AES.encrypt(
+      JSON.stringify(value),
+      EncKey
+    ).toString();
+    return sessionStorage.setItem(key, ciphertext);
   } catch (error) {
     return null;
   }

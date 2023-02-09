@@ -58,7 +58,7 @@ export const firebaseConfig = {
   messagingSenderId: "1097452226849",
   appId: "1:1097452226849:web:c7f8f4f313b74d1d34d660",
 };
-
+export const EncKey = "31ac8db0438f395a5739fd7a113a4f41";
 export const paytmConfig = {
   host: "https://securegw.paytm.in",
   mid: "WotNCM52358571558082",

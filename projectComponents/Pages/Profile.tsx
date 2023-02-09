@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { serverConfig, storageConfig } from "../../config/siteConfig";
 import { messageService } from "../Functions/messageService";
 import {
@@ -8,8 +7,6 @@ import {
   getSessionObjectData,
   gSignInWithPopup,
   gSignOut,
-  removeLocalData,
-  removeSessionData,
   setSessionObjectData,
   uploadImage,
 } from "../Functions/util";
@@ -39,11 +36,38 @@ const Profile = (props: ProfileProps) => {
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
       : serverConfig?.backend_url_test;
-  const router = useRouter();
   const sectionArr = ["General", "Security"];
-  const [loading, setLoading] = useState(false);
+  const [section, setSection] = useState(
+    sectionArr.map((i: string, idx: number) => {
+      if (idx === 0) {
+        return { id: idx, type: i, active: true };
+      }
+      return { id: idx, type: i, active: false };
+    })
+  );
+  const sectionSelect = (id: number) => {
+    setSection(
+      section.map((v: any, idx: number) => {
+        if (id === idx) {
+          return { ...v, active: true };
+        }
+        return { ...v, active: false };
+      })
+    );
+  };
+  const Logout = () => {
+    messageService?.sendMessage(
+      "profile-page",
+      // @ts-ignore
+      { action: "logout" },
+      "global"
+    );
+  };
+
+  // General ********************
+
   const [editState, setEditState] = useState(false);
-  const [openPopUp, setOpenPopUp] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
     firstName: false,
     lastName: false,
@@ -60,26 +84,17 @@ const Profile = (props: ProfileProps) => {
     email: profile?.email,
     phoneNumber: profile?.phoneNumber,
   });
-  const [section, setSection] = useState(
-    sectionArr.map((i: string, idx: number) => {
-      if (idx === 0) {
-        return { id: idx, type: i, active: true };
-      }
-      return { id: idx, type: i, active: false };
-    })
-  );
 
-  const sectionSelect = (id: number) => {
-    setSection(
-      section.map((v: any, idx: number) => {
-        if (id === idx) {
-          return { ...v, active: true };
-        }
-        return { ...v, active: false };
-      })
-    );
+  const cancelProfileEdit = () => {
+    setLoading(false);
+    setEditState(false);
+    setError((prev: any) => {
+      return { ...prev, firstName: false, lastName: false, phoneNumber: false };
+    });
+    setImage((prev: any) => {
+      return { ...prev, deleted: false, image: [], preview: null };
+    });
   };
-
   const getEmail = () => {
     gSignInWithPopup().then((res: any) => {
       gSignOut();
@@ -91,9 +106,7 @@ const Profile = (props: ProfileProps) => {
 
   const refreshUser = (userData: any) => {
     setSessionObjectData(storageConfig?.userProfile, userData);
-    setImage((prev: any) => {
-      return { ...prev, deleted: false, image: [], preview: null };
-    });
+    cancelProfileEdit();
     messageService?.sendMessage(
       "profile-page",
       // @ts-ignore
@@ -132,7 +145,6 @@ const Profile = (props: ProfileProps) => {
                   profilePhoto: res?.data?.returnData[0]?.path,
                 }).then((res: responseType) => {
                   if (res?.data?.returnCode) {
-                    setEditState(false);
                     refreshUser(res?.data?.returnData?.profile);
                   }
                   setLoading(false);
@@ -154,7 +166,6 @@ const Profile = (props: ProfileProps) => {
               profilePhoto: res?.data?.returnData[0]?.path,
             }).then((res: responseType) => {
               if (res?.data?.returnCode) {
-                setEditState(false);
                 refreshUser(res?.data?.returnData?.profile);
               }
               setLoading(false);
@@ -175,7 +186,6 @@ const Profile = (props: ProfileProps) => {
               profilePhoto: null,
             }).then((res: responseType) => {
               if (res?.data?.returnCode) {
-                setEditState(false);
                 refreshUser(res?.data?.returnData?.profile);
               }
               setLoading(false);
@@ -194,7 +204,6 @@ const Profile = (props: ProfileProps) => {
           profilePhoto: profile?.profilePhoto,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
-            setEditState(false);
             refreshUser(res?.data?.returnData?.profile);
           }
           setLoading(false);
@@ -203,63 +212,13 @@ const Profile = (props: ProfileProps) => {
     }
   };
 
-  const Logout = () => {
-    removeSessionData(storageConfig?.userProfile);
-    removeLocalData(storageConfig?.jwtToken);
+  const VerifyAndUpdatePhone = () => {
     messageService?.sendMessage(
       "profile-page",
       // @ts-ignore
-      { action: "refresh-profile" },
+      { action: "phone-verify" },
       "global"
     );
-    router.push("/");
-  };
-
-  const VerifyAndUpdatePhone = () => {
-    setOpenPopUp(true);
-  };
-
-  useEffect(() => {
-    messageService?.onReceive()?.subscribe((m: any) => {
-      if (m?.sender === "phone-verify-card") {
-        if (m?.message?.action === "close-popup") {
-          setOpenPopUp(false);
-        } else if (m?.message?.action === "success-verify") {
-          setOpenPopUp(false);
-          setProfileData((prev: any) => {
-            return { ...prev, phoneNumber: m?.message?.params };
-          });
-        }
-      }
-    });
-  }, []);
-  useEffect(() => {
-    setEditState(false);
-    setLoading(false);
-    setImage((prev: any) => {
-      return { ...prev, deleted: false, image: [], preview: null };
-    });
-    setError((prev: any) => {
-      return { ...prev, firstName: false, lastName: false, phoneNumber: false };
-    });
-  }, [section]);
-  const SectionRender = () => {
-    let active: number = NaN;
-    section?.map((i: any) => {
-      if (i?.active) {
-        active = i?.id;
-      }
-    });
-    switch (active) {
-      case 0:
-        return BasicDetails();
-        break;
-      case 1:
-        return <>Security</>;
-        break;
-      default:
-        break;
-    }
   };
 
   const editImage = (e: any) => {
@@ -273,6 +232,8 @@ const Profile = (props: ProfileProps) => {
   const BasicDetails = () => {
     return (
       <>
+        <div className="header">Personal Details</div>
+        <hr />
         <div className="profile-photo-container">
           {profile?.profilePhoto ? (
             <>
@@ -351,7 +312,7 @@ const Profile = (props: ProfileProps) => {
             </>
           )}
         </div>
-        <div className="section l-1">
+        <div className="section-general l-1">
           <div className="col">
             <div className="label">First Name</div>
             {editState ? (
@@ -415,7 +376,7 @@ const Profile = (props: ProfileProps) => {
             )}
           </div>
         </div>
-        <div className="section">
+        <div className="section-general">
           <div className="label">E-mail</div>
           {editState ? (
             <>
@@ -439,11 +400,11 @@ const Profile = (props: ProfileProps) => {
             </div>
           )}
         </div>
-        <div className="section">
+        <div className="section-general">
           <div className="label">Phone number</div>
           {editState ? (
             <>
-              {profile?.phoneNumber}
+              {profileData?.phoneNumber}
               <button
                 type="button"
                 className="google-button"
@@ -456,32 +417,13 @@ const Profile = (props: ProfileProps) => {
             <div className="details">{profile?.phoneNumber}</div>
           )}
         </div>
-        <div className="section">
+        <div className="section-general">
           {editState ? (
             <>
               <button
                 type="button"
                 className="cancel-edit"
-                onClick={() => {
-                  setEditState(false);
-                  setProfileData((prev: any) => {
-                    return {
-                      ...prev,
-                      firstName: profile?.firstName,
-                      lastName: profile?.lastName,
-                      email: profile?.email,
-                      phoneNumber: profile?.phoneNumber,
-                    };
-                  });
-                  setImage((prev: any) => {
-                    return {
-                      ...prev,
-                      image: [],
-                      preview: null,
-                      deleted: false,
-                    };
-                  });
-                }}
+                onClick={cancelProfileEdit}
               >
                 Cancel
               </button>
@@ -504,13 +446,285 @@ const Profile = (props: ProfileProps) => {
               Update profile
             </button>
           )}
-          <button type="button" className="logout" onClick={Logout}>
-            Log out
-          </button>
         </div>
       </>
     );
   };
+
+  // ************************
+  // Security *****************
+  const [passwordInput, setPasswordInput] = useState(false);
+  const [loadingSecurity, setLoadingSecurity] = useState(false);
+  const [passwordDetails, setPasswordDetails] = useState({
+    oldPass: "",
+    newPass: "",
+    confPass: "",
+  });
+  const [errorSecurity, setErrorSecurity] = useState({
+    oldPass: false,
+    oldPassText: "",
+    newPass: false,
+    newPassText: "",
+    confPass: false,
+    confPassTxt: "",
+  });
+  const oldPassRef = useRef<any>();
+  const md5 = require("md5");
+  const passwordChangeHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (passwordDetails?.oldPass === "") {
+      setErrorSecurity((prev: any) => {
+        return {
+          ...prev,
+          oldPass: true,
+          oldPassText: "Please enter old password",
+        };
+      });
+    } else if (passwordDetails?.newPass === "") {
+      setErrorSecurity((prev: any) => {
+        return {
+          ...prev,
+          newPass: true,
+          newPassText: "Please enter new password",
+        };
+      });
+    } else if (passwordDetails?.confPass === "") {
+      setErrorSecurity((prev: any) => {
+        return {
+          ...prev,
+          confPass: true,
+          confPassTxt: "Please confirm new password",
+        };
+      });
+    } else if (passwordDetails?.newPass?.length < 8) {
+      setErrorSecurity((prev: any) => {
+        return {
+          ...prev,
+          newPass: true,
+          newPassText: "Password must be 8 characters long!",
+        };
+      });
+    } else if (passwordDetails?.newPass !== passwordDetails?.confPass) {
+      setErrorSecurity((prev: any) => {
+        return {
+          ...prev,
+          confPass: true,
+          confPassTxt: "Confirmed password doesn't match!",
+        };
+      });
+    } else {
+      setLoadingSecurity(true);
+      callApi(processIDs?.change_password, {
+        id: getSessionObjectData(storageConfig?.userProfile)?.id,
+        oldPass: md5(passwordDetails?.oldPass),
+        newPass: md5(passwordDetails?.newPass),
+      }).then((res: responseType) => {
+        if (res?.data?.returnCode) {
+          cancelChangePassword();
+        } else {
+          setLoadingSecurity(false);
+          setErrorSecurity((prev: any) => {
+            return {
+              ...prev,
+              oldPass: true,
+              oldPassText: res?.data?.msg,
+            };
+          });
+        }
+      });
+    }
+  };
+
+  const cancelChangePassword = () => {
+    setPasswordInput(false);
+    setLoadingSecurity(false);
+    setPasswordDetails((prev: any) => {
+      return { ...prev, oldPass: "", newPass: "", confPass: "" };
+    });
+    setErrorSecurity((prev: any) => {
+      return {
+        ...prev,
+        oldPass: false,
+        newPass: false,
+        confPass: false,
+        oldPassText: "",
+        newPassText: "",
+        confPassTxt: "",
+      };
+    });
+  };
+
+  const ForgotPassword = () => {
+    messageService?.sendMessage(
+      "profile-page",
+      // @ts-ignore
+      { action: "forgot-password" },
+      "header"
+    );
+  };
+
+  useEffect(() => {
+    if (passwordInput) {
+      oldPassRef.current.focus();
+    }
+  }, [passwordInput]);
+
+  const Security = () => {
+    return (
+      <>
+        <div className="header">Change Password</div>
+        <hr />
+        <form onSubmit={passwordChangeHandler}>
+          <div className="section-security">
+            <div className="label">Old Password</div>
+            <input
+              type={"password"}
+              className="form-input"
+              disabled={!passwordInput}
+              value={passwordDetails?.oldPass}
+              onChange={(e: any) => {
+                setErrorSecurity((prev: any) => {
+                  return {
+                    ...prev,
+                    oldPass: false,
+                    oldPassText: "",
+                  };
+                });
+                setPasswordDetails((prev: any) => {
+                  return { ...prev, oldPass: e.target.value.trim() };
+                });
+              }}
+              ref={oldPassRef}
+            />
+            {errorSecurity?.oldPass && (
+              <div className="error">{errorSecurity?.oldPassText}</div>
+            )}
+          </div>
+          <div className="section-security">
+            <div className="label">New Password</div>
+            <input
+              type={"password"}
+              className="form-input"
+              disabled={!passwordInput}
+              value={passwordDetails?.newPass}
+              onChange={(e: any) => {
+                setErrorSecurity((prev: any) => {
+                  return {
+                    ...prev,
+                    newPass: false,
+                    newPassText: "",
+                  };
+                });
+                setPasswordDetails((prev: any) => {
+                  return { ...prev, newPass: e.target.value.trim() };
+                });
+              }}
+            />
+            {errorSecurity?.newPass && (
+              <div className="error">{errorSecurity?.newPassText}</div>
+            )}
+          </div>
+          <div className="section-security">
+            <div className="label">Confirm Password</div>
+            <input
+              type={"password"}
+              className="form-input"
+              disabled={!passwordInput}
+              value={passwordDetails?.confPass}
+              onChange={(e: any) => {
+                setErrorSecurity((prev: any) => {
+                  return {
+                    ...prev,
+                    confPass: false,
+                    confPassTxt: "",
+                  };
+                });
+                setPasswordDetails((prev: any) => {
+                  return { ...prev, confPass: e.target.value.trim() };
+                });
+              }}
+            />
+            {errorSecurity?.confPass && (
+              <div className="error">{errorSecurity?.confPassTxt}</div>
+            )}
+          </div>
+          <div className="section-security">
+            <div className="forgot-password" onClick={ForgotPassword}>
+              Forgot Password?
+            </div>
+          </div>
+          <div className="section-security">
+            {passwordInput ? (
+              <div className="button-section">
+                <button
+                  type="button"
+                  className="cancel-change-password-button"
+                  onClick={cancelChangePassword}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="change-password-button">
+                  {loadingSecurity ? (
+                    <Loading className="dot-flashing" />
+                  ) : (
+                    "Change"
+                  )}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="change-password-button"
+                onClick={() => {
+                  setPasswordInput(true);
+                }}
+              >
+                Change Password
+              </button>
+            )}
+          </div>
+        </form>
+      </>
+    );
+  };
+
+  // ***********************
+
+  const SectionRender = () => {
+    let active: number = NaN;
+    section?.map((i: any) => {
+      if (i?.active) {
+        active = i?.id;
+      }
+    });
+    switch (active) {
+      case 0:
+        return BasicDetails();
+        break;
+      case 1:
+        return Security();
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    messageService?.onReceive()?.subscribe((m: any) => {
+      if (m?.sender === "phone-verify-card") {
+        if (m?.message?.action === "success-verify") {
+          setProfileData((prev: any) => {
+            return { ...prev, phoneNumber: m?.message?.params };
+          });
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    cancelProfileEdit();
+    cancelChangePassword();
+  }, [section]);
 
   return (
     <div className="profile-screen">
@@ -526,9 +740,13 @@ const Profile = (props: ProfileProps) => {
             {i?.type}
           </div>
         ))}
+        <div className="logout-container">
+          <button type="button" className="logout" onClick={Logout}>
+            Log out
+          </button>
+        </div>
       </div>
       <div className="right-col">{SectionRender()}</div>
-      {openPopUp && <PhoneVerifyCard />}
     </div>
   );
 };
