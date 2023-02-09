@@ -9,6 +9,8 @@ export const processIDs = {
   create_new_account: "create-new-account",
   update_user: "update-user",
   delete_photo: "delete-photo",
+  change_password: "change-password",
+  forgot_password: "forgot-password",
   paytm_transaction_token_generate: "paytm-transaction-token-generate",
   get_all_products: "get-all-products",
   get_product_details: "get-product-details",

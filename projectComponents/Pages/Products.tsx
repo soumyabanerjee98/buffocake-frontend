@@ -13,6 +13,7 @@ import { callApi, getSessionObjectData } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
+import Loading from "../UI/Loading";
 
 export type ProductProps = {
   productDetails: any;
@@ -301,7 +302,11 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {!isLoading && (
+        {isLoading ? (
+          <div className="fav-loader">
+            <Loading className="spinner" />
+          </div>
+        ) : (
           <div className="fav" onClick={favSelect}>
             <HeartIcon className="heart" fill={fav ? "red" : "white"} />
           </div>

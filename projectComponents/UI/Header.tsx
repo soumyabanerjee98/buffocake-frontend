@@ -16,6 +16,7 @@ import {
   getLocalStringData,
   getSessionObjectData,
   removeLocalData,
+  removeSessionData,
   setSessionObjectData,
 } from "../Functions/util";
 import CartIcon from "./Icons/CartIcon";
@@ -24,6 +25,8 @@ import ProfileIcon from "./Icons/ProfileIcon";
 import Loading from "./Loading";
 import LoginCard from "./LoginCard";
 import { responseType } from "../../typings";
+import ForgotPasswordCard from "./ForgotPasswordCard";
+import PhoneVerifyCard from "./PhoneVerifyCard";
 
 const dataFetcher = async () => {
   if (getSessionObjectData(storageConfig?.userProfile)) {
@@ -64,6 +67,8 @@ const Header = () => {
       : serverConfig?.backend_url_test;
   const [userProfile, setUserProfile] = useState(userData);
   const [loginCardOpen, setLoginCardOpen] = useState(false);
+  const [forgotPasswordCardOpen, setForgotPasswordCardOpen] = useState(false);
+  const [phoneVerifyCardOpen, setPhoneVerifyCardOpen] = useState(false);
   const redirect = useRouter();
   const navigate = (url: string) => {
     redirect.push(url);
@@ -87,6 +92,9 @@ const Header = () => {
         if (m?.message?.action === "refresh-profile") {
           setUserProfile(getSessionObjectData(storageConfig?.userProfile));
         }
+        if (m?.message?.action === "forgot-password") {
+          setForgotPasswordCardOpen(true);
+        }
       } else if (m?.sender === "product-page" && m?.target === "header") {
         if (m?.message?.action === "login-popup") {
           setLoginCardOpen(true);
@@ -94,6 +102,31 @@ const Header = () => {
       } else if (m?.sender === "profile-page" && m?.target === "global") {
         if (m?.message?.action === "refresh-profile") {
           setUserProfile(getSessionObjectData(storageConfig?.userProfile));
+        } else if (m?.message?.action === "phone-verify") {
+          setPhoneVerifyCardOpen(true);
+        } else if (m?.message?.action === "logout") {
+          navigate("/");
+          removeSessionData(storageConfig?.userProfile);
+          removeLocalData(storageConfig?.jwtToken);
+          setUserProfile(null);
+        }
+      } else if (m?.sender === "phone-verify-card" && m?.target === "global") {
+        if (
+          m?.message?.action === "success-verify" ||
+          m?.message?.action === "close-popup"
+        ) {
+          setPhoneVerifyCardOpen(false);
+        }
+      } else if (m?.sender === "profile-page" && m?.target === "header") {
+        if (m?.message?.action === "forgot-password") {
+          setForgotPasswordCardOpen(true);
+        }
+      } else if (
+        m?.sender === "forgot-password-card" &&
+        m?.target === "header"
+      ) {
+        if (m?.message?.action === "close-popup") {
+          setForgotPasswordCardOpen(false);
         }
       }
     });
@@ -162,6 +195,8 @@ const Header = () => {
         </div>
       </div>
       {loginCardOpen && <LoginCard />}
+      {forgotPasswordCardOpen && <ForgotPasswordCard />}
+      {phoneVerifyCardOpen && <PhoneVerifyCard />}
     </header>
   );
 };
