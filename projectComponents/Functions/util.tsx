@@ -101,7 +101,9 @@ export const removeSessionData = (key: string) => {
 
 export const getLocalStringData = (key: string) => {
   try {
-    return localStorage.getItem(key);
+    const bytes = CryptoJS.AES.decrypt(localStorage.getItem(key), EncKey);
+    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    return originalText;
   } catch (error) {
     return null;
   }
@@ -109,7 +111,8 @@ export const getLocalStringData = (key: string) => {
 
 export const setLocalStringData = (key: string, value: any) => {
   try {
-    return localStorage.setItem(key, value);
+    const ciphertext = CryptoJS.AES.encrypt(value, EncKey).toString();
+    return localStorage.setItem(key, ciphertext);
   } catch (error) {
     return null;
   }
@@ -117,8 +120,9 @@ export const setLocalStringData = (key: string, value: any) => {
 
 export const getLocalObjectData = (key: string) => {
   try {
-    let value: any = localStorage.getItem(key);
-    return JSON.parse(value);
+    const bytes = CryptoJS.AES.decrypt(localStorage.getItem(key), EncKey);
+    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    return decryptedData;
   } catch (error) {
     return null;
   }
@@ -126,7 +130,11 @@ export const getLocalObjectData = (key: string) => {
 
 export const setLocalObjectData = (key: string, value: any) => {
   try {
-    return localStorage.setItem(key, JSON.stringify(value));
+    const ciphertext = CryptoJS.AES.encrypt(
+      JSON.stringify(value),
+      EncKey
+    ).toString();
+    return localStorage.setItem(key, ciphertext);
   } catch (error) {
     return null;
   }
