@@ -348,7 +348,7 @@ input::-webkit-inner-spin-button {
   font-weight: 600;
 }
 .profile-screen .left-col {
-  width: 10%;
+  width: 15%;
 }
 .profile-screen .left-col .section {
   color: rgba(107, 39, 51);
@@ -367,7 +367,7 @@ input::-webkit-inner-spin-button {
   color: whitesmoke;
 }
 .profile-screen .right-col {
-  width: 90%;
+  width: 85%;
   padding: 1rem;
 }
 .profile-screen .right-col .label {
