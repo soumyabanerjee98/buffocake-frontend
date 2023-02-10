@@ -40,6 +40,7 @@ input::-webkit-inner-spin-button {
   justify-content: space-between;
   align-items: center;
   z-index: 5;
+  height: 6rem;
 }
 .main-header .left-col {
   display: flex;
@@ -342,6 +343,7 @@ input::-webkit-inner-spin-button {
 .profile-screen {
   display: flex;
   width: 100%;
+  min-height: 100vh;
 }
 .profile-screen .header{
   font-size: large;
@@ -349,6 +351,9 @@ input::-webkit-inner-spin-button {
 }
 .profile-screen .left-col {
   width: 15%;
+  height: 44rem;
+  position: sticky;
+  top: 6.4rem;
 }
 .profile-screen .left-col .section {
   color: rgba(107, 39, 51);
@@ -369,15 +374,20 @@ input::-webkit-inner-spin-button {
 .profile-screen .right-col {
   width: 85%;
   padding: 1rem;
+  height: max-content;
 }
 .profile-screen .right-col .label {
   font-weight: 600;
 }
 .profile-screen .left-col .logout-container{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-top: 2rem;
+  padding-bottom: 5rem;
 }
 .profile-screen .left-col .logout {
   text-align: center;
