@@ -1,17 +1,9 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-// import Skeleton from "react-loading-skeleton";
-// import "react-loading-skeleton/dist/skeleton.css";
-import {
-  labelConfig,
-  paytmConfig,
-  serverConfig,
-} from "../../config/siteConfig";
-import { uploadImage } from "../Functions/util";
-import PaytmPayment from "../UI/PaytmPayment";
+import React from "react";
+import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
-import { responseType } from "../../typings";
+import MediaCarousel from "../UI/MediaCarousel";
 
 export type HomeProps = {
   allProducts: any;
@@ -36,29 +28,31 @@ const Home = (props: HomeProps) => {
     redirect.push(path);
   };
 
-  // const uploadImageFunc = (e: any) => {
-  //   const fileArr = Array.from(e.target.files);
-  //   // @ts-ignore
-  //   uploadImage(fileArr).then((res: responseType) => {
-  //     console.log(res?.data);
-  //   });
-  // };
-
   return (
     <>
       <div className="home-screen">
-        {/* <input
-          type={"file"}
-          multiple={true}
-          accept={"image/*"}
-          onChange={uploadImageFunc}
-        /> */}
+        <MediaCarousel
+          elementArr={[
+            <Image
+              src={NoIMage}
+              alt={labelConfig?.image_not_loaded}
+              className="product-image"
+            />,
+            <Image
+              src={NoIMage}
+              alt={labelConfig?.image_not_loaded}
+              className="product-image"
+            />,
+          ]}
+        />
+        <div className="header">Our Products</div>
         {catagorySet?.map((i: any) => {
           return (
             <div key={`catagory-${i}`} className="product-catagory">
               <div className="catagory-header">
                 <div className="title">
-                  {labelConfig?.home_catagory_header_title} {i}
+                  {/* {labelConfig?.home_catagory_header_title} */}
+                  {i}
                 </div>
                 {allProducts?.filter((v: any) => v?.catagory === i).length >
                   4 && (
