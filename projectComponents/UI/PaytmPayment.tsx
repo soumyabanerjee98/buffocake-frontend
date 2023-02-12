@@ -16,6 +16,9 @@ export type PaytmPaymentProps = {
 const PaytmPayment = (props: PaytmPaymentProps) => {
   const { MID, MKEY, Total } = props;
   const [loading, setLoading] = useState(false);
+  const env = process.env.NODE_ENV;
+  const paytmbaseurl =
+    env === "production" ? paytmConfig?.host : paytmConfig?.stage_host;
   const InitiatePayment = async () => {
     try {
       setLoading(true);
@@ -73,7 +76,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       </Head>
       <Script
         type="application/javascript"
-        src={`${paytmConfig?.host}/merchantpgpui/checkoutjs/merchants/${MID}.js`}
+        src={`${paytmbaseurl}/merchantpgpui/checkoutjs/merchants/${MID}.js`}
         crossOrigin="anonymous"
       />
       <button className="paytm-button" type="button" onClick={InitiatePayment}>

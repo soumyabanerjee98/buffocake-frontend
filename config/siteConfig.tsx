@@ -60,9 +60,14 @@ export const firebaseConfig = {
 };
 export const EncKey = "31ac8db0438f395a5739fd7a113a4f41";
 export const paytmConfig = {
+  // production
   host: "https://securegw.paytm.in",
   mid: "WotNCM52358571558082",
   mkey: "!Q1oy4s9yV8trfja",
+  // test
+  stage_host: "https://securegw-stage.paytm.in",
+  stage_mid: "lhpHNy94509335410871",
+  stage_mkey: "gKQ07o!iuXn3ozZa",
 };
 
 export const productConfig = {
