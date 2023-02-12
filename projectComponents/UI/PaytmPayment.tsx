@@ -40,11 +40,17 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
               tokenType: "TXN_TOKEN",
               amount: Total,
             },
+            merchant: {
+              redirect: false,
+            },
             handler: {
               notifyMerchant: function (eventName: any, data: any) {
                 setLoading(false);
                 console.log("eventName => ", eventName);
                 console.log("data => ", data);
+              },
+              transactionStatus: function (data: any) {
+                console.log("payment status ", data);
               },
             },
           };
