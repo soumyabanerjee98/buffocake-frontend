@@ -12,9 +12,11 @@ import Plus from "../../Assets/Images/plus.png";
 import {
   callApi,
   getLocalObjectData,
+  getSessionObjectData,
   gSignInWithPopup,
   gSignOut,
   setLocalObjectData,
+  setSessionObjectData,
 } from "../../Functions/util";
 import Loading from "../../UI/Loading";
 export type BasicDetailsProps = {
@@ -72,7 +74,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
   };
 
   const refreshUser = (userData: any) => {
-    setLocalObjectData(storageConfig?.userProfile, userData);
+    setSessionObjectData(storageConfig?.userProfile, userData);
     cancelProfileEdit();
     messageService?.sendMessage(
       "profile-page",
@@ -104,7 +106,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
               // @ts-ignore
               uploadImage(image?.image).then((res: responseType) => {
                 callApi(processIDs?.update_user, {
-                  id: getLocalObjectData(storageConfig?.userProfile)?.id,
+                  id: getSessionObjectData(storageConfig?.userProfile)?.id,
                   firstName: profileData?.firstName,
                   lastName: profileData?.lastName,
                   phoneNumber: profileData?.phoneNumber,
@@ -125,7 +127,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
           // @ts-ignore
           uploadImage(image?.image).then((res: responseType) => {
             callApi(processIDs?.update_user, {
-              id: getLocalObjectData(storageConfig?.userProfile)?.id,
+              id: getSessionObjectData(storageConfig?.userProfile)?.id,
               firstName: profileData?.firstName,
               lastName: profileData?.lastName,
               phoneNumber: profileData?.phoneNumber,
@@ -145,7 +147,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             callApi(processIDs?.update_user, {
-              id: getLocalObjectData(storageConfig?.userProfile)?.id,
+              id: getSessionObjectData(storageConfig?.userProfile)?.id,
               firstName: profileData?.firstName,
               lastName: profileData?.lastName,
               phoneNumber: profileData?.phoneNumber,
@@ -163,7 +165,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
         });
       } else {
         callApi(processIDs?.update_user, {
-          id: getLocalObjectData(storageConfig?.userProfile)?.id,
+          id: getSessionObjectData(storageConfig?.userProfile)?.id,
           firstName: profileData?.firstName,
           lastName: profileData?.lastName,
           phoneNumber: profileData?.phoneNumber,

@@ -6,7 +6,11 @@ import {
   paytmConfig,
   storageConfig,
 } from "../../config/siteConfig";
-import { callApi, getLocalObjectData } from "../Functions/util";
+import {
+  callApi,
+  getLocalObjectData,
+  getSessionObjectData,
+} from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
 import { responseType } from "../../typings";
@@ -32,7 +36,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         mkey: MKEY,
         oid: oid,
         value: Total,
-        userId: getLocalObjectData(storageConfig?.userProfile)?.id,
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       })
         .then((res: responseType) => {
           let config = {

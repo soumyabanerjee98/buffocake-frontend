@@ -3,7 +3,11 @@ import { processIDs } from "../../../config/processID";
 import { storageConfig } from "../../../config/siteConfig";
 import { responseType } from "../../../typings";
 import { messageService } from "../../Functions/messageService";
-import { callApi, getLocalObjectData } from "../../Functions/util";
+import {
+  callApi,
+  getLocalObjectData,
+  getSessionObjectData,
+} from "../../Functions/util";
 import Loading from "../../UI/Loading";
 
 const Security = () => {
@@ -69,7 +73,7 @@ const Security = () => {
     } else {
       setLoadingSecurity(true);
       callApi(processIDs?.change_password, {
-        id: getLocalObjectData(storageConfig?.userProfile)?.id,
+        id: getSessionObjectData(storageConfig?.userProfile)?.id,
         oldPass: md5(passwordDetails?.oldPass),
         newPass: md5(passwordDetails?.newPass),
       }).then((res: responseType) => {

@@ -8,6 +8,7 @@ import {
   gSignOut,
   setLocalObjectData,
   setLocalStringData,
+  setSessionObjectData,
 } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import OTPField from "./OTPField";
@@ -88,7 +89,7 @@ const LoginCard = () => {
         email: res?.user?.email,
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
-          setLocalObjectData(
+          setSessionObjectData(
             storageConfig?.userProfile,
             res?.data?.returnData?.profileData
           );
@@ -168,7 +169,7 @@ const LoginCard = () => {
             storageConfig?.jwtToken,
             res?.data?.returnData?.accessToken
           );
-          setLocalObjectData(
+          setSessionObjectData(
             storageConfig?.userProfile,
             res?.data?.returnData?.profileData
           );

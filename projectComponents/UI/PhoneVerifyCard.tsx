@@ -4,7 +4,11 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Loading from "./Loading";
 import OTPField from "./OTPField";
-import { callApi, getLocalObjectData } from "../Functions/util";
+import {
+  callApi,
+  getLocalObjectData,
+  getSessionObjectData,
+} from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import { storageConfig } from "../../config/siteConfig";
@@ -101,7 +105,7 @@ const PhoneVerifyCard = () => {
       });
     } else if (
       formData?.phoneNumber ===
-      getLocalObjectData(storageConfig?.userProfile)?.phoneNumber
+      getSessionObjectData(storageConfig?.userProfile)?.phoneNumber
     ) {
       setError((prev: any) => {
         return {

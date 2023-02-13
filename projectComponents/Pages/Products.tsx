@@ -10,7 +10,11 @@ import {
   storageConfig,
 } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
-import { callApi, getLocalObjectData } from "../Functions/util";
+import {
+  callApi,
+  getLocalObjectData,
+  getSessionObjectData,
+} from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
@@ -32,9 +36,9 @@ const getLocalDateTime = () => {
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
   const wishlistFetcher = async () => {
-    if (getLocalObjectData(storageConfig?.userProfile)) {
+    if (getSessionObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
-        userId: getLocalObjectData(storageConfig?.userProfile)?.id,
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           let returnStatement;
@@ -263,10 +267,10 @@ const Products = (props: ProductProps) => {
   };
 
   const favSelect = () => {
-    if (getLocalObjectData(storageConfig?.userProfile)) {
+    if (getSessionObjectData(storageConfig?.userProfile)) {
       if (fav) {
         callApi(processIDs?.remove_item_from_wishlist, {
-          userId: getLocalObjectData(storageConfig?.userProfile)?.id,
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
@@ -275,7 +279,7 @@ const Products = (props: ProductProps) => {
         });
       } else {
         callApi(processIDs?.add_item_to_wishlist, {
-          userId: getLocalObjectData(storageConfig?.userProfile)?.id,
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {

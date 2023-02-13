@@ -17,6 +17,9 @@ import {
   getLocalObjectData,
   removeLocalData,
   setLocalObjectData,
+  getSessionObjectData,
+  setSessionObjectData,
+  removeSessionData,
 } from "../Functions/util";
 import CartIcon from "./Icons/CartIcon";
 import NameIcon from "./Icons/NameIcon";
@@ -30,18 +33,20 @@ import FavIcon from "./Icons/FavIcon";
 import OrderIcon from "./Icons/OrderIcon";
 
 const dataFetcher = async () => {
-  if (getLocalObjectData(storageConfig?.userProfile)) {
-    return getLocalObjectData(storageConfig?.userProfile);
+  if (getSessionObjectData(storageConfig?.userProfile)) {
+    return getSessionObjectData(storageConfig?.userProfile);
   } else {
     if (getLocalStringData(storageConfig?.jwtToken)) {
       let data = await callApi(processIDs?.verify_login_token, {
         token: getLocalStringData(storageConfig?.jwtToken),
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
-          setLocalObjectData(storageConfig?.userProfile, res?.data?.returnData);
+          setSessionObjectData(
+            storageConfig?.userProfile,
+            res?.data?.returnData
+          );
           return res?.data?.returnData;
         } else {
-          removeLocalData(storageConfig?.userProfile);
           removeLocalData(storageConfig?.jwtToken);
           return null;
         }
@@ -89,7 +94,7 @@ const Header = () => {
           setLoginCardOpen(false);
         }
         if (m?.message?.action === "refresh-profile") {
-          setUserProfile(getLocalObjectData(storageConfig?.userProfile));
+          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
         }
         if (m?.message?.action === "forgot-password") {
           setForgotPasswordCardOpen(true);
@@ -100,12 +105,12 @@ const Header = () => {
         }
       } else if (m?.sender === "profile-page" && m?.target === "global") {
         if (m?.message?.action === "refresh-profile") {
-          setUserProfile(getLocalObjectData(storageConfig?.userProfile));
+          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
         } else if (m?.message?.action === "phone-verify") {
           setPhoneVerifyCardOpen(true);
         } else if (m?.message?.action === "logout") {
           navigate("/");
-          removeLocalData(storageConfig?.userProfile);
+          removeSessionData(storageConfig?.userProfile);
           removeLocalData(storageConfig?.jwtToken);
           setUserProfile(null);
         }
