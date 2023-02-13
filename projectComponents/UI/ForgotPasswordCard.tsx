@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { processIDs } from "../../config/processID";
-import { storageConfig } from "../../config/siteConfig";
 import { responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
-import { callApi, getSessionObjectData } from "../Functions/util";
+import { callApi } from "../Functions/util";
 import Loading from "./Loading";
 import OTPField from "./OTPField";
 

@@ -4,16 +4,18 @@ import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import {
   labelConfig,
+  paytmConfig,
   productConfig,
   serverConfig,
   storageConfig,
 } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
-import { callApi, getSessionObjectData } from "../Functions/util";
+import { callApi, getLocalObjectData } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
+import PaytmPayment from "../UI/PaytmPayment";
 
 export type ProductProps = {
   productDetails: any;
@@ -30,9 +32,9 @@ const getLocalDateTime = () => {
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
   const wishlistFetcher = async () => {
-    if (getSessionObjectData(storageConfig?.userProfile)) {
+    if (getLocalObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        userId: getLocalObjectData(storageConfig?.userProfile)?.id,
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           let returnStatement;
@@ -261,10 +263,10 @@ const Products = (props: ProductProps) => {
   };
 
   const favSelect = () => {
-    if (getSessionObjectData(storageConfig?.userProfile)) {
+    if (getLocalObjectData(storageConfig?.userProfile)) {
       if (fav) {
         callApi(processIDs?.remove_item_from_wishlist, {
-          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+          userId: getLocalObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
@@ -273,7 +275,7 @@ const Products = (props: ProductProps) => {
         });
       } else {
         callApi(processIDs?.add_item_to_wishlist, {
-          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+          userId: getLocalObjectData(storageConfig?.userProfile)?.id,
           itemId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
@@ -480,6 +482,24 @@ const Products = (props: ProductProps) => {
           <button className="action-button buy-now" type="button">
             {labelConfig?.product_buy_now}
           </button>
+          {/* test */}
+          {/* <PaytmPayment
+            MID={
+              process.env.NODE_ENV === "production"
+                ? paytmConfig?.mid
+                : paytmConfig?.stage_mid
+            }
+            MKEY={
+              process.env.NODE_ENV === "production"
+                ? paytmConfig?.mkey
+                : paytmConfig?.stage_mkey
+            }
+            Total={
+              checkOutDetails?.subTotal +
+              checkOutDetails?.additionalValueFlavour +
+              checkOutDetails?.additionalValueCustom
+            }
+          /> */}
         </div>
       </div>
     </div>

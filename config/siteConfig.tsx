@@ -21,6 +21,8 @@ export const labelConfig = {
   header_search_placeholder: "Search by typing...",
   login_label: "Log in",
   cart_label: "Cart",
+  fav_label: "Wishlist",
+  order_label: "Orders",
   // home page
   home_catagory_header_title: "Catagory",
   home_view_all_button: "View All",

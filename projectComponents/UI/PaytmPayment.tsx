@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import Script from "next/script";
-import { labelConfig, paytmConfig } from "../../config/siteConfig";
-import { callApi } from "../Functions/util";
+import {
+  labelConfig,
+  paytmConfig,
+  storageConfig,
+} from "../../config/siteConfig";
+import { callApi, getLocalObjectData } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
 import { responseType } from "../../typings";
@@ -28,7 +32,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         mkey: MKEY,
         oid: oid,
         value: Total,
-        userId: "001",
+        userId: getLocalObjectData(storageConfig?.userProfile)?.id,
       })
         .then((res: responseType) => {
           let config = {
@@ -44,13 +48,26 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
               redirect: false,
             },
             handler: {
-              notifyMerchant: function (eventName: any, data: any) {
+              notifyMerchant: function (eventType: any, data: any) {
                 setLoading(false);
-                console.log("eventName => ", eventName);
+                console.log("eventType => ", eventType);
                 console.log("data => ", data);
               },
               transactionStatus: function (data: any) {
-                console.log("payment status ", data);
+                callApi(processIDs?.paytm_transaction_verify, {
+                  mid: MID,
+                  oid: oid,
+                  mkey: MKEY,
+                }).then((res: responseType) => {
+                  if (res?.data?.returnCode) {
+                    document.getElementById("app-close-btn")?.click();
+                    //  TXN_SUCCESS, TXN_FAILURE, PENDING
+                    console.log(
+                      "payment status ",
+                      res?.data?.returnData?.resultInfo?.resultStatus
+                    );
+                  }
+                });
               },
             },
           };

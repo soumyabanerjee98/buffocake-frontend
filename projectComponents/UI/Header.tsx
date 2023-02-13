@@ -14,10 +14,9 @@ import { messageService } from "../Functions/messageService";
 import {
   callApi,
   getLocalStringData,
-  getSessionObjectData,
+  getLocalObjectData,
   removeLocalData,
-  removeSessionData,
-  setSessionObjectData,
+  setLocalObjectData,
 } from "../Functions/util";
 import CartIcon from "./Icons/CartIcon";
 import NameIcon from "./Icons/NameIcon";
@@ -27,20 +26,19 @@ import LoginCard from "./LoginCard";
 import { responseType } from "../../typings";
 import ForgotPasswordCard from "./ForgotPasswordCard";
 import PhoneVerifyCard from "./PhoneVerifyCard";
+import FavIcon from "./Icons/FavIcon";
+import OrderIcon from "./Icons/OrderIcon";
 
 const dataFetcher = async () => {
-  if (getSessionObjectData(storageConfig?.userProfile)) {
-    return getSessionObjectData(storageConfig?.userProfile);
+  if (getLocalObjectData(storageConfig?.userProfile)) {
+    return getLocalObjectData(storageConfig?.userProfile);
   } else {
     if (getLocalStringData(storageConfig?.jwtToken)) {
       let data = await callApi(processIDs?.verify_login_token, {
         token: getLocalStringData(storageConfig?.jwtToken),
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
-          setSessionObjectData(
-            storageConfig?.userProfile,
-            res?.data?.returnData
-          );
+          setLocalObjectData(storageConfig?.userProfile, res?.data?.returnData);
           return res?.data?.returnData;
         } else {
           removeLocalData(storageConfig?.jwtToken);
@@ -90,7 +88,7 @@ const Header = () => {
           setLoginCardOpen(false);
         }
         if (m?.message?.action === "refresh-profile") {
-          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
+          setUserProfile(getLocalObjectData(storageConfig?.userProfile));
         }
         if (m?.message?.action === "forgot-password") {
           setForgotPasswordCardOpen(true);
@@ -101,12 +99,12 @@ const Header = () => {
         }
       } else if (m?.sender === "profile-page" && m?.target === "global") {
         if (m?.message?.action === "refresh-profile") {
-          setUserProfile(getSessionObjectData(storageConfig?.userProfile));
+          setUserProfile(getLocalObjectData(storageConfig?.userProfile));
         } else if (m?.message?.action === "phone-verify") {
           setPhoneVerifyCardOpen(true);
         } else if (m?.message?.action === "logout") {
           navigate("/");
-          removeSessionData(storageConfig?.userProfile);
+          removeLocalData(storageConfig?.userProfile);
           removeLocalData(storageConfig?.jwtToken);
           setUserProfile(null);
         }
@@ -157,11 +155,43 @@ const Header = () => {
         </div>
       </div>
       <div className="right-col">
-        <CartIcon
-          fill="rgb(107, 39, 51)"
-          className="cart-image"
-          textColor="rgb(107, 39, 51)"
-        />
+        {userProfile && (
+          <>
+            <div
+              onClick={() => {
+                navigate("/orders");
+              }}
+            >
+              <OrderIcon
+                fill="rgb(107, 39, 51)"
+                className="cart-image"
+                textColor="rgb(107, 39, 51)"
+              />
+            </div>
+            <div
+              onClick={() => {
+                navigate("/wishlist");
+              }}
+            >
+              <FavIcon
+                fill="rgb(107, 39, 51)"
+                className="cart-image"
+                textColor="rgb(107, 39, 51)"
+              />
+            </div>
+            <div
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
+              <CartIcon
+                fill="rgb(107, 39, 51)"
+                className="cart-image"
+                textColor="rgb(107, 39, 51)"
+              />
+            </div>
+          </>
+        )}
         <div className="profile-container">
           {isLoading ? (
             <Loading className="spinner" />

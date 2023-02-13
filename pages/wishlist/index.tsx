@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getLocalObjectData } from "../../projectComponents/Functions/util";
 import { storageConfig } from "../../config/siteConfig";
-import Profile from "../../projectComponents/Pages/Profile";
 import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Head from "next/head";
-import { messageService } from "../../projectComponents/Functions/messageService";
 
-const ProfilePage = () => {
+const WishlistPage = () => {
   const [auth, setAuth] = useState<any>();
   useEffect(() => {
     setAuth(getLocalObjectData(storageConfig?.userProfile));
-    messageService?.onReceive().subscribe((m: any) => {
-      if (m?.sender === "profile-page" && m?.target === "global") {
-        if (m?.message?.action === "refresh-profile") {
-          setAuth(getLocalObjectData(storageConfig?.userProfile));
-        }
-      }
-    });
   }, []);
   if (auth === undefined) {
     return <>Loading...</>;
@@ -27,20 +18,15 @@ const ProfilePage = () => {
     return (
       <>
         <Head>
-          <title>
-            {auth?.firstName} {auth?.lastName}
-          </title>
+          <title>Wishlist</title>
           <link rel="icon" href="../boffocake-logo.png" />
-          <meta
-            name="description"
-            content={`${auth?.firstName} ${auth?.lastName}`}
-          />
+          <meta name="description" content={`Wishlist`} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <Profile profile={auth} />
+        <>Wishlist</>
       </>
     );
   }
 };
 
-export default ProfilePage;
+export default WishlistPage;

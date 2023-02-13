@@ -12,6 +12,7 @@ export const processIDs = {
   change_password: "change-password",
   forgot_password: "forgot-password",
   paytm_transaction_token_generate: "paytm-transaction-token-generate",
+  paytm_transaction_verify: "paytm-transaction-verify",
   get_all_products: "get-all-products",
   get_product_details: "get-product-details",
   add_item_to_wishlist: "add-item-to-wishlist",
