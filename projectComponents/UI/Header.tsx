@@ -41,6 +41,7 @@ const dataFetcher = async () => {
           setLocalObjectData(storageConfig?.userProfile, res?.data?.returnData);
           return res?.data?.returnData;
         } else {
+          removeLocalData(storageConfig?.userProfile);
           removeLocalData(storageConfig?.jwtToken);
           return null;
         }
