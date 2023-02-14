@@ -9,6 +9,7 @@ import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Head from "next/head";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
+import Wishlist from "../../projectComponents/Pages/Wishlist";
 
 const WishlistPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -52,7 +53,7 @@ const WishlistPage = () => {
           <meta name="description" content={`Wishlist`} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <>Wishlist</>
+        <Wishlist />
       </>
     );
   }

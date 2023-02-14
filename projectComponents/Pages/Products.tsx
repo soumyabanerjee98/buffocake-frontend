@@ -43,9 +43,14 @@ const Products = (props: ProductProps) => {
         if (res?.data?.returnCode) {
           let returnStatement;
           if (res?.data?.returnData) {
-            returnStatement = res?.data?.returnData?.includes(
-              productDetails?._id
-            );
+            let data = res?.data?.returnData?.find((i: any) => {
+              return i?.productId === productDetails?._id;
+            });
+            if (data) {
+              returnStatement = true;
+            } else {
+              returnStatement = false;
+            }
           } else {
             returnStatement = false;
           }
@@ -271,7 +276,7 @@ const Products = (props: ProductProps) => {
       if (fav) {
         callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-          itemId: productDetails?._id,
+          productId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(false);
@@ -280,7 +285,7 @@ const Products = (props: ProductProps) => {
       } else {
         callApi(processIDs?.add_item_to_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-          itemId: productDetails?._id,
+          productId: productDetails?._id,
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(true);
