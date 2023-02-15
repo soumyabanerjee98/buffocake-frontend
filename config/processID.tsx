@@ -18,4 +18,7 @@ export const processIDs = {
   add_item_to_wishlist: "add-item-to-wishlist",
   remove_item_from_wishlist: "remove-item-from-wishlist",
   get_wishlist: "get-wishlist",
+  add_item_to_cart: "add-item-to-cart",
+  remove_item_from_cart: "remove-item-from-cart",
+  get_cart: "get-cart",
 };

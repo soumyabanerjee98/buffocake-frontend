@@ -11,6 +11,24 @@ export const metaConfig = {
 export const serverConfig = {
   backend_url_test: "http://localhost:9000/",
   backend_url_server: "https://boffocakes-api.onrender.com/",
+  del_time_arr: [
+    {
+      value: "9AM - 12PM",
+      label: "9AM - 12PM",
+    },
+    {
+      value: "12PM - 3PM",
+      label: "12PM - 3PM",
+    },
+    {
+      value: "3PM - 6PM",
+      label: "3PM - 6PM",
+    },
+    {
+      value: "6PM - 9PM",
+      label: "6PM - 9PM",
+    },
+  ],
 };
 
 export const labelConfig = {
@@ -37,7 +55,8 @@ export const labelConfig = {
   product_no_custom_label: "No customization available!",
   product_allergy_label: "Any allergy?",
   product_allergy_placeholder: "e.g. Lactos intolerance",
-  product_delivery_label: "Delivery time and date",
+  product_delivery_date_label: "Delivery date",
+  product_delivery_time_label: "Delivery time",
   product_weight_unit: "lbs",
   product_unit_add: "+",
   product_unit_deduct: "-",
@@ -47,6 +66,7 @@ export const labelConfig = {
 
 export const storageConfig = {
   userProfile: "userProfile",
+  cart: "userCart",
   jwtToken: "accessToken",
 };
 

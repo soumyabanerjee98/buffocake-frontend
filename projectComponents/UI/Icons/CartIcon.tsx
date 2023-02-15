@@ -1,5 +1,14 @@
-import React from "react";
-import { labelConfig } from "../../../config/siteConfig";
+import React, { useEffect, useState } from "react";
+import useSwr from "swr";
+import { processIDs } from "../../../config/processID";
+import { labelConfig, storageConfig } from "../../../config/siteConfig";
+import { messageType, responseType } from "../../../typings";
+import { messageService } from "../../Functions/messageService";
+import {
+  callApi,
+  getSessionObjectData,
+  setSessionObjectData,
+} from "../../Functions/util";
 
 export type CartIconProps = {
   fill: string;
@@ -9,6 +18,44 @@ export type CartIconProps = {
 
 const CartIcon = (props: CartIconProps) => {
   const { fill, className, textColor } = props;
+  const dataFetcher = async () => {
+    let data = await callApi(processIDs?.get_cart, {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+    }).then((res: responseType) => {
+      if (res?.data?.returnCode) {
+        if (res?.data?.returnData) {
+          return res?.data?.returnData;
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    });
+    return data;
+  };
+  const {
+    data: cartData,
+    isLoading,
+    error,
+  } = useSwr(`${processIDs?.get_cart}`, dataFetcher, {
+    refreshInterval: 1,
+  });
+  const [cartCount, setCartCount] = useState(cartData?.length);
+  useEffect(() => {
+    setCartCount(cartData?.length);
+    // @ts-ignore
+    messageService?.onReceive()?.subscribe((m: messageType) => {
+      if (
+        (m?.sender === "product-page" || m?.sender === "cart-page") &&
+        m?.target === "cart-icon"
+      ) {
+        if (m?.message?.action === "refresh-count") {
+          setCartCount(m?.message?.params);
+        }
+      }
+    });
+  }, [cartData]);
   return (
     <div
       style={{
@@ -18,6 +65,7 @@ const CartIcon = (props: CartIconProps) => {
         alignItems: "center",
         cursor: "pointer",
         gap: "4px",
+        position: "relative",
       }}
     >
       <svg
@@ -31,6 +79,22 @@ const CartIcon = (props: CartIconProps) => {
         />
       </svg>
       <div style={{ color: textColor }}>{labelConfig?.cart_label}</div>
+      <div
+        style={{
+          position: "absolute",
+          top: "-0.6rem",
+          right: "-0.4rem",
+          backgroundColor: "rgb(224, 135, 168)",
+          height: "1.2rem",
+          width: "1.2rem",
+          borderRadius: "50%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {cartCount}
+      </div>
     </div>
   );
 };

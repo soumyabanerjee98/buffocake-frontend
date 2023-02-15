@@ -1,6 +1,10 @@
 import Image from "next/image";
 import useSwr from "swr";
 import React, { useEffect, useState } from "react";
+// @ts-ignore
+import Calendar from "react-calendar";
+import Select from "react-select";
+import "react-calendar/dist/Calendar.css";
 import { processIDs } from "../../config/processID";
 import {
   labelConfig,
@@ -14,27 +18,26 @@ import {
   callApi,
   getLocalObjectData,
   getSessionObjectData,
+  setSessionObjectData,
 } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
 import PaytmPayment from "../UI/PaytmPayment";
+import { useRouter } from "next/router";
 
 export type ProductProps = {
   productDetails: any;
 };
 
-const getLocalDateTime = () => {
-  const d = new Date();
-  const today = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-    .toISOString()
-    .slice(0, -1);
-  return today.split(":")[0]?.concat(`:${today.split(":")[1]}`);
-};
-
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
+  const router = useRouter();
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 8);
+  minDate.setDate(minDate.getDate() + 1);
   const wishlistFetcher = async () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
@@ -84,8 +87,18 @@ const Products = (props: ProductProps) => {
     message: "",
     customOption: null,
     allergy: "",
-    deliveryTime: "",
+    deliveryDate: minDate,
+    deliveryTime: null,
   });
+  const [err, setErr] = useState({
+    flavours: false,
+    time: false,
+  });
+  const [loader, setLoader] = useState({
+    buy: false,
+    cart: false,
+  });
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [textFieldLimits, setTextFieldLimits] = useState({
     messageLimit: productConfig?.messageFieldLimit,
     allergyLimit: productConfig?.allergyFieldLimit,
@@ -171,6 +184,9 @@ const Products = (props: ProductProps) => {
   };
 
   const selectFlavour = (opt: any, index: number) => {
+    setErr((prev: any) => {
+      return { ...prev, flavours: false };
+    });
     setCheckOutDetails((prev: any) => {
       return {
         ...prev,
@@ -252,25 +268,6 @@ const Products = (props: ProductProps) => {
     }
   };
 
-  const setDeliveryDateTime = (datetime: string) => {
-    let mintime = getLocalDateTime()
-      .split("T")[1]
-      .split(":")[0]
-      .concat(getLocalDateTime().split("T")[1].split(":")[1]);
-    let selectedTime = datetime
-      .split("T")[1]
-      .split(":")[0]
-      .concat(datetime.split("T")[1].split(":")[1]);
-    let mindate = getLocalDateTime().split("T")[0];
-    if (mindate === datetime.split("T")[0]) {
-      if (parseInt(selectedTime) > parseInt(mintime)) {
-        setCheckOutDetails((prev: any) => {
-          return { ...prev, deliveryTime: datetime };
-        });
-      }
-    }
-  };
-
   const favSelect = () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       if (fav) {
@@ -294,6 +291,110 @@ const Products = (props: ProductProps) => {
       }
     } else {
       loginCardOpen();
+    }
+  };
+
+  const addToCart = () => {
+    if (
+      productDetails?.availableFlavours?.length > 0 &&
+      checkOutDetails?.selectedFlavour === null
+    ) {
+      setErr((prev: any) => {
+        return { ...prev, flavours: true };
+      });
+    } else if (!checkOutDetails?.deliveryTime) {
+      setErr((prev: any) => {
+        return { ...prev, time: true };
+      });
+    } else {
+      setLoader((prev: any) => {
+        return { ...prev, cart: true };
+      });
+      let body = {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        productId: productDetails?._id,
+        qty: checkOutDetails?.qty,
+        weight: checkOutDetails?.weight,
+        flavour: checkOutDetails?.selectedFlavour
+          ? checkOutDetails?.selectedFlavour
+          : "",
+        custom: checkOutDetails?.customOption
+          ? checkOutDetails?.customOption
+          : "",
+        message: checkOutDetails?.message,
+        allergy: checkOutDetails?.allergy,
+        delDate: checkOutDetails?.deliveryDate?.toDateString(),
+        delTime: checkOutDetails?.deliveryTime,
+        subTotal:
+          checkOutDetails?.additionalValueCustom +
+          checkOutDetails?.additionalValueFlavour +
+          checkOutDetails?.subTotal,
+      };
+      callApi(processIDs?.add_item_to_cart, body).then((res: responseType) => {
+        if (res?.data?.returnCode) {
+          setLoader((prev: any) => {
+            return { ...prev, cart: false };
+          });
+          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+          messageService?.sendMessage(
+            "product-page",
+            // @ts-ignore
+            {
+              action: "refresh-count",
+              params: res?.data?.returnData?.length,
+            },
+            "cart-icon"
+          );
+        }
+      });
+    }
+  };
+
+  const placeOrder = () => {
+    if (
+      productDetails?.availableFlavours?.length > 0 &&
+      checkOutDetails?.selectedFlavour === null
+    ) {
+      setErr((prev: any) => {
+        return { ...prev, flavours: true };
+      });
+    } else if (!checkOutDetails?.deliveryTime) {
+      setErr((prev: any) => {
+        return { ...prev, time: true };
+      });
+    } else {
+      setLoader((prev: any) => {
+        return { ...prev, buy: true };
+      });
+      let body = {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        productId: productDetails?._id,
+        qty: checkOutDetails?.qty,
+        weight: checkOutDetails?.weight,
+        flavour: checkOutDetails?.selectedFlavour
+          ? checkOutDetails?.selectedFlavour
+          : "",
+        custom: checkOutDetails?.customOption
+          ? checkOutDetails?.customOption
+          : "",
+        message: checkOutDetails?.message,
+        allergy: checkOutDetails?.allergy,
+        delDate: checkOutDetails?.deliveryDate?.toDateString(),
+        delTime: checkOutDetails?.deliveryTime,
+        subTotal:
+          checkOutDetails?.additionalValueCustom +
+          checkOutDetails?.additionalValueFlavour +
+          checkOutDetails?.subTotal,
+      };
+      callApi(processIDs?.add_item_to_cart, body).then((res: responseType) => {
+        if (res?.data?.returnCode) {
+          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+          setLoader((prev: any) => {
+            return { ...prev, buy: false };
+          });
+          router.push("/cart");
+        }
+      });
     }
   };
 
@@ -382,6 +483,9 @@ const Products = (props: ProductProps) => {
             <div className="section">
               <div className="label">
                 {labelConfig?.product_available_flavours_label}
+                {productDetails?.availableFlavours?.length > 0 && (
+                  <span style={{ color: "red" }}> *</span>
+                )}
               </div>
               {productDetails?.availableFlavours?.length > 0 ? (
                 <div className="available-options">
@@ -406,6 +510,9 @@ const Products = (props: ProductProps) => {
                 </div>
               )}
             </div>
+            {err?.flavours && (
+              <div className="error">Please select a flavour</div>
+            )}
             <div className="section">
               <div className="label">{labelConfig?.product_message_label}</div>
               <div className="text-section">
@@ -462,16 +569,75 @@ const Products = (props: ProductProps) => {
               </div>
             </div>
             <div className="section">
-              <div className="label">{labelConfig?.product_delivery_label}</div>
-              <input
-                type={"datetime-local"}
-                min={getLocalDateTime()}
-                value={checkOutDetails?.deliveryTime}
-                onChange={(e: any) => {
-                  setDeliveryDateTime(e.target.value);
-                }}
-              />
+              <div className="label">
+                {labelConfig?.product_delivery_date_label}
+              </div>
+              <div className="calendar-section">
+                {calendarOpen ? (
+                  <>
+                    <Calendar
+                      onChange={(e: any) => {
+                        setCheckOutDetails((prev: any) => {
+                          return {
+                            ...prev,
+                            deliveryDate: e,
+                          };
+                        });
+                        setCalendarOpen(false);
+                      }}
+                      minDate={minDate}
+                      maxDate={maxDate}
+                      value={checkOutDetails?.deliveryDate}
+                      className="calendar"
+                    />
+                    <i
+                      className="fa-solid fa-xmark cross"
+                      onClick={() => {
+                        setCalendarOpen(false);
+                      }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div>{checkOutDetails?.deliveryDate.toDateString()}</div>
+                    <button
+                      className="calendar-popup"
+                      onClick={() => {
+                        setCalendarOpen(true);
+                      }}
+                    >
+                      Select date
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
+            <div className="section">
+              <div className="label">
+                {labelConfig?.product_delivery_time_label}
+                <span style={{ color: "red" }}> *</span>
+              </div>
+              <div className="time-section">
+                <Select
+                  className="time-picker"
+                  isSearchable={false}
+                  placeholder={"Select delivery time"}
+                  defaultValue={checkOutDetails?.deliveryTime}
+                  onChange={(e: any) => {
+                    setErr((prev: any) => {
+                      return { ...prev, time: false };
+                    });
+                    setCheckOutDetails((prev: any) => {
+                      return { ...prev, deliveryTime: e?.value };
+                    });
+                  }}
+                  options={serverConfig?.del_time_arr}
+                />
+              </div>
+            </div>
+            {err?.time && (
+              <div className="error">Please select a delivery time</div>
+            )}
           </div>
           <div className="subtotal">
             {labelConfig?.inr_code}
@@ -485,11 +651,27 @@ const Products = (props: ProductProps) => {
           />
         </div>
         <div className="button-section">
-          <button className="action-button add-cart" type="button">
-            {labelConfig?.product_add_to_cart}
+          <button
+            className="action-button add-cart"
+            type="button"
+            onClick={addToCart}
+          >
+            {loader?.cart ? (
+              <Loading className="dot-flashing" />
+            ) : (
+              labelConfig?.product_add_to_cart
+            )}
           </button>
-          <button className="action-button buy-now" type="button">
-            {labelConfig?.product_buy_now}
+          <button
+            className="action-button buy-now"
+            type="button"
+            onClick={placeOrder}
+          >
+            {loader?.buy ? (
+              <Loading className="dot-flashing" />
+            ) : (
+              labelConfig?.product_buy_now
+            )}
           </button>
           {/* test */}
           {/* <PaytmPayment

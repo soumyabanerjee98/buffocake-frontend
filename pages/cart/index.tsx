@@ -10,6 +10,7 @@ import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Head from "next/head";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
+import Cart from "../../projectComponents/Pages/Cart";
 
 const CartPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -53,7 +54,7 @@ const CartPage = () => {
           <meta name="description" content={`Cart`} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <>Cart</>
+        <Cart />
       </>
     );
   }

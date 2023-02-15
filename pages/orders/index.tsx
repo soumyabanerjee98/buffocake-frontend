@@ -10,6 +10,7 @@ import PageNotFound from "../../projectComponents/Pages/PageNotFound";
 import Head from "next/head";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
+import Orders from "../../projectComponents/Pages/Orders";
 
 const OrdersPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -53,7 +54,7 @@ const OrdersPage = () => {
           <meta name="description" content={`Orders`} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <>Orders</>
+        <Orders />
       </>
     );
   }
