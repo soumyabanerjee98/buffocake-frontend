@@ -70,7 +70,7 @@ const Header = () => {
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
       : serverConfig?.backend_url_test;
-  const [userProfile, setUserProfile] = useState(userData);
+  const [userProfile, setUserProfile] = useState<any>();
   const [loginCardOpen, setLoginCardOpen] = useState(false);
   const [forgotPasswordCardOpen, setForgotPasswordCardOpen] = useState(false);
   const [phoneVerifyCardOpen, setPhoneVerifyCardOpen] = useState(false);
@@ -242,7 +242,7 @@ const Header = () => {
           </>
         )}
         <div className="profile-container">
-          {isLoading ? (
+          {isLoading || userProfile === undefined ? (
             <Loading className="spinner" />
           ) : (
             <>
