@@ -3,12 +3,15 @@ import useSwr from "swr";
 import { processIDs } from "../../config/processID";
 import { serverConfig, storageConfig } from "../../config/siteConfig";
 import { responseType } from "../../typings";
-import { callApi, getSessionObjectData } from "../Functions/util";
+import {
+  callApi,
+  getSessionObjectData,
+  setSessionObjectData,
+} from "../Functions/util";
 import Broken from "../Assets/Images/broken.png";
 import Image from "next/image";
-import NoImage from "../Assets/Images/no-image.png";
 import { useRouter } from "next/router";
-import Loading from "../UI/Loading";
+import WishlistCard from "../UI/WishlistCard";
 
 const Wishlist = () => {
   const router = useRouter();
@@ -36,26 +39,18 @@ const Wishlist = () => {
     data: wishlist,
     isLoading,
     error,
-  } = useSwr(`${processIDs?.get_wishlist}`, dataFetcher, {
-    refreshInterval: 1,
-  });
+  } = useSwr(`${processIDs?.get_wishlist}`, dataFetcher);
   const [wishList, setWishList] = useState(wishlist);
-  const [loading, setLoading] = useState(false);
-  const removeItem = (id: string) => {
-    setLoading(true);
-    callApi(processIDs?.remove_item_from_wishlist, {
-      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      productId: id,
-    }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        setLoading(false);
-        setWishList(res?.data?.returnData);
-      }
-    });
-  };
 
   useEffect(() => {
-    setWishList(wishlist);
+    if (getSessionObjectData(storageConfig?.wishlist)) {
+      setWishList(getSessionObjectData(storageConfig?.wishlist));
+    } else {
+      if (wishlist?.length > 0) {
+        setSessionObjectData(storageConfig?.wishlist, wishlist);
+      }
+      setWishList(wishlist);
+    }
   }, [wishlist]);
 
   if (isLoading) return <>Loading...</>;
@@ -81,34 +76,12 @@ const Wishlist = () => {
               }
             }}
           >
-            <div className="image-container">
-              {i?.productImage ? (
-                <img
-                  src={`${url}${i?.productImage}`}
-                  className="image"
-                  alt="Image not found!"
-                />
-              ) : (
-                <Image
-                  src={NoImage}
-                  alt="Image not found!"
-                  priority={true}
-                  className="image"
-                />
-              )}
-            </div>
-            <div className="details">
-              <div className="title">{i?.productTitle}</div>
-              <button
-                type="button"
-                className="remove"
-                onClick={() => {
-                  removeItem(i?.productId);
-                }}
-              >
-                {loading ? <Loading className="dot-flashing" /> : "Remove"}
-              </button>
-            </div>
+            <WishlistCard
+              setWishList={setWishList}
+              productId={i?.productId}
+              productTitle={i?.productTitle}
+              productImage={i?.productImage}
+            />
           </div>
         ))}
       </div>

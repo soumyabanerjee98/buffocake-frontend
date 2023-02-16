@@ -432,6 +432,31 @@ input::-webkit-inner-spin-button {
 .profile-screen .header {
   font-size: large;
   font-weight: 600;
+  
+}
+.profile-screen .header.secondary {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 0.8rem;
+  margin: 0.8rem 0;
+}
+.profile-screen .section-general-address .add-address{
+  display: flex;
+  justify-content: flex-end;
+}
+.profile-screen .section-general-address .add-address-button {
+  border-color: rgb(0, 191, 0);
+    border-radius: 4px;
+    color: rgb(0, 191, 0);
+    font-weight: 600;
+    background-color: whitesmoke;
+    padding: 0.8rem;
+    transition: all 200ms ease-in-out;
+}
+.profile-screen .section-general-address .add-address-button:hover {
+  color: whitesmoke;
+  background-color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
 }
 .profile-screen .left-col {
   width: 15%;
@@ -634,7 +659,8 @@ input::-webkit-inner-spin-button {
   padding: 1rem 0;
   display: grid;
   gap: 0.8rem;
-  grid-template-columns: repeat(4, 25%);
+  justify-content: center;
+  grid-template-columns: repeat(4, 24%);
 }
 .wishlist-screen .wishlist .wishlist-item {
   padding: 1rem;
@@ -724,7 +750,13 @@ input::-webkit-inner-spin-button {
   justify-content: center;
   align-items: center;
 }
-
+.cart-screen .cart .name {
+  font-size: 24px;
+  padding-bottom: 0.8rem;
+  font-weight: 600;
+  color: rgb(223, 174, 192);
+    text-shadow: 0 0 0.4px black;
+}
 .cart-screen .cart .image-container .image {
   height: 10rem;
   width: max-content;
@@ -788,6 +820,29 @@ input::-webkit-inner-spin-button {
 .no-cart .buy:hover {
   color: #4285f4;
   transition: all 200ms ease-in-out;
+}
+.cart-screen .checkout-section{
+  position: sticky;
+  bottom: 1rem;
+  margin: 1rem;
+  border: 1px solid rgb(2, 126, 2);
+  padding: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgb(0, 191, 0);
+  color: whitesmoke;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 200ms ease-in-out;
+}
+.cart-screen .checkout-section:hover {
+  background-color: whitesmoke;
+  color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
+}
+.cart-screen .checkout-section .total {
+  font-size: 22px;
 }
 
 /* modals */
@@ -1019,6 +1074,85 @@ input::-webkit-inner-spin-button {
   width: -webkit-fill-available;
 }
 
+/* checkout card */
+.checkout-card{
+  position: absolute;
+    padding: 1.2rem 2rem;
+    background-color: white;
+    border-radius: 4px;
+    
+}
+.checkout-details{
+display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+.checkout-card .title{
+  padding-bottom: 0.4rem;
+  font-size: large;
+  font-weight: 500;
+  color: rgba(107, 39, 51);
+}
+.checkout-card .left-column .details{
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  min-height: 20rem;
+  min-width: 16rem;
+}
+.checkout-card .left-column .details.no-address {
+  border-style: dashed;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.checkout-card .left-column .details.no-address .go-to-profile{
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+}
+.checkout-card .left-column .details.no-address .go-to-profile:hover {
+  color: #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.checkout-card .right-column .details{
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  max-height: 20rem;
+}
+.checkout-card .right-column .details::-webkit-scrollbar {
+  display: none;
+}
+.checkout-card .right-column .details {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.checkout-card .right-column .details .items {
+  margin: 0.4rem 0;
+  padding: 0.4rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+.checkout-card .right-column .details .items .name{
+  font-size: large;
+  font-weight: 500;
+  padding-bottom: 0.4rem;
+  color: rgb(223, 174, 192);
+    text-shadow: 0 0 0.4px black;
+}
+.checkout-card .right-column .details .items .label {
+  font-size: medium;
+  font-weight: 500;
+  color: rgba(107, 39, 51);
+}
+.checkout-card .right-column .details .items .value{
+  font-size: smaller;
+}
+.checkout-card .right-column .details .items .section {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  padding-bottom: 0.2rem;
+}
+
 /* OTP Field */
 
 .otp-field {
@@ -1041,6 +1175,9 @@ input::-webkit-inner-spin-button {
   border-radius: 4px;
   background-color: rgb(0, 191, 0);
   transition: all 200ms ease-in-out;
+}
+.paytm-button.disable {
+  cursor: not-allowed;
 }
 .paytm-button:hover {
   background-color: rgb(211, 211, 211);

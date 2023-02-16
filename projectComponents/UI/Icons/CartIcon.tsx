@@ -4,11 +4,7 @@ import { processIDs } from "../../../config/processID";
 import { labelConfig, storageConfig } from "../../../config/siteConfig";
 import { messageType, responseType } from "../../../typings";
 import { messageService } from "../../Functions/messageService";
-import {
-  callApi,
-  getSessionObjectData,
-  setSessionObjectData,
-} from "../../Functions/util";
+import { callApi, getSessionObjectData } from "../../Functions/util";
 
 export type CartIconProps = {
   fill: string;
@@ -38,12 +34,14 @@ const CartIcon = (props: CartIconProps) => {
     data: cartData,
     isLoading,
     error,
-  } = useSwr(`${processIDs?.get_cart}`, dataFetcher, {
-    refreshInterval: 1,
-  });
+  } = useSwr(`${processIDs?.get_cart}`, dataFetcher);
   const [cartCount, setCartCount] = useState(cartData?.length);
   useEffect(() => {
-    setCartCount(cartData?.length);
+    if (getSessionObjectData(storageConfig?.cart)) {
+      setCartCount(getSessionObjectData(storageConfig?.cart)?.length);
+    } else {
+      setCartCount(cartData?.length);
+    }
     // @ts-ignore
     messageService?.onReceive()?.subscribe((m: messageType) => {
       if (
@@ -79,22 +77,24 @@ const CartIcon = (props: CartIconProps) => {
         />
       </svg>
       <div style={{ color: textColor }}>{labelConfig?.cart_label}</div>
-      <div
-        style={{
-          position: "absolute",
-          top: "-0.6rem",
-          right: "-0.4rem",
-          backgroundColor: "rgb(224, 135, 168)",
-          height: "1.2rem",
-          width: "1.2rem",
-          borderRadius: "50%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {cartCount}
-      </div>
+      {cartCount !== 0 && (
+        <div
+          style={{
+            position: "absolute",
+            top: "-0.6rem",
+            right: "-0.4rem",
+            backgroundColor: "rgb(224, 135, 168)",
+            height: "1.2rem",
+            width: "1.2rem",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {cartCount}
+        </div>
+      )}
     </div>
   );
 };

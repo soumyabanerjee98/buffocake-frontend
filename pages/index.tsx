@@ -32,7 +32,7 @@ export async function getStaticProps() {
     props: {
       allProducts: data,
     },
-    revalidate: 10,
+    revalidate: 60,
   };
 }
 export default HomePage;

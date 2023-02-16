@@ -8,7 +8,6 @@ import "react-calendar/dist/Calendar.css";
 import { processIDs } from "../../config/processID";
 import {
   labelConfig,
-  paytmConfig,
   productConfig,
   serverConfig,
   storageConfig,
@@ -16,7 +15,6 @@ import {
 import NoIMage from "../Assets/Images/no-image.png";
 import {
   callApi,
-  getLocalObjectData,
   getSessionObjectData,
   setSessionObjectData,
 } from "../Functions/util";
@@ -24,8 +22,6 @@ import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
-import PaytmPayment from "../UI/PaytmPayment";
-import { useRouter } from "next/router";
 
 export type ProductProps = {
   productDetails: any;
@@ -33,7 +29,6 @@ export type ProductProps = {
 
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
-  const router = useRouter();
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 8);
@@ -46,6 +41,12 @@ const Products = (props: ProductProps) => {
         if (res?.data?.returnCode) {
           let returnStatement;
           if (res?.data?.returnData) {
+            if (getSessionObjectData(storageConfig?.wishlist) === null) {
+              setSessionObjectData(
+                storageConfig?.wishlist,
+                res?.data?.returnData
+              );
+            }
             let data = res?.data?.returnData?.find((i: any) => {
               return i?.productId === productDetails?._id;
             });
@@ -73,8 +74,7 @@ const Products = (props: ProductProps) => {
     isLoading,
   } = useSwr(
     `${processIDs?.get_wishlist}${productDetails?._id}`,
-    wishlistFetcher,
-    { refreshInterval: 1 }
+    wishlistFetcher
   );
   const [fav, setFav] = useState(favourite);
   const [checkOutDetails, setCheckOutDetails] = useState({
@@ -109,7 +109,20 @@ const Products = (props: ProductProps) => {
       : serverConfig?.backend_url_server;
 
   useEffect(() => {
-    setFav(favourite);
+    if (getSessionObjectData(storageConfig?.wishlist)) {
+      let data = getSessionObjectData(storageConfig?.wishlist)?.find(
+        (i: any) => {
+          return i?.productId === productDetails?._id;
+        }
+      );
+      if (data) {
+        setFav(true);
+      } else {
+        setFav(false);
+      }
+    } else {
+      setFav(favourite);
+    }
   }, [favourite]);
 
   const loginCardOpen = () => {
@@ -277,6 +290,10 @@ const Products = (props: ProductProps) => {
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(false);
+            setSessionObjectData(
+              storageConfig?.wishlist,
+              res?.data?.returnData
+            );
           }
         });
       } else {
@@ -286,6 +303,10 @@ const Products = (props: ProductProps) => {
         }).then((res: responseType) => {
           if (res?.data?.returnCode) {
             setFav(true);
+            setSessionObjectData(
+              storageConfig?.wishlist,
+              res?.data?.returnData
+            );
           }
         });
       }
@@ -363,12 +384,9 @@ const Products = (props: ProductProps) => {
         return { ...prev, time: true };
       });
     } else {
-      setLoader((prev: any) => {
-        return { ...prev, buy: true };
-      });
       let body = {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
         productId: productDetails?._id,
+        productName: productDetails?.title,
         qty: checkOutDetails?.qty,
         weight: checkOutDetails?.weight,
         flavour: checkOutDetails?.selectedFlavour
@@ -386,15 +404,15 @@ const Products = (props: ProductProps) => {
           checkOutDetails?.additionalValueFlavour +
           checkOutDetails?.subTotal,
       };
-      callApi(processIDs?.add_item_to_cart, body).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-          setLoader((prev: any) => {
-            return { ...prev, buy: false };
-          });
-          router.push("/cart");
-        }
-      });
+      messageService?.sendMessage(
+        "product-page",
+        // @ts-ignore
+        {
+          action: "checkout",
+          params: [body],
+        },
+        "checkout-card"
+      );
     }
   };
 
@@ -673,24 +691,6 @@ const Products = (props: ProductProps) => {
               labelConfig?.product_buy_now
             )}
           </button>
-          {/* test */}
-          {/* <PaytmPayment
-            MID={
-              process.env.NODE_ENV === "production"
-                ? paytmConfig?.mid
-                : paytmConfig?.stage_mid
-            }
-            MKEY={
-              process.env.NODE_ENV === "production"
-                ? paytmConfig?.mkey
-                : paytmConfig?.stage_mkey
-            }
-            Total={
-              checkOutDetails?.subTotal +
-              checkOutDetails?.additionalValueFlavour +
-              checkOutDetails?.additionalValueCustom
-            }
-          /> */}
         </div>
       </div>
     </div>

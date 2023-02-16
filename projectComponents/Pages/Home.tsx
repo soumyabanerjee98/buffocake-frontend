@@ -93,11 +93,6 @@ const Home = (props: HomeProps) => {
                         <div className="product-price">
                           &#8377;{val?.unitValue}
                         </div>
-                        {/* <PaytmPayment
-                          MID={paytmConfig?.mid}
-                          MKEY={paytmConfig?.mkey}
-                          Total={parseInt(val?.item_price)}
-                        /> */}
                       </div>
                     );
                   })}

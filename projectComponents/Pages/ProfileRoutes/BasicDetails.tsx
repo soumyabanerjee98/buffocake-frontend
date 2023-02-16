@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
 import { serverConfig, storageConfig } from "../../../config/siteConfig";
 import { responseType } from "../../../typings";
@@ -29,6 +30,28 @@ const BasicDetails = (props: BasicDetailsProps) => {
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
       : serverConfig?.backend_url_test;
+
+  const dataFetcher = async () => {
+    let data = await callApi(processIDs?.get_address, {
+      userId: profile?.id,
+    }).then((res: responseType) => {
+      if (res?.data?.returnCode) {
+        if (res?.data?.returnData) {
+          return res?.data?.returnData;
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    });
+    return data;
+  };
+  const {
+    data: addressData,
+    error: errorData,
+    isLoading,
+  } = useSwr(processIDs?.get_address, dataFetcher);
   const [editState, setEditState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
@@ -47,7 +70,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
     email: profile?.email,
     phoneNumber: profile?.phoneNumber,
   });
-
+  const [address, setAddress] = useState(addressData);
   const cancelProfileEdit = () => {
     setLoading(false);
     setEditState(false);
@@ -63,7 +86,16 @@ const BasicDetails = (props: BasicDetailsProps) => {
       return { ...prev, deleted: false, image: [], preview: null };
     });
   };
-
+  useEffect(() => {
+    if (getSessionObjectData(storageConfig?.address)) {
+      setAddress(getSessionObjectData(storageConfig?.address));
+    } else {
+      setAddress(addressData);
+      if (addressData?.length > 0) {
+        setSessionObjectData(storageConfig?.address, addressData);
+      }
+    }
+  }, [addressData]);
   const getEmail = () => {
     gSignInWithPopup().then((res: any) => {
       gSignOut();
@@ -421,6 +453,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
           >
             Update profile
           </button>
+        )}
+      </div>
+      <div className="header secondary">Address</div>
+      <div className="section-general-address">
+        {address?.length <= 5 && (
+          <div className="add-address">
+            <button type="button" className="add-address-button">
+              Add address
+            </button>
+          </div>
+        )}
+        {address?.length > 0 ? (
+          <></>
+        ) : (
+          <div className="no-address">No address found!</div>
         )}
       </div>
     </>

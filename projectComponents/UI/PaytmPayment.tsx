@@ -19,10 +19,11 @@ export type PaytmPaymentProps = {
   MID: string;
   MKEY: string;
   Total: number;
+  disable: boolean;
 };
 
 const PaytmPayment = (props: PaytmPaymentProps) => {
-  const { MID, MKEY, Total } = props;
+  const { MID, MKEY, Total, disable } = props;
   const [loading, setLoading] = useState(false);
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
@@ -106,7 +107,12 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         src={`${paytmbaseurl}/merchantpgpui/checkoutjs/merchants/${MID}.js`}
         crossOrigin="anonymous"
       />
-      <button className="paytm-button" type="button" onClick={InitiatePayment}>
+      <button
+        className={`paytm-button ${disable ? "disable" : ""}`}
+        type="button"
+        disabled={disable}
+        onClick={InitiatePayment}
+      >
         {loading ? (
           <Loading className="dot-flashing" />
         ) : (

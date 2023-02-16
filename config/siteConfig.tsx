@@ -67,7 +67,9 @@ export const labelConfig = {
 export const storageConfig = {
   userProfile: "userProfile",
   cart: "userCart",
+  wishlist: "userWishlist",
   jwtToken: "accessToken",
+  address: "userAddress",
 };
 
 export const colorPalette = {};

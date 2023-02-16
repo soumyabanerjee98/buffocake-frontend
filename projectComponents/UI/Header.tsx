@@ -26,11 +26,12 @@ import NameIcon from "./Icons/NameIcon";
 import ProfileIcon from "./Icons/ProfileIcon";
 import Loading from "./Loading";
 import LoginCard from "./LoginCard";
-import { responseType } from "../../typings";
+import { messageType, responseType } from "../../typings";
 import ForgotPasswordCard from "./ForgotPasswordCard";
 import PhoneVerifyCard from "./PhoneVerifyCard";
 import FavIcon from "./Icons/FavIcon";
 import OrderIcon from "./Icons/OrderIcon";
+import CheckoutCard from "./CheckoutCard";
 
 const dataFetcher = async () => {
   if (getSessionObjectData(storageConfig?.userProfile)) {
@@ -73,6 +74,11 @@ const Header = () => {
   const [loginCardOpen, setLoginCardOpen] = useState(false);
   const [forgotPasswordCardOpen, setForgotPasswordCardOpen] = useState(false);
   const [phoneVerifyCardOpen, setPhoneVerifyCardOpen] = useState(false);
+  const [checkOutCardOpen, setCheckOutCardOpen] = useState({
+    state: false,
+    source: "",
+    cart: [],
+  });
   const redirect = useRouter();
   const navigate = (url: string) => {
     redirect.push(url);
@@ -88,7 +94,8 @@ const Header = () => {
     navigate("/profile");
   };
   useEffect(() => {
-    messageService?.onReceive().subscribe((m: any) => {
+    // @ts-ignore
+    messageService?.onReceive().subscribe((m: messageType) => {
       if (m?.sender === "login-card" && m?.target === "header") {
         if (m?.message?.action === "close-popup") {
           setLoginCardOpen(false);
@@ -102,6 +109,42 @@ const Header = () => {
       } else if (m?.sender === "product-page" && m?.target === "header") {
         if (m?.message?.action === "login-popup") {
           setLoginCardOpen(true);
+        }
+      } else if (
+        m?.sender === "product-page" &&
+        m?.target === "checkout-card"
+      ) {
+        if (m?.message?.action === "checkout") {
+          setCheckOutCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              source: m?.sender,
+              cart: m?.message?.params,
+            };
+          });
+        }
+      } else if (m?.sender === "cart-page" && m?.target === "checkout-card") {
+        if (m?.message?.action === "checkout") {
+          setCheckOutCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              source: m?.sender,
+              cart: m?.message?.params,
+            };
+          });
+        }
+      } else if (m?.sender === "checkout-card" && m?.target === "header") {
+        if (m?.message?.action === "close-popup") {
+          setCheckOutCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+              source: "",
+              cart: [],
+            };
+          });
         }
       } else if (m?.sender === "profile-page" && m?.target === "global") {
         if (m?.message?.action === "refresh-profile") {
@@ -233,6 +276,12 @@ const Header = () => {
       {loginCardOpen && <LoginCard />}
       {forgotPasswordCardOpen && <ForgotPasswordCard />}
       {phoneVerifyCardOpen && <PhoneVerifyCard />}
+      {checkOutCardOpen?.state && (
+        <CheckoutCard
+          source={checkOutCardOpen?.source}
+          cart={checkOutCardOpen?.cart}
+        />
+      )}
     </header>
   );
 };
