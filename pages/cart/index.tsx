@@ -11,6 +11,7 @@ import Head from "next/head";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import Cart from "../../projectComponents/Pages/Cart";
+import { toast } from "react-toastify";
 
 const CartPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -22,16 +23,21 @@ const CartPage = () => {
         new Promise((resolve, reject) => {
           callApi(processIDs?.verify_login_token, {
             token: getLocalStringData(storageConfig?.jwtToken),
+            // @ts-ignore
           }).then((res: responseType) => {
-            if (res?.data?.returnCode) {
-              resolve(res?.data?.returnData);
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                resolve(res?.data?.returnData);
+              } else {
+                resolve(null);
+              }
             } else {
-              resolve(null);
+              resolve(undefined);
+              toast.error(`Error: ${res?.status}`);
             }
           });
         });
       let data = await dataFetcher();
-      console.log(data);
       setAuth(data);
     } else {
       setAuth(null);

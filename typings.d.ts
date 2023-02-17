@@ -1,4 +1,5 @@
 export type responseType = {
+    status: number,
     data:{
         returnCode: boolean,
         returnData: any,

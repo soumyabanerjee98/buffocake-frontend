@@ -1,5 +1,7 @@
 import BasicLayout from "../projectComponents/UI/BasicLayout";
 import "../styles/global.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const _App = (props: any) => {
   const { Component, pageProps } = props;
@@ -11,6 +13,7 @@ const _App = (props: any) => {
       <BasicLayout>
         <Component {...pageProps} />
       </BasicLayout>
+      <ToastContainer />
     </main>
   );
 };

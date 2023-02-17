@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { processIDs } from "../../../config/processID";
 import { storageConfig } from "../../../config/siteConfig";
 import { responseType } from "../../../typings";
@@ -76,10 +77,23 @@ const Security = () => {
         id: getSessionObjectData(storageConfig?.userProfile)?.id,
         oldPass: md5(passwordDetails?.oldPass),
         newPass: md5(passwordDetails?.newPass),
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          cancelChangePassword();
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            cancelChangePassword();
+          } else {
+            setLoadingSecurity(false);
+            setErrorSecurity((prev: any) => {
+              return {
+                ...prev,
+                oldPass: true,
+                oldPassText: res?.data?.msg,
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoadingSecurity(false);
           setErrorSecurity((prev: any) => {
             return {

@@ -4,6 +4,7 @@ import { processIDs } from "../config/processID";
 import Home from "../projectComponents/Pages/Home";
 import { callApi } from "../projectComponents/Functions/util";
 import { responseType } from "../typings";
+import { toast } from "react-toastify";
 
 const HomePage = (props: any) => {
   const { allProducts } = props;
@@ -20,10 +21,16 @@ const HomePage = (props: any) => {
 };
 export async function getStaticProps() {
   let data = await callApi(processIDs?.get_all_products, {}).then(
+    // @ts-ignore
     (res: responseType) => {
-      if (res?.data?.returnCode) {
-        return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          return res?.data?.returnData;
+        } else {
+          return null;
+        }
       } else {
+        toast.error(`Error: ${res?.status}`);
         return null;
       }
     }

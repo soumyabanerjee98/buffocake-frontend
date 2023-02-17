@@ -17,36 +17,44 @@ export const gSignInWithPopup = () => signInWithPopup(auth, provider);
 export const gSignOut = () => signOut(auth);
 
 export const callApi = async (processid: string, datajson: object) => {
-  let url =
-    process?.env?.NODE_ENV === "development"
-      ? serverConfig?.backend_url_test
-      : serverConfig?.backend_url_server;
-  let data = {
-    processId: processid,
-    datajson: datajson,
-  };
-  return axios.post(url, JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const uploadImage = async (filesArr: any) => {
-  if (filesArr?.length > 0) {
-    const formData = new FormData();
+  try {
     let url =
       process?.env?.NODE_ENV === "development"
         ? serverConfig?.backend_url_test
         : serverConfig?.backend_url_server;
-    filesArr.map((i: any) => {
-      formData.append("files", i);
-    });
-    return axios.post(`${url}imageUpload/`, formData, {
+    let data = {
+      processId: processid,
+      datajson: datajson,
+    };
+    return axios.post(url, JSON.stringify(data), {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
     });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const uploadImage = async (filesArr: any) => {
+  try {
+    if (filesArr?.length > 0) {
+      const formData = new FormData();
+      let url =
+        process?.env?.NODE_ENV === "development"
+          ? serverConfig?.backend_url_test
+          : serverConfig?.backend_url_server;
+      filesArr.map((i: any) => {
+        formData.append("files", i);
+      });
+      return axios.post(`${url}imageUpload/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 

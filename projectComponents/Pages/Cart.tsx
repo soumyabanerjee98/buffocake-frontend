@@ -13,20 +13,27 @@ import Broken from "../Assets/Images/broken.png";
 import { useRouter } from "next/router";
 import { messageService } from "../Functions/messageService";
 import CartCard from "../UI/CartCard";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_cart, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        if (res?.data?.returnData) {
-          return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          if (res?.data?.returnData) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
         } else {
           return [];
         }
       } else {
-        return [];
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
       }
     });
     return data;
@@ -36,7 +43,7 @@ const Cart = () => {
     isLoading,
     error,
   } = useSwr(`${processIDs?.get_cart}`, dataFetcher);
-  const [cart, setCart] = useState(cartData);
+  const [cart, setCart] = useState<any>();
   const [grandTotal, setGrandTotal] = useState<any>(null);
   const router = useRouter();
   const navigate = (url: string) => {
@@ -66,13 +73,15 @@ const Cart = () => {
     }
   }, [cartData]);
   useEffect(() => {
-    let total = 0;
-    cart?.map((i: any) => {
-      total = total + i?.subTotal;
-    });
-    setGrandTotal(total);
+    if (cart) {
+      let total = 0;
+      cart?.map((i: any) => {
+        total = total + i?.subTotal;
+      });
+      setGrandTotal(total);
+    }
   }, [cart]);
-  if (isLoading) return <>Loading...</>;
+  if (isLoading || cart === undefined) return <>Loading...</>;
   if (cart?.length === 0 || !cart) {
     return (
       <div className="no-cart">

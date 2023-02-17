@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
 import { callApi } from "../../projectComponents/Functions/util";
 import PageNotFound from "../../projectComponents/Pages/PageNotFound";
@@ -12,7 +13,7 @@ import { responseType } from "../../typings";
 const ProductPage = (props: any) => {
   const { productDetails } = props;
   const router = useRouter();
-  if (router.isFallback) {
+  if (router.isFallback || productDetails === undefined) {
     return <>Loading...</>;
   }
   return (
@@ -40,11 +41,17 @@ const ProductPage = (props: any) => {
 export async function getStaticProps({ params }: any) {
   let data = await callApi(processIDs?.get_product_details, {
     productId: params.slug,
+    // @ts-ignore
   }).then((res: responseType) => {
-    if (res?.data?.returnCode) {
-      return res?.data?.returnData;
+    if (res?.status === 200) {
+      if (res?.data?.returnCode) {
+        return res?.data?.returnData;
+      } else {
+        return null;
+      }
     } else {
-      return null;
+      toast.error(`Error: ${res?.status}`);
+      return undefined;
     }
   });
   return {
@@ -57,10 +64,16 @@ export async function getStaticProps({ params }: any) {
 
 export async function getStaticPaths() {
   let data = await callApi(processIDs?.get_all_products, {}).then(
+    // @ts-ignore
     (res: responseType) => {
-      if (res?.data?.returnCode) {
-        return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          return res?.data?.returnData;
+        } else {
+          return null;
+        }
       } else {
+        toast.error(`Error: ${res?.status}`);
         return null;
       }
     }

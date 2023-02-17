@@ -22,6 +22,7 @@ import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
+import { toast } from "react-toastify";
 
 export type ProductProps = {
   productDetails: any;
@@ -37,26 +38,32 @@ const Products = (props: ProductProps) => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        // @ts-ignore
       }).then((res: responseType) => {
         if (res?.data?.returnCode) {
           let returnStatement;
-          if (res?.data?.returnData) {
-            if (getSessionObjectData(storageConfig?.wishlist) === null) {
-              setSessionObjectData(
-                storageConfig?.wishlist,
-                res?.data?.returnData
-              );
-            }
-            let data = res?.data?.returnData?.find((i: any) => {
-              return i?.productId === productDetails?._id;
-            });
-            if (data) {
-              returnStatement = true;
+          if (res?.status === 200) {
+            if (res?.data?.returnData) {
+              if (getSessionObjectData(storageConfig?.wishlist) === null) {
+                setSessionObjectData(
+                  storageConfig?.wishlist,
+                  res?.data?.returnData
+                );
+              }
+              let data = res?.data?.returnData?.find((i: any) => {
+                return i?.productId === productDetails?._id;
+              });
+              if (data) {
+                returnStatement = true;
+              } else {
+                returnStatement = false;
+              }
             } else {
               returnStatement = false;
             }
           } else {
-            returnStatement = false;
+            toast.error(`Error: ${res?.status}`);
+            returnStatement = undefined;
           }
           return returnStatement;
         } else {
@@ -65,7 +72,7 @@ const Products = (props: ProductProps) => {
       });
       return data;
     } else {
-      return undefined;
+      return false;
     }
   };
   const {
@@ -76,7 +83,7 @@ const Products = (props: ProductProps) => {
     `${processIDs?.get_wishlist}${productDetails?._id}`,
     wishlistFetcher
   );
-  const [fav, setFav] = useState(favourite);
+  const [fav, setFav] = useState<any>();
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
     weight: productDetails?.minWeight,
@@ -287,26 +294,36 @@ const Products = (props: ProductProps) => {
         callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
+          // @ts-ignore
         }).then((res: responseType) => {
-          if (res?.data?.returnCode) {
-            setFav(false);
-            setSessionObjectData(
-              storageConfig?.wishlist,
-              res?.data?.returnData
-            );
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setFav(false);
+              setSessionObjectData(
+                storageConfig?.wishlist,
+                res?.data?.returnData
+              );
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
         });
       } else {
         callApi(processIDs?.add_item_to_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
+          // @ts-ignore
         }).then((res: responseType) => {
-          if (res?.data?.returnCode) {
-            setFav(true);
-            setSessionObjectData(
-              storageConfig?.wishlist,
-              res?.data?.returnData
-            );
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setFav(true);
+              setSessionObjectData(
+                storageConfig?.wishlist,
+                res?.data?.returnData
+              );
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
         });
       }
@@ -351,21 +368,26 @@ const Products = (props: ProductProps) => {
           checkOutDetails?.additionalValueFlavour +
           checkOutDetails?.subTotal,
       };
+      // @ts-ignore
       callApi(processIDs?.add_item_to_cart, body).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setLoader((prev: any) => {
-            return { ...prev, cart: false };
-          });
-          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-          messageService?.sendMessage(
-            "product-page",
-            // @ts-ignore
-            {
-              action: "refresh-count",
-              params: res?.data?.returnData?.length,
-            },
-            "cart-icon"
-          );
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setLoader((prev: any) => {
+              return { ...prev, cart: false };
+            });
+            setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+            messageService?.sendMessage(
+              "product-page",
+              // @ts-ignore
+              {
+                action: "refresh-count",
+                params: res?.data?.returnData?.length,
+              },
+              "cart-icon"
+            );
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
         }
       });
     }
@@ -432,7 +454,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {isLoading ? (
+        {isLoading || fav === undefined ? (
           <div className="fav-loader">
             <Loading className="spinner" />
           </div>

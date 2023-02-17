@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
 import { labelConfig, storageConfig } from "../../../config/siteConfig";
 import { messageType, responseType } from "../../../typings";
 import { messageService } from "../../Functions/messageService";
 import { callApi, getSessionObjectData } from "../../Functions/util";
+import Loading from "../Loading";
 
 export type CartIconProps = {
   fill: string;
@@ -17,15 +19,21 @@ const CartIcon = (props: CartIconProps) => {
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_cart, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        if (res?.data?.returnData) {
-          return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          if (res?.data?.returnData) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
         } else {
           return [];
         }
       } else {
-        return [];
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
       }
     });
     return data;
@@ -35,7 +43,7 @@ const CartIcon = (props: CartIconProps) => {
     isLoading,
     error,
   } = useSwr(`${processIDs?.get_cart}`, dataFetcher);
-  const [cartCount, setCartCount] = useState(cartData?.length);
+  const [cartCount, setCartCount] = useState<any>();
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.cart)) {
       setCartCount(getSessionObjectData(storageConfig?.cart)?.length);
@@ -77,6 +85,20 @@ const CartIcon = (props: CartIconProps) => {
         />
       </svg>
       <div style={{ color: textColor }}>{labelConfig?.cart_label}</div>
+      {isLoading ||
+        (cartCount === undefined && (
+          <div
+            style={{
+              position: "absolute",
+              top: "-0.8rem",
+              right: "-0.5rem",
+              height: "1rem",
+              width: "1rem",
+            }}
+          >
+            <Loading className="spinner" />
+          </div>
+        ))}
       {cartCount !== 0 && (
         <div
           style={{

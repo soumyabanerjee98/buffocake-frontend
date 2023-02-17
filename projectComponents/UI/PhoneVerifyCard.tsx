@@ -12,6 +12,7 @@ import {
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import { storageConfig } from "../../config/siteConfig";
+import { toast } from "react-toastify";
 
 const PhoneVerifyCard = () => {
   const [verifyStep, setVerifyStep] = useState(1);
@@ -120,30 +121,60 @@ const PhoneVerifyCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          callApi(processIDs?.phone_verify, {
-            phone: formData?.phoneNumber,
-          }).then((res: responseType) => {
-            if (res?.data?.returnCode) {
-              setLoading((prev: any) => {
-                return { ...prev, otpSend: false };
-              });
-              setVerifyStep(2);
-            } else {
-              setLoading((prev: any) => {
-                return { ...prev, otpSend: false };
-              });
-              setError((prev: any) => {
-                return {
-                  ...prev,
-                  globalError: true,
-                  globalErrorText: res?.data?.msg,
-                };
-              });
-            }
-          });
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            callApi(processIDs?.phone_verify, {
+              phone: formData?.phoneNumber,
+              // @ts-ignore
+            }).then((res: responseType) => {
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  setLoading((prev: any) => {
+                    return { ...prev, otpSend: false };
+                  });
+                  setVerifyStep(2);
+                } else {
+                  setLoading((prev: any) => {
+                    return { ...prev, otpSend: false };
+                  });
+                  setError((prev: any) => {
+                    return {
+                      ...prev,
+                      globalError: true,
+                      globalErrorText: res?.data?.msg,
+                    };
+                  });
+                }
+              } else {
+                toast.error(`Error: ${res?.status}`);
+                setLoading((prev: any) => {
+                  return { ...prev, otpSend: false };
+                });
+                setError((prev: any) => {
+                  return {
+                    ...prev,
+                    globalError: true,
+                    globalErrorText: res?.data?.msg,
+                  };
+                });
+              }
+            });
+          } else {
+            setLoading((prev: any) => {
+              return { ...prev, otpSend: false };
+            });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                globalError: true,
+                globalErrorText: res?.data?.msg,
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
           });
@@ -183,12 +214,26 @@ const PhoneVerifyCard = () => {
       callApi(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, otpVeri: false };
-          });
-          verifySuccess();
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setLoading((prev: any) => {
+              return { ...prev, otpVeri: false };
+            });
+            verifySuccess();
+          } else {
+            setLoading((prev: any) => {
+              return { ...prev, otpVeri: false };
+            });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                globalError: true,
+                globalErrorText: res?.data?.msg,
+              };
+            });
+          }
         } else {
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
@@ -200,6 +245,7 @@ const PhoneVerifyCard = () => {
               globalErrorText: res?.data?.msg,
             };
           });
+          toast.error(`Error: ${res?.status}`);
         }
       });
     }
@@ -210,19 +256,34 @@ const PhoneVerifyCard = () => {
     });
     callApi(processIDs?.phone_verify, {
       phone: formData?.phoneNumber,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        setLoading((prev: any) => {
-          return { ...prev, resendOtp: false };
-        });
-        setResendOtp((prev: any) => {
-          return {
-            ...prev,
-            state: false,
-          };
-        });
-        startTimer();
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          setLoading((prev: any) => {
+            return { ...prev, resendOtp: false };
+          });
+          setResendOtp((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+            };
+          });
+          startTimer();
+        } else {
+          setLoading((prev: any) => {
+            return { ...prev, resendOtp: false };
+          });
+          setError((prev: any) => {
+            return {
+              ...prev,
+              globalError: true,
+              globalErrorText: res?.data?.msg,
+            };
+          });
+        }
       } else {
+        toast.error(`Error: ${res?.status}`);
         setLoading((prev: any) => {
           return { ...prev, resendOtp: false };
         });

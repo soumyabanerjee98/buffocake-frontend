@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import useSwr from "swr";
 import { processIDs } from "../../config/processID";
 import { paytmConfig, storageConfig } from "../../config/siteConfig";
@@ -27,15 +28,21 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     } else {
       let data = await callApi(processIDs?.get_address, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          if (res?.data?.returnData) {
-            return res?.data?.returnData;
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              return res?.data?.returnData;
+            } else {
+              return [];
+            }
           } else {
             return [];
           }
         } else {
-          return [];
+          toast.error(`Error: ${res?.status}`);
+          return undefined;
         }
       });
       return data;
@@ -46,7 +53,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     error,
     isLoading,
   } = useSwr(processIDs?.get_address, dataFetcher);
-  const [address, setAddress] = useState(addressData);
+  const [address, setAddress] = useState<any>();
   const [grandTotal, setGrandTotal] = useState<any>(null);
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.address)) {
@@ -91,6 +98,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
             <div
               className={`details ${address?.length === 0 ? "no-address" : ""}`}
             >
+              {(isLoading || address === undefined) && <>Loading...</>}
               {address?.length === 0 && (
                 <div
                   style={{

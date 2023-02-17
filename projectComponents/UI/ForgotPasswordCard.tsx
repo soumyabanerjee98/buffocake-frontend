@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
@@ -73,36 +74,49 @@ const ForgotPasswordCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (!res?.data?.returnCode) {
-          callApi(processIDs?.phone_verify, {
-            phone: formData?.phoneNumber,
-          }).then((res: responseType) => {
+        if (res?.status === 200) {
+          if (!res?.data?.returnCode) {
+            callApi(processIDs?.phone_verify, {
+              phone: formData?.phoneNumber,
+              // @ts-ignore
+            }).then((res: responseType) => {
+              setLoading((prev: any) => {
+                return { ...prev, otpSend: false };
+              });
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  setSteps(2);
+                } else {
+                  setError((prev: any) => {
+                    return {
+                      ...prev,
+                      globalError: true,
+                      globalErrorText: res?.data?.msg,
+                    };
+                  });
+                }
+              } else {
+                toast.error(`Error: ${res?.status}`);
+              }
+            });
+          } else {
             setLoading((prev: any) => {
               return { ...prev, otpSend: false };
             });
-            if (res?.data?.returnCode) {
-              setSteps(2);
-            } else {
-              setError((prev: any) => {
-                return {
-                  ...prev,
-                  globalError: true,
-                  globalErrorText: res?.data?.msg,
-                };
-              });
-            }
-          });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                globalError: true,
+                globalErrorText: "User not found!",
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: "User not found!",
-            };
           });
         }
       });
@@ -133,13 +147,28 @@ const ForgotPasswordCard = () => {
       callApi(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, otpVeri: false };
-          });
-          setSteps(3);
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setLoading((prev: any) => {
+              return { ...prev, otpVeri: false };
+            });
+            setSteps(3);
+          } else {
+            setLoading((prev: any) => {
+              return { ...prev, otpVeri: false };
+            });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                otp: true,
+                otpText: res?.data?.msg,
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
           });
@@ -195,12 +224,17 @@ const ForgotPasswordCard = () => {
       callApi(processIDs?.forgot_password, {
         phoneNumber: formData?.phoneNumber,
         newPass: md5(formData?.confPassword),
+        // @ts-ignore
       }).then((res: responseType) => {
         setLoading((prev: any) => {
           return { ...prev, changePass: false };
         });
-        if (res?.data?.returnCode) {
-          closePopUp();
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            closePopUp();
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
         }
       });
     }
@@ -238,19 +272,34 @@ const ForgotPasswordCard = () => {
     });
     callApi(processIDs?.phone_verify, {
       phone: formData?.phoneNumber,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        setLoading((prev: any) => {
-          return { ...prev, resendOtp: false };
-        });
-        setResendOtp((prev: any) => {
-          return {
-            ...prev,
-            state: false,
-          };
-        });
-        startTimer();
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          setLoading((prev: any) => {
+            return { ...prev, resendOtp: false };
+          });
+          setResendOtp((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+            };
+          });
+          startTimer();
+        } else {
+          setLoading((prev: any) => {
+            return { ...prev, resendOtp: false };
+          });
+          setError((prev: any) => {
+            return {
+              ...prev,
+              globalError: true,
+              globalErrorText: res?.data?.msg,
+            };
+          });
+        }
       } else {
+        toast.error(`Error: ${res?.status}`);
         setLoading((prev: any) => {
           return { ...prev, resendOtp: false };
         });

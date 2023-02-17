@@ -15,6 +15,7 @@ import {
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
+import { toast } from "react-toastify";
 
 export type CartCardProps = {
   cart: any;
@@ -33,20 +34,25 @@ const CartCard = (props: CartCardProps) => {
     callApi(processIDs?.remove_item_from_cart, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       cartId: id,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        setLoading(false);
-        setCart(res?.data?.returnData);
-        setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-        messageService?.sendMessage(
-          "cart-page",
-          // @ts-ignore
-          {
-            action: "refresh-count",
-            params: res?.data?.returnData?.length,
-          },
-          "cart-icon"
-        );
+      setLoading(false);
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          setCart(res?.data?.returnData);
+          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+          messageService?.sendMessage(
+            "cart-page",
+            // @ts-ignore
+            {
+              action: "refresh-count",
+              params: res?.data?.returnData?.length,
+            },
+            "cart-icon"
+          );
+        }
+      } else {
+        toast.error(`Error: ${res?.status}`);
       }
     });
   };

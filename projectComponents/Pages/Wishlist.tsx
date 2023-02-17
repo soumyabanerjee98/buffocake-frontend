@@ -12,25 +12,28 @@ import Broken from "../Assets/Images/broken.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import WishlistCard from "../UI/WishlistCard";
+import { toast } from "react-toastify";
 
 const Wishlist = () => {
   const router = useRouter();
-  const url =
-    process?.env?.NODE_ENV === "development"
-      ? serverConfig?.backend_url_test
-      : serverConfig?.backend_url_server;
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_wishlist, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        if (res?.data?.returnData) {
-          return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          if (res?.data?.returnData) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
         } else {
           return [];
         }
       } else {
-        return [];
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
       }
     });
     return data;
@@ -40,7 +43,7 @@ const Wishlist = () => {
     isLoading,
     error,
   } = useSwr(`${processIDs?.get_wishlist}`, dataFetcher);
-  const [wishList, setWishList] = useState(wishlist);
+  const [wishList, setWishList] = useState<any>();
 
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.wishlist)) {
@@ -53,7 +56,7 @@ const Wishlist = () => {
     }
   }, [wishlist]);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading || wishList === undefined) return <>Loading...</>;
   if (wishList?.length === 0) {
     return (
       <div className="no-wishlist">

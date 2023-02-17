@@ -32,6 +32,7 @@ import PhoneVerifyCard from "./PhoneVerifyCard";
 import FavIcon from "./Icons/FavIcon";
 import OrderIcon from "./Icons/OrderIcon";
 import CheckoutCard from "./CheckoutCard";
+import { toast } from "react-toastify";
 
 const dataFetcher = async () => {
   if (getSessionObjectData(storageConfig?.userProfile)) {
@@ -40,16 +41,22 @@ const dataFetcher = async () => {
     if (getLocalStringData(storageConfig?.jwtToken)) {
       let data = await callApi(processIDs?.verify_login_token, {
         token: getLocalStringData(storageConfig?.jwtToken),
+        // @ts-ignore
       }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          setSessionObjectData(
-            storageConfig?.userProfile,
-            res?.data?.returnData
-          );
-          return res?.data?.returnData;
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setSessionObjectData(
+              storageConfig?.userProfile,
+              res?.data?.returnData
+            );
+            return res?.data?.returnData;
+          } else {
+            removeLocalData(storageConfig?.jwtToken);
+            return null;
+          }
         } else {
-          removeLocalData(storageConfig?.jwtToken);
-          return null;
+          toast.error(`Error: ${res?.status}`);
+          return undefined;
         }
       });
       return data;

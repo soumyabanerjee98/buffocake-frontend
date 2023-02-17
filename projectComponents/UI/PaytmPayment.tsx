@@ -14,6 +14,7 @@ import {
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
 import { responseType } from "../../typings";
+import { toast } from "react-toastify";
 
 export type PaytmPaymentProps = {
   MID: string;
@@ -39,55 +40,65 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         value: Total,
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       })
+        // @ts-ignore
         .then((res: responseType) => {
-          let config = {
-            root: "",
-            flow: "DEFAULT",
-            data: {
-              orderId: oid,
-              token: res?.data?.returnData?.txnToken,
-              tokenType: "TXN_TOKEN",
-              amount: Total,
-            },
-            merchant: {
-              redirect: false,
-            },
-            handler: {
-              notifyMerchant: function (eventType: any, data: any) {
+          if (res?.status === 200) {
+            let config = {
+              root: "",
+              flow: "DEFAULT",
+              data: {
+                orderId: oid,
+                token: res?.data?.returnData?.txnToken,
+                tokenType: "TXN_TOKEN",
+                amount: Total,
+              },
+              merchant: {
+                redirect: false,
+              },
+              handler: {
+                notifyMerchant: function (eventType: any, data: any) {
+                  setLoading(false);
+                  console.log("eventType => ", eventType);
+                  console.log("data => ", data);
+                },
+                transactionStatus: function (data: any) {
+                  callApi(processIDs?.paytm_transaction_verify, {
+                    mid: MID,
+                    oid: oid,
+                    mkey: MKEY,
+                    // @ts-ignore
+                  }).then((res: responseType) => {
+                    if (res?.status === 200) {
+                      if (res?.data?.returnCode) {
+                        document.getElementById("app-close-btn")?.click();
+                        //  TXN_SUCCESS, TXN_FAILURE, PENDING
+                        console.log(
+                          "payment status ",
+                          res?.data?.returnData?.resultInfo?.resultStatus
+                        );
+                      }
+                    } else {
+                      toast.error(`Error: ${res?.status}`);
+                    }
+                  });
+                },
+              },
+            };
+            (window as any).Paytm.CheckoutJS.init(config)
+              .then(function onSuccess() {
+                (window as any).Paytm.CheckoutJS.invoke();
+              })
+              .catch(function onError(error: any) {
                 setLoading(false);
-                console.log("eventType => ", eventType);
-                console.log("data => ", data);
-              },
-              transactionStatus: function (data: any) {
-                callApi(processIDs?.paytm_transaction_verify, {
-                  mid: MID,
-                  oid: oid,
-                  mkey: MKEY,
-                }).then((res: responseType) => {
-                  if (res?.data?.returnCode) {
-                    document.getElementById("app-close-btn")?.click();
-                    //  TXN_SUCCESS, TXN_FAILURE, PENDING
-                    console.log(
-                      "payment status ",
-                      res?.data?.returnData?.resultInfo?.resultStatus
-                    );
-                  }
-                });
-              },
-            },
-          };
-          (window as any).Paytm.CheckoutJS.init(config)
-            .then(function onSuccess() {
-              (window as any).Paytm.CheckoutJS.invoke();
-            })
-            .catch(function onError(error: any) {
-              setLoading(false);
-              console.log("error => ", error);
-            });
+                console.log("error => ", error);
+              });
+          } else {
+            setLoading(false);
+            toast.error(`Error: ${res?.status}`);
+          }
         })
         .catch((err: any) => {
           setLoading(false);
-          console.log(err);
         });
     } catch (error) {
       setLoading(false);

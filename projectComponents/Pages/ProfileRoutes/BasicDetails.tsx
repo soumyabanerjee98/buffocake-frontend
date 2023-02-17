@@ -20,6 +20,7 @@ import {
   setSessionObjectData,
 } from "../../Functions/util";
 import Loading from "../../UI/Loading";
+import { toast } from "react-toastify";
 export type BasicDetailsProps = {
   profile: any;
 };
@@ -34,15 +35,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_address, {
       userId: profile?.id,
+      // @ts-ignore
     }).then((res: responseType) => {
-      if (res?.data?.returnCode) {
-        if (res?.data?.returnData) {
-          return res?.data?.returnData;
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          if (res?.data?.returnData) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
         } else {
           return [];
         }
       } else {
-        return [];
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
       }
     });
     return data;
@@ -70,7 +77,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
     email: profile?.email,
     phoneNumber: profile?.phoneNumber,
   });
-  const [address, setAddress] = useState(addressData);
+  const [address, setAddress] = useState<any>();
   const cancelProfileEdit = () => {
     setLoading(false);
     setEditState(false);
@@ -133,66 +140,103 @@ const BasicDetails = (props: BasicDetailsProps) => {
         if (profile?.profilePhoto) {
           callApi(processIDs?.delete_photo, {
             mediaPath: profile?.profilePhoto,
+            // @ts-ignore
           }).then((res: responseType) => {
-            if (res?.data?.returnCode) {
-              // @ts-ignore
-              uploadImage(image?.image).then((res: responseType) => {
-                callApi(processIDs?.update_user, {
-                  id: getSessionObjectData(storageConfig?.userProfile)?.id,
-                  firstName: profileData?.firstName,
-                  lastName: profileData?.lastName,
-                  phoneNumber: profileData?.phoneNumber,
-                  email: profileData?.email,
-                  profilePhoto: res?.data?.returnData[0]?.path,
-                }).then((res: responseType) => {
-                  if (res?.data?.returnCode) {
-                    refreshUser(res?.data?.returnData?.profile);
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                // @ts-ignore
+                uploadImage(image?.image).then((res: responseType) => {
+                  if (res?.status === 200) {
+                    callApi(processIDs?.update_user, {
+                      id: getSessionObjectData(storageConfig?.userProfile)?.id,
+                      firstName: profileData?.firstName,
+                      lastName: profileData?.lastName,
+                      phoneNumber: profileData?.phoneNumber,
+                      email: profileData?.email,
+                      profilePhoto: res?.data?.returnData[0]?.path,
+                      // @ts-ignore
+                    }).then((res: responseType) => {
+                      if (res?.status === 200) {
+                        if (res?.data?.returnCode) {
+                          refreshUser(res?.data?.returnData?.profile);
+                        }
+                      } else {
+                        toast.error(`Error: ${res?.status}`);
+                      }
+                      setLoading(false);
+                    });
+                  } else {
+                    setLoading(false);
+                    toast.error(`Error: ${res?.status}`);
                   }
-                  setLoading(false);
                 });
-              });
+              } else {
+                setLoading(false);
+              }
             } else {
               setLoading(false);
+              toast.error(`Error: ${res?.status}`);
             }
           });
         } else {
           // @ts-ignore
           uploadImage(image?.image).then((res: responseType) => {
-            callApi(processIDs?.update_user, {
-              id: getSessionObjectData(storageConfig?.userProfile)?.id,
-              firstName: profileData?.firstName,
-              lastName: profileData?.lastName,
-              phoneNumber: profileData?.phoneNumber,
-              email: profileData?.email,
-              profilePhoto: res?.data?.returnData[0]?.path,
-            }).then((res: responseType) => {
-              if (res?.data?.returnCode) {
-                refreshUser(res?.data?.returnData?.profile);
-              }
+            if (res?.status === 200) {
+              callApi(processIDs?.update_user, {
+                id: getSessionObjectData(storageConfig?.userProfile)?.id,
+                firstName: profileData?.firstName,
+                lastName: profileData?.lastName,
+                phoneNumber: profileData?.phoneNumber,
+                email: profileData?.email,
+                profilePhoto: res?.data?.returnData[0]?.path,
+                // @ts-ignore
+              }).then((res: responseType) => {
+                if (res?.status === 200) {
+                  if (res?.data?.returnCode) {
+                    refreshUser(res?.data?.returnData?.profile);
+                  }
+                } else {
+                  toast.error(`Error: ${res?.status}`);
+                }
+                setLoading(false);
+              });
+            } else {
               setLoading(false);
-            });
+              toast.error(`Error: ${res?.status}`);
+            }
           });
         }
       } else if (image?.deleted) {
         callApi(processIDs?.delete_photo, {
           mediaPath: profile?.profilePhoto,
+          // @ts-ignore
         }).then((res: responseType) => {
-          if (res?.data?.returnCode) {
-            callApi(processIDs?.update_user, {
-              id: getSessionObjectData(storageConfig?.userProfile)?.id,
-              firstName: profileData?.firstName,
-              lastName: profileData?.lastName,
-              phoneNumber: profileData?.phoneNumber,
-              email: profileData?.email,
-              profilePhoto: null,
-            }).then((res: responseType) => {
-              if (res?.data?.returnCode) {
-                refreshUser(res?.data?.returnData?.profile);
-              }
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              callApi(processIDs?.update_user, {
+                id: getSessionObjectData(storageConfig?.userProfile)?.id,
+                firstName: profileData?.firstName,
+                lastName: profileData?.lastName,
+                phoneNumber: profileData?.phoneNumber,
+                email: profileData?.email,
+                profilePhoto: null,
+                // @ts-ignore
+              }).then((res: responseType) => {
+                if (res?.status === 200) {
+                  if (res?.data?.returnCode) {
+                    refreshUser(res?.data?.returnData?.profile);
+                  }
+                } else {
+                  toast.error(`Error: ${res?.status}`);
+                }
+                setLoading(false);
+              });
+            } else {
               setLoading(false);
-            });
+            }
           } else {
             setLoading(false);
+            toast.error(`Error: ${res?.status}`);
           }
         });
       } else {
@@ -203,9 +247,14 @@ const BasicDetails = (props: BasicDetailsProps) => {
           phoneNumber: profileData?.phoneNumber,
           email: profileData?.email,
           profilePhoto: profile?.profilePhoto,
+          // @ts-ignore
         }).then((res: responseType) => {
-          if (res?.data?.returnCode) {
-            refreshUser(res?.data?.returnData?.profile);
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              refreshUser(res?.data?.returnData?.profile);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
           setLoading(false);
         });
@@ -457,6 +506,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
       </div>
       <div className="header secondary">Address</div>
       <div className="section-general-address">
+        {isLoading || (address === undefined && <>Loading...</>)}
         {address?.length <= 5 && (
           <div className="add-address">
             <button type="button" className="add-address-button">

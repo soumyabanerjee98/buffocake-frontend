@@ -10,6 +10,7 @@ import Head from "next/head";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import Wishlist from "../../projectComponents/Pages/Wishlist";
+import { toast } from "react-toastify";
 
 const WishlistPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -21,16 +22,21 @@ const WishlistPage = () => {
         new Promise((resolve, reject) => {
           callApi(processIDs?.verify_login_token, {
             token: getLocalStringData(storageConfig?.jwtToken),
+            // @ts-ignore
           }).then((res: responseType) => {
-            if (res?.data?.returnCode) {
-              resolve(res?.data?.returnData);
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                resolve(res?.data?.returnData);
+              } else {
+                resolve(null);
+              }
             } else {
-              resolve(null);
+              toast.error(`Error: ${res?.status}`);
+              resolve(undefined);
             }
           });
         });
       let data = await dataFetcher();
-      console.log(data);
       setAuth(data);
     } else {
       setAuth(null);
