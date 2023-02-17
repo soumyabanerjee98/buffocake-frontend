@@ -30,7 +30,7 @@ export const callApi = async (processid: string, datajson: object) => {
       headers: {
         "Content-Type": "application/json",
       },
-      timeout: 5000,
+      timeout: serverConfig?.request_timeout,
     });
   } catch (error) {
     console.log(error);
@@ -52,7 +52,7 @@ export const uploadImage = async (filesArr: any) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 5000,
+        timeout: serverConfig?.request_timeout,
       });
     }
   } catch (error) {
