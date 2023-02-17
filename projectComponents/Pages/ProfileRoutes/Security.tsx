@@ -77,33 +77,30 @@ const Security = () => {
         id: getSessionObjectData(storageConfig?.userProfile)?.id,
         oldPass: md5(passwordDetails?.oldPass),
         newPass: md5(passwordDetails?.newPass),
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            cancelChangePassword();
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              cancelChangePassword();
+            } else {
+              setLoadingSecurity(false);
+              setErrorSecurity((prev: any) => {
+                return {
+                  ...prev,
+                  oldPass: true,
+                  oldPassText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoadingSecurity(false);
-            setErrorSecurity((prev: any) => {
-              return {
-                ...prev,
-                oldPass: true,
-                oldPassText: res?.data?.msg,
-              };
-            });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoadingSecurity(false);
-          setErrorSecurity((prev: any) => {
-            return {
-              ...prev,
-              oldPass: true,
-              oldPassText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     }
   };
 
@@ -233,7 +230,11 @@ const Security = () => {
               >
                 Cancel
               </button>
-              <button type="submit" className="change-password-button">
+              <button
+                type="submit"
+                className="change-password-button"
+                disabled={loadingSecurity}
+              >
                 {loadingSecurity ? (
                   <Loading className="dot-flashing" />
                 ) : (

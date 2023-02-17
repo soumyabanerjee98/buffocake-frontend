@@ -38,38 +38,42 @@ const Products = (props: ProductProps) => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
       let data = await callApi(processIDs?.get_wishlist, {
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.data?.returnCode) {
-          let returnStatement;
-          if (res?.status === 200) {
-            if (res?.data?.returnData) {
-              if (getSessionObjectData(storageConfig?.wishlist) === null) {
-                setSessionObjectData(
-                  storageConfig?.wishlist,
-                  res?.data?.returnData
-                );
-              }
-              let data = res?.data?.returnData?.find((i: any) => {
-                return i?.productId === productDetails?._id;
-              });
-              if (data) {
-                returnStatement = true;
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.data?.returnCode) {
+            let returnStatement;
+            if (res?.status === 200) {
+              if (res?.data?.returnData) {
+                if (getSessionObjectData(storageConfig?.wishlist) === null) {
+                  setSessionObjectData(
+                    storageConfig?.wishlist,
+                    res?.data?.returnData
+                  );
+                }
+                let data = res?.data?.returnData?.find((i: any) => {
+                  return i?.productId === productDetails?._id;
+                });
+                if (data) {
+                  returnStatement = true;
+                } else {
+                  returnStatement = false;
+                }
               } else {
                 returnStatement = false;
               }
             } else {
-              returnStatement = false;
+              toast.error(`Error: ${res?.status}`);
+              returnStatement = undefined;
             }
+            return returnStatement;
           } else {
-            toast.error(`Error: ${res?.status}`);
-            returnStatement = undefined;
+            return false;
           }
-          return returnStatement;
-        } else {
-          return false;
-        }
-      });
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          return undefined;
+        });
       return data;
     } else {
       return false;
@@ -298,44 +302,50 @@ const Products = (props: ProductProps) => {
         callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
-          // @ts-ignore
-        }).then((res: responseType) => {
-          setLoader((prev: any) => {
-            return { ...prev, fav: false };
-          });
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              setFav(false);
-              setSessionObjectData(
-                storageConfig?.wishlist,
-                res?.data?.returnData
-              );
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            setLoader((prev: any) => {
+              return { ...prev, fav: false };
+            });
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                setFav(false);
+                setSessionObjectData(
+                  storageConfig?.wishlist,
+                  res?.data?.returnData
+                );
+              }
+            } else {
+              toast.error(`Error: ${res?.status}`);
             }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-          }
-        });
+          })
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+          });
       } else {
         callApi(processIDs?.add_item_to_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
-          // @ts-ignore
-        }).then((res: responseType) => {
-          setLoader((prev: any) => {
-            return { ...prev, fav: false };
-          });
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              setFav(true);
-              setSessionObjectData(
-                storageConfig?.wishlist,
-                res?.data?.returnData
-              );
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            setLoader((prev: any) => {
+              return { ...prev, fav: false };
+            });
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                setFav(true);
+                setSessionObjectData(
+                  storageConfig?.wishlist,
+                  res?.data?.returnData
+                );
+              }
+            } else {
+              toast.error(`Error: ${res?.status}`);
             }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-          }
-        });
+          })
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+          });
       }
     } else {
       loginCardOpen();
@@ -378,28 +388,36 @@ const Products = (props: ProductProps) => {
           checkOutDetails?.additionalValueFlavour +
           checkOutDetails?.subTotal,
       };
-      // @ts-ignore
-      callApi(processIDs?.add_item_to_cart, body).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setLoader((prev: any) => {
-              return { ...prev, cart: false };
-            });
-            setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-            messageService?.sendMessage(
-              "product-page",
-              // @ts-ignore
-              {
-                action: "refresh-count",
-                params: res?.data?.returnData?.length,
-              },
-              "cart-icon"
-            );
+
+      callApi(processIDs?.add_item_to_cart, body)
+        // @ts-ignore
+        .then((res: responseType) => {
+          setLoader((prev: any) => {
+            return { ...prev, cart: false };
+          });
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+              messageService?.sendMessage(
+                "product-page",
+                // @ts-ignore
+                {
+                  action: "refresh-count",
+                  params: res?.data?.returnData?.length,
+                },
+                "cart-icon"
+              );
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-        }
-      });
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setLoader((prev: any) => {
+            return { ...prev, cart: false };
+          });
+        });
     }
   };
 
@@ -705,6 +723,7 @@ const Products = (props: ProductProps) => {
             className="action-button add-cart"
             type="button"
             onClick={addToCart}
+            disabled={loader?.cart}
           >
             {loader?.cart ? (
               <Loading className="dot-flashing" />
@@ -716,6 +735,7 @@ const Products = (props: ProductProps) => {
             className="action-button buy-now"
             type="button"
             onClick={placeOrder}
+            disabled={loader?.buy}
           >
             {loader?.buy ? (
               <Loading className="dot-flashing" />

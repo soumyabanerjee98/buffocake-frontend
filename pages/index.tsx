@@ -20,21 +20,26 @@ const HomePage = (props: any) => {
   );
 };
 export async function getStaticProps() {
-  let data = await callApi(processIDs?.get_all_products, {}).then(
-    // @ts-ignore
-    (res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          return res?.data?.returnData;
+  let data = await callApi(processIDs?.get_all_products, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            return null;
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           return null;
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
-        return null;
       }
-    }
-  );
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return null;
+    });
   return {
     props: {
       allProducts: data,

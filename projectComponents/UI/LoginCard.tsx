@@ -88,55 +88,54 @@ const LoginCard = () => {
       gSignOut();
       callApi(processIDs?.user_login_with_email, {
         email: res?.user?.email,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setSessionObjectData(
-              storageConfig?.userProfile,
-              res?.data?.returnData?.profileData
-            );
-            setLocalStringData(
-              storageConfig?.jwtToken,
-              res?.data?.returnData?.accessToken
-            );
-            messageService?.sendMessage(
-              "login-card",
-              // @ts-ignore
-              { action: "refresh-profile" },
-              "header"
-            );
-            setLoading((prev: any) => {
-              return { ...prev, loginMail: false };
-            });
-            router.push("/");
-            closePopUp();
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setSessionObjectData(
+                storageConfig?.userProfile,
+                res?.data?.returnData?.profileData
+              );
+              setLocalStringData(
+                storageConfig?.jwtToken,
+                res?.data?.returnData?.accessToken
+              );
+              messageService?.sendMessage(
+                "login-card",
+                // @ts-ignore
+                { action: "refresh-profile" },
+                "header"
+              );
+              setLoading((prev: any) => {
+                return { ...prev, loginMail: false };
+              });
+              router.push("/");
+              closePopUp();
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, loginMail: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, loginMail: false };
-            });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
             });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, loginMail: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     });
   };
   const LoginUser = (e: any) => {
@@ -179,55 +178,54 @@ const LoginCard = () => {
       callApi(processIDs?.user_login_with_phone, {
         phone: formData?.phoneNumber,
         password: md5(formData?.password),
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setLocalStringData(
-              storageConfig?.jwtToken,
-              res?.data?.returnData?.accessToken
-            );
-            setSessionObjectData(
-              storageConfig?.userProfile,
-              res?.data?.returnData?.profileData
-            );
-            messageService?.sendMessage(
-              "login-card",
-              // @ts-ignore
-              { action: "refresh-profile" },
-              "header"
-            );
-            setLoading((prev: any) => {
-              return { ...prev, loginPhone: false };
-            });
-            router.push("/");
-            closePopUp();
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setLocalStringData(
+                storageConfig?.jwtToken,
+                res?.data?.returnData?.accessToken
+              );
+              setSessionObjectData(
+                storageConfig?.userProfile,
+                res?.data?.returnData?.profileData
+              );
+              messageService?.sendMessage(
+                "login-card",
+                // @ts-ignore
+                { action: "refresh-profile" },
+                "header"
+              );
+              setLoading((prev: any) => {
+                return { ...prev, loginPhone: false };
+              });
+              router.push("/");
+              closePopUp();
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, loginPhone: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, loginPhone: false };
-            });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
             });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, loginPhone: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     }
   };
   const SignupUser = (e: any) => {
@@ -279,49 +277,54 @@ const LoginCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            callApi(processIDs?.phone_verify, {
-              phone: formData?.phoneNumber,
-              // @ts-ignore
-            }).then((res: responseType) => {
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              callApi(processIDs?.phone_verify, {
+                phone: formData?.phoneNumber,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  setLoading((prev: any) => {
+                    return { ...prev, signupPhone: false };
+                  });
+                  if (res?.status === 200) {
+                    setSignUpStep(3);
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err: any) => {
+                  setLoading((prev: any) => {
+                    return { ...prev, signupPhone: false };
+                  });
+                  toast.error(`Error: ${err?.message}`);
+                });
+            } else {
               setLoading((prev: any) => {
                 return { ...prev, signupPhone: false };
               });
-              if (res?.status === 200) {
-                setSignUpStep(3);
-              } else {
-                toast.error(`Error: ${res?.status}`);
-              }
-            });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, signupPhone: false };
             });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
-            });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, signupPhone: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     }
   };
   const signUpWithGoogle = () => {
@@ -337,48 +340,47 @@ const LoginCard = () => {
         firstName: res?.user?.displayName?.split(" ")[0].toString(),
         lastName: res?.user?.displayName?.split(" ")[1].toString(),
         email: res?.user?.email,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setFormData((prev: any) => {
-              return {
-                ...prev,
-                firstName: res?.data?.returnData?.firstName,
-                lastName: res?.data?.returnData?.lastName,
-                email: res?.data?.returnData?.email,
-              };
-            });
-            setLoading((prev: any) => {
-              return { ...prev, signupmMail: false };
-            });
-            setSignUpStep(2);
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setFormData((prev: any) => {
+                return {
+                  ...prev,
+                  firstName: res?.data?.returnData?.firstName,
+                  lastName: res?.data?.returnData?.lastName,
+                  email: res?.data?.returnData?.email,
+                };
+              });
+              setLoading((prev: any) => {
+                return { ...prev, signupmMail: false };
+              });
+              setSignUpStep(2);
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, signupmMail: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, signupmMail: false };
-            });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
             });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, signupmMail: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     });
   };
   const phoneVerify = (e: any) => {
@@ -405,72 +407,70 @@ const LoginCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            callApi(processIDs?.phone_verify, {
-              phone: formData?.phoneNumber,
-              // @ts-ignore
-            }).then((res: responseType) => {
-              if (res?.status === 200) {
-                if (res?.data?.returnCode) {
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              callApi(processIDs?.phone_verify, {
+                phone: formData?.phoneNumber,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    if (res?.data?.returnCode) {
+                      setLoading((prev: any) => {
+                        return { ...prev, otpSend: false };
+                      });
+                      setSignUpStep(3);
+                    } else {
+                      setLoading((prev: any) => {
+                        return { ...prev, otpSend: false };
+                      });
+                      setError((prev: any) => {
+                        return {
+                          ...prev,
+                          globalError: true,
+                          globalErrorText: res?.data?.msg,
+                        };
+                      });
+                    }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                    setLoading((prev: any) => {
+                      return { ...prev, otpSend: false };
+                    });
+                  }
+                })
+                .catch((err: any) => {
+                  toast.error(`Error: ${err?.message}`);
                   setLoading((prev: any) => {
                     return { ...prev, otpSend: false };
                   });
-                  setSignUpStep(3);
-                } else {
-                  setLoading((prev: any) => {
-                    return { ...prev, otpSend: false };
-                  });
-                  setError((prev: any) => {
-                    return {
-                      ...prev,
-                      globalError: true,
-                      globalErrorText: res?.data?.msg,
-                    };
-                  });
-                }
-              } else {
-                toast.error(`Error: ${res?.status}`);
-                setLoading((prev: any) => {
-                  return { ...prev, otpSend: false };
                 });
-                setError((prev: any) => {
-                  return {
-                    ...prev,
-                    globalError: true,
-                    globalErrorText: res?.data?.msg,
-                  };
-                });
-              }
-            });
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, otpSend: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, otpSend: false };
             });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
-            });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     }
   };
   const OTPVerify = (e: any) => {
@@ -498,40 +498,39 @@ const LoginCard = () => {
       callApi(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setLoading((prev: any) => {
-              return { ...prev, otpVeri: false };
-            });
-            setSignUpStep(4);
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setLoading((prev: any) => {
+                return { ...prev, otpVeri: false };
+              });
+              setSignUpStep(4);
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, otpVeri: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, otpVeri: false };
-            });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
             });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
-          });
-        }
-      });
+          toast.error(`Error: ${err?.message}`);
+        });
     }
   };
 
@@ -602,20 +601,13 @@ const LoginCard = () => {
             setLoading((prev: any) => {
               return { ...prev, createAcc: false };
             });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: res?.data?.msg,
-              };
-            });
           }
         })
         .catch((err: any) => {
           setLoading((prev: any) => {
             return { ...prev, createAcc: false };
           });
-          console.log(err);
+          toast.error(`Error: ${err?.message}`);
         });
     }
   };
@@ -626,46 +618,45 @@ const LoginCard = () => {
     });
     callApi(processIDs?.phone_verify, {
       phone: formData?.phoneNumber,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, resendOtp: false };
-          });
-          setResendOtp((prev: any) => {
-            return {
-              ...prev,
-              state: false,
-            };
-          });
-          startTimer();
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setLoading((prev: any) => {
+              return { ...prev, resendOtp: false };
+            });
+            setResendOtp((prev: any) => {
+              return {
+                ...prev,
+                state: false,
+              };
+            });
+            startTimer();
+          } else {
+            setLoading((prev: any) => {
+              return { ...prev, resendOtp: false };
+            });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                globalError: true,
+                globalErrorText: res?.data?.msg,
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoading((prev: any) => {
             return { ...prev, resendOtp: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
           });
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
+      })
+      .catch((err: any) => {
         setLoading((prev: any) => {
           return { ...prev, resendOtp: false };
         });
-        setError((prev: any) => {
-          return {
-            ...prev,
-            globalError: true,
-            globalErrorText: res?.data?.msg,
-          };
-        });
-      }
-    });
+        toast.error(`Error: ${err?.message}`);
+      });
   };
 
   const ForgotPassword = () => {
@@ -819,7 +810,11 @@ const LoginCard = () => {
                 </span>
               </div>
               <div className="form-input">
-                <button type="submit" className="login-button">
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading?.loginPhone}
+                >
                   {loading?.loginPhone ? (
                     <Loading className="dot-flashing" />
                   ) : (
@@ -833,6 +828,7 @@ const LoginCard = () => {
               type="button"
               className="google-button"
               onClick={signInWithGoogle}
+              disabled={loading?.loginMail}
             >
               {loading?.loginMail ? (
                 <Loading className="dot-flashing" />
@@ -970,7 +966,11 @@ const LoginCard = () => {
                     )}
                   </div>
                   <div className="form-input">
-                    <button type="submit" className="login-button">
+                    <button
+                      type="submit"
+                      className="login-button"
+                      disabled={loading?.signupPhone}
+                    >
                       {loading?.signupPhone ? (
                         <Loading className="dot-flashing" />
                       ) : (
@@ -984,6 +984,7 @@ const LoginCard = () => {
                   type="button"
                   className="google-button"
                   onClick={signUpWithGoogle}
+                  disabled={loading?.signupmMail}
                 >
                   {loading?.signupmMail ? (
                     <Loading className="dot-flashing" />
@@ -1040,7 +1041,11 @@ const LoginCard = () => {
                     )}
                   </div>
                   <div className="form-input">
-                    <button type="submit" className="login-button">
+                    <button
+                      type="submit"
+                      className="login-button"
+                      disabled={loading?.otpSend}
+                    >
                       {loading?.otpSend ? (
                         <Loading className="dot-flashing" />
                       ) : (
@@ -1070,7 +1075,11 @@ const LoginCard = () => {
                     )}
                   </div>
                   <div className="form-input">
-                    <button type="submit" className="login-button">
+                    <button
+                      type="submit"
+                      className="login-button"
+                      disabled={loading?.otpVeri}
+                    >
                       {loading?.otpVeri ? (
                         <Loading className="dot-flashing" />
                       ) : (
@@ -1142,7 +1151,11 @@ const LoginCard = () => {
                     />
                   </div>
                   <div className="form-input">
-                    <button type="submit" className="login-button">
+                    <button
+                      type="submit"
+                      className="login-button"
+                      disabled={loading?.createAcc}
+                    >
                       {loading?.createAcc ? (
                         <Loading className="dot-flashing" />
                       ) : (

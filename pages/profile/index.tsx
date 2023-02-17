@@ -24,19 +24,23 @@ const ProfilePage = () => {
         new Promise((resolve, reject) => {
           callApi(processIDs?.verify_login_token, {
             token: getLocalStringData(storageConfig?.jwtToken),
-            // @ts-ignore
-          }).then((res: responseType) => {
-            if (res?.status === 200) {
-              if (res?.data?.returnCode) {
-                resolve(res?.data?.returnData);
+          }) // @ts-ignore
+            .then((res: responseType) => {
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  resolve(res?.data?.returnData);
+                } else {
+                  resolve(null);
+                }
               } else {
-                resolve(null);
+                toast.error(`Error: ${res?.status}`);
+                resolve(undefined);
               }
-            } else {
-              toast.error(`Error: ${res?.status}`);
+            })
+            .catch((err: any) => {
+              toast.error(`Error: ${err?.message}`);
               resolve(undefined);
-            }
-          });
+            });
         });
       let data = await dataFetcher();
       setAuth(data);

@@ -31,18 +31,25 @@ const WishlistCard = (props: WishlistCardProps) => {
     callApi(processIDs?.remove_item_from_wishlist, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       productId: id,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      setLoading(false);
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          setSessionObjectData(storageConfig?.wishlist, res?.data?.returnData);
-          setWishList(res?.data?.returnData);
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        setLoading(false);
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setSessionObjectData(
+              storageConfig?.wishlist,
+              res?.data?.returnData
+            );
+            setWishList(res?.data?.returnData);
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
-      }
-    });
+      })
+      .catch((err: any) => {
+        setLoading(false);
+        toast.error(`Error: ${err?.message}`);
+      });
   };
   return (
     <>
@@ -70,6 +77,7 @@ const WishlistCard = (props: WishlistCardProps) => {
           onClick={() => {
             removeItem(productId);
           }}
+          disabled={loading}
         >
           {loading ? <Loading className="dot-flashing" /> : "Remove"}
         </button>

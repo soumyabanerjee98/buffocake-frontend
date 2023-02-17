@@ -74,52 +74,64 @@ const ForgotPasswordCard = () => {
       });
       callApi(processIDs?.user_phone_check, {
         phoneNumber: formData?.phoneNumber,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (!res?.data?.returnCode) {
-            callApi(processIDs?.phone_verify, {
-              phone: formData?.phoneNumber,
-              // @ts-ignore
-            }).then((res: responseType) => {
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (!res?.data?.returnCode) {
+              callApi(processIDs?.phone_verify, {
+                phone: formData?.phoneNumber,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  setLoading((prev: any) => {
+                    return { ...prev, otpSend: false };
+                  });
+                  if (res?.status === 200) {
+                    if (res?.data?.returnCode) {
+                      setSteps(2);
+                    } else {
+                      setError((prev: any) => {
+                        return {
+                          ...prev,
+                          globalError: true,
+                          globalErrorText: res?.data?.msg,
+                        };
+                      });
+                    }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err: any) => {
+                  setLoading((prev: any) => {
+                    return { ...prev, otpSend: false };
+                  });
+                  toast.error(`Error: ${err?.message}`);
+                });
+            } else {
               setLoading((prev: any) => {
                 return { ...prev, otpSend: false };
               });
-              if (res?.status === 200) {
-                if (res?.data?.returnCode) {
-                  setSteps(2);
-                } else {
-                  setError((prev: any) => {
-                    return {
-                      ...prev,
-                      globalError: true,
-                      globalErrorText: res?.data?.msg,
-                    };
-                  });
-                }
-              } else {
-                toast.error(`Error: ${res?.status}`);
-              }
-            });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  globalError: true,
+                  globalErrorText: "User not found!",
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, otpSend: false };
             });
-            setError((prev: any) => {
-              return {
-                ...prev,
-                globalError: true,
-                globalErrorText: "User not found!",
-              };
-            });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, otpSend: false };
           });
-        }
-      });
+        });
     }
   };
   const OTPVerify = (e: any) => {
@@ -147,15 +159,28 @@ const ForgotPasswordCard = () => {
       callApi(processIDs?.otp_verify, {
         phone: formData?.phoneNumber,
         otp: formData?.otp,
-        // @ts-ignore
-      }).then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setLoading((prev: any) => {
-              return { ...prev, otpVeri: false };
-            });
-            setSteps(3);
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setLoading((prev: any) => {
+                return { ...prev, otpVeri: false };
+              });
+              setSteps(3);
+            } else {
+              setLoading((prev: any) => {
+                return { ...prev, otpVeri: false };
+              });
+              setError((prev: any) => {
+                return {
+                  ...prev,
+                  otp: true,
+                  otpText: res?.data?.msg,
+                };
+              });
+            }
           } else {
+            toast.error(`Error: ${res?.status}`);
             setLoading((prev: any) => {
               return { ...prev, otpVeri: false };
             });
@@ -167,20 +192,13 @@ const ForgotPasswordCard = () => {
               };
             });
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
           setLoading((prev: any) => {
             return { ...prev, otpVeri: false };
           });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              otp: true,
-              otpText: res?.data?.msg,
-            };
-          });
-        }
-      });
+        });
     }
   };
   const changePassword = (e: any) => {
@@ -224,19 +242,25 @@ const ForgotPasswordCard = () => {
       callApi(processIDs?.forgot_password, {
         phoneNumber: formData?.phoneNumber,
         newPass: md5(formData?.confPassword),
-        // @ts-ignore
-      }).then((res: responseType) => {
-        setLoading((prev: any) => {
-          return { ...prev, changePass: false };
-        });
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            closePopUp();
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          setLoading((prev: any) => {
+            return { ...prev, changePass: false };
+          });
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              closePopUp();
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-        }
-      });
+        })
+        .catch((err: any) => {
+          setLoading((prev: any) => {
+            return { ...prev, changePass: false };
+          });
+          toast.error(`Error: ${err?.message}`);
+        });
     }
   };
   const startTimer = () => {
@@ -272,46 +296,45 @@ const ForgotPasswordCard = () => {
     });
     callApi(processIDs?.phone_verify, {
       phone: formData?.phoneNumber,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          setLoading((prev: any) => {
-            return { ...prev, resendOtp: false };
-          });
-          setResendOtp((prev: any) => {
-            return {
-              ...prev,
-              state: false,
-            };
-          });
-          startTimer();
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setLoading((prev: any) => {
+              return { ...prev, resendOtp: false };
+            });
+            setResendOtp((prev: any) => {
+              return {
+                ...prev,
+                state: false,
+              };
+            });
+            startTimer();
+          } else {
+            setLoading((prev: any) => {
+              return { ...prev, resendOtp: false };
+            });
+            setError((prev: any) => {
+              return {
+                ...prev,
+                globalError: true,
+                globalErrorText: res?.data?.msg,
+              };
+            });
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           setLoading((prev: any) => {
             return { ...prev, resendOtp: false };
-          });
-          setError((prev: any) => {
-            return {
-              ...prev,
-              globalError: true,
-              globalErrorText: res?.data?.msg,
-            };
           });
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
         setLoading((prev: any) => {
           return { ...prev, resendOtp: false };
         });
-        setError((prev: any) => {
-          return {
-            ...prev,
-            globalError: true,
-            globalErrorText: res?.data?.msg,
-          };
-        });
-      }
-    });
+      });
   };
   return (
     <div className="modal" onClick={clickOutSide}>
@@ -354,7 +377,11 @@ const ForgotPasswordCard = () => {
                 )}
               </div>
               <div className="form-input">
-                <button type="submit" className="login-button">
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading?.otpSend}
+                >
                   {loading?.otpSend ? (
                     <Loading className="dot-flashing" />
                   ) : (
@@ -382,7 +409,11 @@ const ForgotPasswordCard = () => {
                 )}
               </div>
               <div className="form-input">
-                <button type="submit" className="login-button">
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading?.otpVeri}
+                >
                   {loading?.otpVeri ? (
                     <Loading className="dot-flashing" />
                   ) : (
@@ -452,7 +483,11 @@ const ForgotPasswordCard = () => {
                 />
               </div>
               <div className="form-input">
-                <button type="submit" className="login-button">
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading?.changePass}
+                >
                   {loading?.changePass ? (
                     <Loading className="dot-flashing" />
                   ) : (

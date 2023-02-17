@@ -34,27 +34,31 @@ const CartCard = (props: CartCardProps) => {
     callApi(processIDs?.remove_item_from_cart, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       cartId: id,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      setLoading(false);
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          setCart(res?.data?.returnData);
-          setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-          messageService?.sendMessage(
-            "cart-page",
-            // @ts-ignore
-            {
-              action: "refresh-count",
-              params: res?.data?.returnData?.length,
-            },
-            "cart-icon"
-          );
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        setLoading(false);
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setCart(res?.data?.returnData);
+            setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+            messageService?.sendMessage(
+              "cart-page",
+              // @ts-ignore
+              {
+                action: "refresh-count",
+                params: res?.data?.returnData?.length,
+              },
+              "cart-icon"
+            );
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
-      }
-    });
+      })
+      .catch((err: any) => {
+        setLoading(false);
+        toast.error(`Error: ${err?.message}`);
+      });
   };
   return (
     <>
@@ -119,6 +123,7 @@ const CartCard = (props: CartCardProps) => {
           onClick={() => {
             removeItem(cart?._id);
           }}
+          disabled={loading}
         >
           {loading ? <Loading className="dot-flashing" /> : "Remove"}
         </button>

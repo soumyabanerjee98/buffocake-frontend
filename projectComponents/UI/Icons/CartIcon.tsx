@@ -19,23 +19,27 @@ const CartIcon = (props: CartIconProps) => {
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_cart, {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          if (res?.data?.returnData) {
-            return res?.data?.returnData;
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              return res?.data?.returnData;
+            } else {
+              return [];
+            }
           } else {
             return [];
           }
         } else {
-          return [];
+          toast.error(`Error: ${res?.status}`);
+          return undefined;
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
         return undefined;
-      }
-    });
+      });
     return data;
   };
   const {

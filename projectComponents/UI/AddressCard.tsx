@@ -135,24 +135,32 @@ const AddressCard = (props: AddressCardProps) => {
       });
     } else {
       setLoading(true);
-      // @ts-ignore
-      callApi(processId, body).then((res: responseType) => {
-        setLoading(false);
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            setSessionObjectData(storageConfig?.address, res?.data?.returnData);
-            messageService?.sendMessage(
-              "address-card",
-              // @ts-ignore
-              { action: "address-update", params: res?.data?.returnData },
-              "profile-page"
-            );
-            closePopUp();
+      callApi(processId, body)
+        // @ts-ignore
+        .then((res: responseType) => {
+          setLoading(false);
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setSessionObjectData(
+                storageConfig?.address,
+                res?.data?.returnData
+              );
+              messageService?.sendMessage(
+                "address-card",
+                // @ts-ignore
+                { action: "address-update", params: res?.data?.returnData },
+                "profile-page"
+              );
+              closePopUp();
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-        }
-      });
+        })
+        .catch((err: any) => {
+          setLoading(false);
+          toast.error(`Error: ${err?.message}`);
+        });
     }
   };
   return (
@@ -281,7 +289,12 @@ const AddressCard = (props: AddressCardProps) => {
           <div className="label">Set as favourite</div>
         </div>
         <div className="section submit">
-          <button type="button" className="submit-button" onClick={submit}>
+          <button
+            type="button"
+            className="submit-button"
+            onClick={submit}
+            disabled={loading}
+          >
             {loading ? (
               <Loading className="dot-flashing" />
             ) : action === "add-address" ? (

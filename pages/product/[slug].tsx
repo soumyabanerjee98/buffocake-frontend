@@ -41,19 +41,23 @@ const ProductPage = (props: any) => {
 export async function getStaticProps({ params }: any) {
   let data = await callApi(processIDs?.get_product_details, {
     productId: params.slug,
-    // @ts-ignore
-  }).then((res: responseType) => {
-    if (res?.status === 200) {
-      if (res?.data?.returnCode) {
-        return res?.data?.returnData;
+  }) // @ts-ignore
+    .then((res: responseType) => {
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          return res?.data?.returnData;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
       }
-    } else {
-      toast.error(`Error: ${res?.status}`);
+    })
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
       return undefined;
-    }
-  });
+    });
   return {
     props: {
       productDetails: data,
@@ -63,21 +67,26 @@ export async function getStaticProps({ params }: any) {
 }
 
 export async function getStaticPaths() {
-  let data = await callApi(processIDs?.get_all_products, {}).then(
-    // @ts-ignore
-    (res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          return res?.data?.returnData;
+  let data = await callApi(processIDs?.get_all_products, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            return null;
+          }
         } else {
+          toast.error(`Error: ${res?.status}`);
           return null;
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
-        return null;
       }
-    }
-  );
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return null;
+    });
   const paths = data.map((i: any) => ({
     params: { slug: i._id },
   }));

@@ -23,19 +23,23 @@ const CartPage = () => {
         new Promise((resolve, reject) => {
           callApi(processIDs?.verify_login_token, {
             token: getLocalStringData(storageConfig?.jwtToken),
-            // @ts-ignore
-          }).then((res: responseType) => {
-            if (res?.status === 200) {
-              if (res?.data?.returnCode) {
-                resolve(res?.data?.returnData);
+          }) // @ts-ignore
+            .then((res: responseType) => {
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  resolve(res?.data?.returnData);
+                } else {
+                  resolve(null);
+                }
               } else {
-                resolve(null);
+                resolve(undefined);
+                toast.error(`Error: ${res?.status}`);
               }
-            } else {
+            })
+            .catch((err: any) => {
               resolve(undefined);
-              toast.error(`Error: ${res?.status}`);
-            }
-          });
+              toast.error(`Error: ${err?.message}`);
+            });
         });
       let data = await dataFetcher();
       setAuth(data);

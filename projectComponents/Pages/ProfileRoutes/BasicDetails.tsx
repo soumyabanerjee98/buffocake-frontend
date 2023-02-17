@@ -37,23 +37,27 @@ const BasicDetails = (props: BasicDetailsProps) => {
   const dataFetcher = async () => {
     let data = await callApi(processIDs?.get_address, {
       userId: profile?.id,
-      // @ts-ignore
-    }).then((res: responseType) => {
-      if (res?.status === 200) {
-        if (res?.data?.returnCode) {
-          if (res?.data?.returnData) {
-            return res?.data?.returnData;
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              return res?.data?.returnData;
+            } else {
+              return [];
+            }
           } else {
             return [];
           }
         } else {
-          return [];
+          toast.error(`Error: ${res?.status}`);
+          return undefined;
         }
-      } else {
-        toast.error(`Error: ${res?.status}`);
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
         return undefined;
-      }
-    });
+      });
     return data;
   };
   const {
@@ -142,44 +146,53 @@ const BasicDetails = (props: BasicDetailsProps) => {
         if (profile?.profilePhoto) {
           callApi(processIDs?.delete_photo, {
             mediaPath: profile?.profilePhoto,
-            // @ts-ignore
-          }).then((res: responseType) => {
-            if (res?.status === 200) {
-              if (res?.data?.returnCode) {
-                // @ts-ignore
-                uploadImage(image?.image).then((res: responseType) => {
-                  if (res?.status === 200) {
-                    callApi(processIDs?.update_user, {
-                      id: getSessionObjectData(storageConfig?.userProfile)?.id,
-                      firstName: profileData?.firstName,
-                      lastName: profileData?.lastName,
-                      phoneNumber: profileData?.phoneNumber,
-                      email: profileData?.email,
-                      profilePhoto: res?.data?.returnData[0]?.path,
-                      // @ts-ignore
-                    }).then((res: responseType) => {
-                      if (res?.status === 200) {
-                        if (res?.data?.returnCode) {
-                          refreshUser(res?.data?.returnData?.profile);
-                        }
-                      } else {
-                        toast.error(`Error: ${res?.status}`);
-                      }
+          }) // @ts-ignore
+            .then((res: responseType) => {
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  // @ts-ignore
+                  uploadImage(image?.image).then((res: responseType) => {
+                    if (res?.status === 200) {
+                      callApi(processIDs?.update_user, {
+                        id: getSessionObjectData(storageConfig?.userProfile)
+                          ?.id,
+                        firstName: profileData?.firstName,
+                        lastName: profileData?.lastName,
+                        phoneNumber: profileData?.phoneNumber,
+                        email: profileData?.email,
+                        profilePhoto: res?.data?.returnData[0]?.path,
+                      }) // @ts-ignore
+                        .then((res: responseType) => {
+                          if (res?.status === 200) {
+                            if (res?.data?.returnCode) {
+                              refreshUser(res?.data?.returnData?.profile);
+                            }
+                          } else {
+                            toast.error(`Error: ${res?.status}`);
+                          }
+                          setLoading(false);
+                        })
+                        .catch((err: any) => {
+                          toast.error(`Error: ${err?.message}`);
+                          setLoading(false);
+                        });
+                    } else {
                       setLoading(false);
-                    });
-                  } else {
-                    setLoading(false);
-                    toast.error(`Error: ${res?.status}`);
-                  }
-                });
+                      toast.error(`Error: ${res?.status}`);
+                    }
+                  });
+                } else {
+                  setLoading(false);
+                }
               } else {
                 setLoading(false);
+                toast.error(`Error: ${res?.status}`);
               }
-            } else {
+            })
+            .catch((err: any) => {
               setLoading(false);
-              toast.error(`Error: ${res?.status}`);
-            }
-          });
+              toast.error(`Error: ${err?.message}`);
+            });
         } else {
           // @ts-ignore
           uploadImage(image?.image).then((res: responseType) => {
@@ -191,17 +204,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
                 phoneNumber: profileData?.phoneNumber,
                 email: profileData?.email,
                 profilePhoto: res?.data?.returnData[0]?.path,
-                // @ts-ignore
-              }).then((res: responseType) => {
-                if (res?.status === 200) {
-                  if (res?.data?.returnCode) {
-                    refreshUser(res?.data?.returnData?.profile);
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    if (res?.data?.returnCode) {
+                      refreshUser(res?.data?.returnData?.profile);
+                    }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
                   }
-                } else {
-                  toast.error(`Error: ${res?.status}`);
-                }
-                setLoading(false);
-              });
+                  setLoading(false);
+                })
+                .catch((err: any) => {
+                  setLoading(false);
+                  toast.error(`Error: ${err?.message}`);
+                });
             } else {
               setLoading(false);
               toast.error(`Error: ${res?.status}`);
@@ -211,36 +228,44 @@ const BasicDetails = (props: BasicDetailsProps) => {
       } else if (image?.deleted) {
         callApi(processIDs?.delete_photo, {
           mediaPath: profile?.profilePhoto,
-          // @ts-ignore
-        }).then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              callApi(processIDs?.update_user, {
-                id: getSessionObjectData(storageConfig?.userProfile)?.id,
-                firstName: profileData?.firstName,
-                lastName: profileData?.lastName,
-                phoneNumber: profileData?.phoneNumber,
-                email: profileData?.email,
-                profilePhoto: null,
-                // @ts-ignore
-              }).then((res: responseType) => {
-                if (res?.status === 200) {
-                  if (res?.data?.returnCode) {
-                    refreshUser(res?.data?.returnData?.profile);
-                  }
-                } else {
-                  toast.error(`Error: ${res?.status}`);
-                }
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                callApi(processIDs?.update_user, {
+                  id: getSessionObjectData(storageConfig?.userProfile)?.id,
+                  firstName: profileData?.firstName,
+                  lastName: profileData?.lastName,
+                  phoneNumber: profileData?.phoneNumber,
+                  email: profileData?.email,
+                  profilePhoto: null,
+                }) // @ts-ignore
+                  .then((res: responseType) => {
+                    if (res?.status === 200) {
+                      if (res?.data?.returnCode) {
+                        refreshUser(res?.data?.returnData?.profile);
+                      }
+                    } else {
+                      toast.error(`Error: ${res?.status}`);
+                    }
+                    setLoading(false);
+                  })
+                  .catch((err: any) => {
+                    setLoading(false);
+                    toast.error(`Error: ${err?.message}`);
+                  });
+              } else {
                 setLoading(false);
-              });
+              }
             } else {
               setLoading(false);
+              toast.error(`Error: ${res?.status}`);
             }
-          } else {
+          })
+          .catch((err: any) => {
             setLoading(false);
-            toast.error(`Error: ${res?.status}`);
-          }
-        });
+            toast.error(`Error: ${err?.message}`);
+          });
       } else {
         callApi(processIDs?.update_user, {
           id: getSessionObjectData(storageConfig?.userProfile)?.id,
@@ -249,17 +274,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
           phoneNumber: profileData?.phoneNumber,
           email: profileData?.email,
           profilePhoto: profile?.profilePhoto,
-          // @ts-ignore
-        }).then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              refreshUser(res?.data?.returnData?.profile);
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                refreshUser(res?.data?.returnData?.profile);
+              }
+            } else {
+              toast.error(`Error: ${res?.status}`);
             }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-          }
-          setLoading(false);
-        });
+            setLoading(false);
+          })
+          .catch((err: any) => {
+            setLoading(false);
+            toast.error(`Error: ${err?.message}`);
+          });
       }
     }
   };
@@ -333,10 +362,6 @@ const BasicDetails = (props: BasicDetailsProps) => {
       },
       "header"
     );
-  };
-
-  const DeleteAddress = (item: any) => {
-    // callApi()
   };
 
   useEffect(() => {
@@ -556,6 +581,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
               type="button"
               className="edit-profile"
               onClick={UpdateProfile}
+              disabled={loading}
             >
               {loading ? <Loading className="dot-flashing" /> : "Update"}
             </button>

@@ -66,21 +66,24 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
                     mid: MID,
                     oid: oid,
                     mkey: MKEY,
-                    // @ts-ignore
-                  }).then((res: responseType) => {
-                    if (res?.status === 200) {
-                      if (res?.data?.returnCode) {
-                        document.getElementById("app-close-btn")?.click();
-                        //  TXN_SUCCESS, TXN_FAILURE, PENDING
-                        console.log(
-                          "payment status ",
-                          res?.data?.returnData?.resultInfo?.resultStatus
-                        );
+                  }) // @ts-ignore
+                    .then((res: responseType) => {
+                      if (res?.status === 200) {
+                        if (res?.data?.returnCode) {
+                          document.getElementById("app-close-btn")?.click();
+                          //  TXN_SUCCESS, TXN_FAILURE, PENDING
+                          console.log(
+                            "payment status ",
+                            res?.data?.returnData?.resultInfo?.resultStatus
+                          );
+                        }
+                      } else {
+                        toast.error(`Error: ${res?.status}`);
                       }
-                    } else {
-                      toast.error(`Error: ${res?.status}`);
-                    }
-                  });
+                    })
+                    .catch((err: any) => {
+                      toast.error(`Error: ${err?.message}`);
+                    });
                 },
               },
             };
@@ -99,6 +102,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         })
         .catch((err: any) => {
           setLoading(false);
+          toast.error(`Error: ${err?.message}`);
         });
     } catch (error) {
       setLoading(false);
@@ -121,7 +125,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       <button
         className={`paytm-button ${disable ? "disable" : ""}`}
         type="button"
-        disabled={disable}
+        disabled={disable || loading}
         onClick={InitiatePayment}
       >
         {loading ? (
