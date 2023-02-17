@@ -104,6 +104,7 @@ const Products = (props: ProductProps) => {
   const [loader, setLoader] = useState({
     buy: false,
     cart: false,
+    fav: false,
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [textFieldLimits, setTextFieldLimits] = useState({
@@ -290,12 +291,18 @@ const Products = (props: ProductProps) => {
 
   const favSelect = () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
+      setLoader((prev: any) => {
+        return { ...prev, fav: true };
+      });
       if (fav) {
         callApi(processIDs?.remove_item_from_wishlist, {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
           // @ts-ignore
         }).then((res: responseType) => {
+          setLoader((prev: any) => {
+            return { ...prev, fav: false };
+          });
           if (res?.status === 200) {
             if (res?.data?.returnCode) {
               setFav(false);
@@ -314,6 +321,9 @@ const Products = (props: ProductProps) => {
           productId: productDetails?._id,
           // @ts-ignore
         }).then((res: responseType) => {
+          setLoader((prev: any) => {
+            return { ...prev, fav: false };
+          });
           if (res?.status === 200) {
             if (res?.data?.returnCode) {
               setFav(true);
@@ -454,7 +464,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {isLoading || fav === undefined ? (
+        {isLoading || fav === undefined || loader?.fav ? (
           <div className="fav-loader">
             <Loading className="spinner" />
           </div>
