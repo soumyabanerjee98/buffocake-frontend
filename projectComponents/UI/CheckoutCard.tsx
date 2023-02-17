@@ -54,12 +54,39 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     isLoading,
   } = useSwr(processIDs?.get_address, dataFetcher);
   const [address, setAddress] = useState<any>();
+  const [addressInd, setAddressInd] = useState(0);
   const [grandTotal, setGrandTotal] = useState<any>(null);
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.address)) {
-      setAddress(getSessionObjectData(storageConfig?.address));
+      let addressArr = [];
+      let favItem = getSessionObjectData(storageConfig?.address)?.find(
+        (i: any) => {
+          return i?.favorite === true;
+        }
+      );
+      addressArr.push(favItem);
+      let otherItems = getSessionObjectData(storageConfig?.address)?.filter(
+        (i: any) => {
+          return i?.favorite === false;
+        }
+      );
+      otherItems.map((i: any) => {
+        addressArr.push(i);
+      });
+      setAddress(addressArr);
     } else {
-      setAddress(addressData);
+      let addressArr = [];
+      let favItem = addressData?.find((i: any) => {
+        return i?.favorite === true;
+      });
+      addressArr.push(favItem);
+      let otherItems = addressData?.filter((i: any) => {
+        return i?.favorite === false;
+      });
+      otherItems.map((i: any) => {
+        addressArr.push(i);
+      });
+      setAddress(addressArr);
       if (addressData?.length > 0) {
         setSessionObjectData(storageConfig?.address, addressData);
       }
@@ -96,7 +123,9 @@ const CheckoutCard = (props: CheckoutCardProps) => {
           <div className="left-column">
             <div className="title">Address</div>
             <div
-              className={`details ${address?.length === 0 ? "no-address" : ""}`}
+              className={`details ${
+                address?.length === 0 ? "no-address" : "address"
+              }`}
             >
               {(isLoading || address === undefined) && <>Loading...</>}
               {address?.length === 0 && (
@@ -113,6 +142,63 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                     Go to profile
                   </div>
                 </div>
+              )}
+              {address?.length > 0 && (
+                <>
+                  <div className={`${addressInd === 0 ? "space" : ""}`}>
+                    {address?.length > 1 && addressInd > 0 && (
+                      <i
+                        className="fa-solid fa-arrow-left arrows"
+                        onClick={() => {
+                          setAddressInd((prev) => prev - 1);
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className="address-item">
+                    <div className="address-title">
+                      {address[addressInd]?.receiverName}
+                    </div>
+                    <div className="address-details">
+                      <div className="address-section">
+                        <div className="label">House / Building : </div>
+                        <div className="value">
+                          {address[addressInd]?.house
+                            ? address[addressInd]?.house
+                            : "NA"}
+                        </div>
+                      </div>
+                      <div className="address-section">
+                        <div className="label">Street no. : </div>
+                        <div className="value">
+                          {address[addressInd]?.street}
+                        </div>
+                      </div>
+                      <div className="address-section">
+                        <div className="label">Pin code : </div>
+                        <div className="value">{address[addressInd]?.pin}</div>
+                      </div>
+                    </div>
+                    <div className="address-contact">
+                      {address[addressInd]?.receiverContact}
+                    </div>
+                  </div>
+                  <div
+                    className={`${
+                      address?.length === addressInd + 1 ? "space" : ""
+                    }`}
+                  >
+                    {address?.length - 1 > addressInd &&
+                      address?.length > 1 && (
+                        <i
+                          className="fa-solid fa-arrow-right arrows"
+                          onClick={() => {
+                            setAddressInd((prev) => prev + 1);
+                          }}
+                        />
+                      )}
+                  </div>
+                </>
               )}
             </div>
           </div>

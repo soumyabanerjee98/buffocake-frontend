@@ -443,6 +443,7 @@ input::-webkit-inner-spin-button {
 .profile-screen .section-general-address .add-address{
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 .profile-screen .section-general-address .add-address-button {
   border-color: rgb(0, 191, 0);
@@ -576,6 +577,77 @@ input::-webkit-inner-spin-button {
   border: 1px solid transparent;
   padding: 0.4rem;
   border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+
+.profile-screen .address-array{
+  display: grid;
+  gap: 0.8rem;
+  justify-content: center;
+  grid-template-columns: repeat(2, 48%);
+}
+.profile-screen .address-array .address-item{
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  transition: all 200ms ease-in-out;
+  position: relative;
+}
+.profile-screen .address-item .address-name{
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: rgba(107, 39, 51);
+}
+.profile-screen .address-item .address-fav {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.6rem;
+}
+.profile-screen .address-array .address-item.fav {
+  border: 1px solid #4285f4;
+}
+.profile-screen .address-array .address-item:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.profile-screen .action-buttons{
+  display: flex;
+  gap: 0.5rem;
+}
+.profile-screen .edit-address-button{
+border-color: rgb(0, 191, 0);
+  border-radius: 4px;
+  color: rgb(0, 191, 0);
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.4rem 0.8rem;
+  transition: all 200ms ease-in-out;
+  height: max-content;
+}
+.profile-screen .edit-address-button:hover {
+  color: whitesmoke;
+    background-color: rgb(0, 191, 0);
+    transition: all 200ms ease-in-out;
+}
+.profile-screen .delete-address-button {
+  border-color: red;
+  border-radius: 4px;
+  min-width: 5rem;
+  color: red;
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.4rem 0.8rem;
+  transition: all 200ms ease-in-out;
+  height: max-content;
+}
+
+.profile-screen .delete-address-button:hover {
+  color: whitesmoke;
+  background-color: red;
   transition: all 200ms ease-in-out;
 }
 
@@ -1113,6 +1185,42 @@ display: flex;
   color: #4285f4;
   transition: all 200ms ease-in-out;
 }
+.checkout-card .left-column .address-item {
+  padding: 1rem;
+  max-width: 100%;
+  width: 100%;
+}
+.checkout-card .left-column .address {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.checkout-card .left-column .address .arrows{
+  padding: 0.4rem;
+  cursor: pointer;
+  background-color: aliceblue;
+  border: 1px solid rgb(181, 213, 242);
+  border-radius: 50%;
+}
+.checkout-card .left-column .address .space {
+  padding: 0.4rem;
+}
+.checkout-card .left-column .address-item .address-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: rgba(107, 39, 51);
+  margin-bottom: 1rem;
+}
+.checkout-card .left-column .address-item .address-details {
+  font-size: medium
+}
+.checkout-card .left-column .address-item .address-details .address-section{
+  margin-bottom: 0.8rem;
+}
+.checkout-card .left-column .address-item .address-details .address-section .label{
+  font-weight: 500;
+  color: rgba(107, 39, 51);
+}
 .checkout-card .right-column .details{
   overflow-y: scroll;
   scroll-behavior: smooth;
@@ -1153,6 +1261,76 @@ display: flex;
   padding-bottom: 0.2rem;
 }
 
+/* Address card */
+
+.address-card{
+  position: absolute;
+    padding: 1.2rem 2rem;
+    background-color: white;
+    border-radius: 4px;
+    min-width: 25rem;
+}
+.address-card input{
+  padding: 0.4rem;
+  outline: none;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+.address-card .title {
+  font-weight: 600;
+  font-size: 24px;
+  color: rgba(107, 39, 51);
+  border-bottom: 1px solid black;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+}
+.address-card .label {
+  font-weight: 500;
+  color: rgba(107, 39, 51);
+}
+.address-card .section{
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.4rem;
+  justify-content: space-between;
+  align-items: center;
+}
+.address-card .section.checkbox {
+  margin-top: 1rem;
+  justify-content: flex-start;
+  gap: 0.4rem;
+}
+.address-card .section.textarea {
+  align-items: baseline;
+}
+.address-card .section .form-field-textarea{
+  resize: none;
+  height: 3rem;
+  outline: none;
+  border-radius: 4px;
+}
+.address-card .section.submit {
+  justify-content: flex-end;
+}
+.address-card .submit-button{
+border-color: rgb(0, 191, 0);
+  border-radius: 4px;
+  color: rgb(0, 191, 0);
+  font-weight: 600;
+  background-color: whitesmoke;
+  padding: 0.8rem;
+  min-width: 5rem;
+  transition: all 200ms ease-in-out;
+}
+.address-card .submit-button:hover {
+  color: whitesmoke;
+  background-color: rgb(0, 191, 0);
+  transition: all 200ms ease-in-out;
+}
+.address-card .error{
+  color: red;
+  text-align: end;
+}
 /* OTP Field */
 
 .otp-field {
@@ -1174,13 +1352,14 @@ display: flex;
   padding: 0.4rem;
   border-radius: 4px;
   background-color: rgb(0, 191, 0);
+  color: whitesmoke;
   transition: all 200ms ease-in-out;
 }
 .paytm-button.disable {
   cursor: not-allowed;
 }
 .paytm-button:hover {
-  background-color: rgb(211, 211, 211);
+  background-color: whitesmoke;
   color: rgb(0, 191, 0);
   transition: all 200ms ease-in-out;
 }

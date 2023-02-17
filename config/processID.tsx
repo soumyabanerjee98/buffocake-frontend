@@ -9,6 +9,7 @@ export const processIDs = {
   create_new_account: "create-new-account",
   update_user: "update-user",
   add_address: "add-address",
+  edit_address: "edit-address",
   remove_address: "remove-address",
   get_address: "get-address",
   delete_photo: "delete-photo",

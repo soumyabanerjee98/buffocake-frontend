@@ -33,6 +33,7 @@ import FavIcon from "./Icons/FavIcon";
 import OrderIcon from "./Icons/OrderIcon";
 import CheckoutCard from "./CheckoutCard";
 import { toast } from "react-toastify";
+import AddressCard from "./AddressCard";
 
 const dataFetcher = async () => {
   if (getSessionObjectData(storageConfig?.userProfile)) {
@@ -85,6 +86,17 @@ const Header = () => {
     state: false,
     source: "",
     cart: [],
+  });
+  const [addressCardOpen, setAddressCardOpen] = useState<any>({
+    state: false,
+    receiverName: "",
+    receiverContact: "",
+    house: "",
+    street: "",
+    pin: null,
+    fav: false,
+    action: "",
+    addressId: "",
   });
   const redirect = useRouter();
   const navigate = (url: string) => {
@@ -174,6 +186,32 @@ const Header = () => {
       } else if (m?.sender === "profile-page" && m?.target === "header") {
         if (m?.message?.action === "forgot-password") {
           setForgotPasswordCardOpen(true);
+        } else if (m?.message?.action === "add-address") {
+          setAddressCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              receiverName: m?.message?.params?.name,
+              receiverContact: m?.message?.params?.contact,
+              fav: m?.message?.params?.fav,
+              action: m?.message?.action,
+            };
+          });
+        } else if (m?.message?.action === "edit-address") {
+          setAddressCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              addressId: m?.message?.params?.addressId,
+              receiverName: m?.message?.params?.name,
+              receiverContact: m?.message?.params?.contact,
+              house: m?.message?.params?.house,
+              street: m?.message?.params?.street,
+              pin: m?.message?.params?.pin,
+              fav: m?.message?.params?.fav,
+              action: m?.message?.action,
+            };
+          });
         }
       } else if (
         m?.sender === "forgot-password-card" &&
@@ -181,6 +219,23 @@ const Header = () => {
       ) {
         if (m?.message?.action === "close-popup") {
           setForgotPasswordCardOpen(false);
+        }
+      } else if (m?.sender === "address-card" && m?.target === "header") {
+        if (m?.message?.action === "close-popup") {
+          setAddressCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+              receiverName: "",
+              receiverContact: "",
+              house: "",
+              street: "",
+              pin: null,
+              fav: false,
+              action: "",
+              addressId: "",
+            };
+          });
         }
       }
     });
@@ -287,6 +342,18 @@ const Header = () => {
         <CheckoutCard
           source={checkOutCardOpen?.source}
           cart={checkOutCardOpen?.cart}
+        />
+      )}
+      {addressCardOpen?.state && (
+        <AddressCard
+          receiverName={addressCardOpen?.receiverName}
+          receiverContact={addressCardOpen?.receiverContact}
+          house={addressCardOpen?.house}
+          street={addressCardOpen?.street}
+          pin={addressCardOpen?.pin}
+          fav={addressCardOpen?.fav}
+          action={addressCardOpen?.action}
+          addressId={addressCardOpen?.addressId}
         />
       )}
     </header>

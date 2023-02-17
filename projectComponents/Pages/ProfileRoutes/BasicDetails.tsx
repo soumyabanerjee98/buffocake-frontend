@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
 import { serverConfig, storageConfig } from "../../../config/siteConfig";
-import { responseType } from "../../../typings";
+import { messageType, responseType } from "../../../typings";
 import { messageService } from "../../Functions/messageService";
 import Avatar from "../../Assets/Images/user.png";
 import Edit from "../../Assets/Images/edit.png";
@@ -21,6 +21,8 @@ import {
 } from "../../Functions/util";
 import Loading from "../../UI/Loading";
 import { toast } from "react-toastify";
+import StarIcon from "../../UI/Icons/StarIcon";
+import AddressItemCard from "../../UI/AddressItemCard";
 export type BasicDetailsProps = {
   profile: any;
 };
@@ -279,13 +281,79 @@ const BasicDetails = (props: BasicDetailsProps) => {
     });
   };
 
+  const AddAddress = () => {
+    const favData = () => {
+      if (address?.length > 0) {
+        let data = address?.find((i: any) => {
+          return i?.favorite === true;
+        });
+        if (data) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    };
+    messageService?.sendMessage(
+      "profile-page",
+      // @ts-ignore
+      {
+        action: "add-address",
+        params: {
+          name: `${
+            getSessionObjectData(storageConfig?.userProfile)?.firstName
+          } ${getSessionObjectData(storageConfig?.userProfile)?.lastName}`,
+          contact: `${
+            getSessionObjectData(storageConfig?.userProfile)?.phoneNumber
+          }`,
+          fav: favData(),
+        },
+      },
+      "header"
+    );
+  };
+
+  const EditAddress = (item: any) => {
+    messageService?.sendMessage(
+      "profile-page",
+      // @ts-ignore
+      {
+        action: "edit-address",
+        params: {
+          addressId: item?._id,
+          name: item?.receiverName,
+          contact: item?.receiverContact,
+          house: item?.house,
+          street: item?.street,
+          pin: item?.pin,
+          fav: item?.favorite,
+        },
+      },
+      "header"
+    );
+  };
+
+  const DeleteAddress = (item: any) => {
+    // callApi()
+  };
+
   useEffect(() => {
-    messageService?.onReceive()?.subscribe((m: any) => {
+    // @ts-ignore
+    messageService?.onReceive()?.subscribe((m: messageType) => {
       if (m?.sender === "phone-verify-card") {
         if (m?.message?.action === "success-verify") {
           setProfileData((prev: any) => {
             return { ...prev, phoneNumber: m?.message?.params };
           });
+        }
+      } else if (
+        m?.sender === "address-card" ||
+        m?.sender === "address-item-card"
+      ) {
+        if (m?.message?.action === "address-update") {
+          setAddress(m?.message?.params);
         }
       }
     });
@@ -506,18 +574,31 @@ const BasicDetails = (props: BasicDetailsProps) => {
       </div>
       <div className="header secondary">Address</div>
       <div className="section-general-address">
-        {isLoading || (address === undefined && <>Loading...</>)}
-        {address?.length <= 5 && (
-          <div className="add-address">
-            <button type="button" className="add-address-button">
-              Add address
-            </button>
-          </div>
-        )}
-        {address?.length > 0 ? (
-          <></>
+        {isLoading || address === undefined ? (
+          <>Loading...</>
         ) : (
-          <div className="no-address">No address found!</div>
+          <>
+            {address?.length < 6 && (
+              <div className="add-address">
+                <button
+                  type="button"
+                  className="add-address-button"
+                  onClick={AddAddress}
+                >
+                  Add address
+                </button>
+              </div>
+            )}
+            {address?.length > 0 ? (
+              <div className="address-array">
+                {address?.map((i: any) => {
+                  return <AddressItemCard address={i} />;
+                })}
+              </div>
+            ) : (
+              <div className="no-address">No address found!</div>
+            )}
+          </>
         )}
       </div>
     </>
