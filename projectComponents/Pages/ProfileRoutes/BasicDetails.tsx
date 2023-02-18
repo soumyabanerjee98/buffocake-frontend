@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
 import { serverConfig, storageConfig } from "../../../config/siteConfig";
 import { messageType, responseType } from "../../../typings";
@@ -23,6 +22,7 @@ import Loading from "../../UI/Loading";
 import { toast } from "react-toastify";
 import StarIcon from "../../UI/Icons/StarIcon";
 import AddressItemCard from "../../UI/AddressItemCard";
+import { cache } from "swr/_internal";
 export type BasicDetailsProps = {
   profile: any;
 };
@@ -33,38 +33,6 @@ const BasicDetails = (props: BasicDetailsProps) => {
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
       : serverConfig?.backend_url_test;
-
-  const dataFetcher = async () => {
-    let data = await callApi(processIDs?.get_address, {
-      userId: profile?.id,
-    }) // @ts-ignore
-      .then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            if (res?.data?.returnData) {
-              return res?.data?.returnData;
-            } else {
-              return [];
-            }
-          } else {
-            return [];
-          }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-          return undefined;
-        }
-      })
-      .catch((err: any) => {
-        toast.error(`Error: ${err?.message}`);
-        return undefined;
-      });
-    return data;
-  };
-  const {
-    data: addressData,
-    error: errorData,
-    isLoading,
-  } = useSwr(processIDs?.get_address, dataFetcher);
   const [editState, setEditState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({
@@ -103,12 +71,36 @@ const BasicDetails = (props: BasicDetailsProps) => {
     if (getSessionObjectData(storageConfig?.address)) {
       setAddress(getSessionObjectData(storageConfig?.address));
     } else {
-      setAddress(addressData);
-      if (addressData?.length > 0) {
-        setSessionObjectData(storageConfig?.address, addressData);
-      }
+      callApi(processIDs?.get_address, {
+        userId: profile?.id,
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              if (res?.data?.returnData) {
+                setAddress(res?.data?.returnData);
+                setSessionObjectData(
+                  storageConfig?.address,
+                  res?.data?.returnData
+                );
+              } else {
+                setAddress([]);
+                setSessionObjectData(storageConfig?.address, []);
+              }
+            } else {
+              setAddress([]);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
+            setAddress(undefined);
+          }
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setAddress(undefined);
+        });
     }
-  }, [addressData]);
+  }, []);
   const getEmail = () => {
     gSignInWithPopup().then((res: any) => {
       gSignOut();
@@ -600,7 +592,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
       </div>
       <div className="header secondary">Address</div>
       <div className="section-general-address">
-        {isLoading || address === undefined ? (
+        {address === undefined ? (
           <>Loading...</>
         ) : (
           <>

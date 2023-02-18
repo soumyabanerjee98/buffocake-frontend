@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useSwr from "swr";
 import { processIDs } from "../../config/processID";
 import { paytmConfig, storageConfig } from "../../config/siteConfig";
 import { responseType } from "../../typings";
@@ -22,41 +21,6 @@ const CheckoutCard = (props: CheckoutCardProps) => {
   const { source, cart } = props;
   //   console.log(source, cart);
   const router = useRouter();
-  const dataFetcher = async () => {
-    if (getSessionObjectData(storageConfig?.address)) {
-      return getSessionObjectData(storageConfig?.address);
-    } else {
-      let data = await callApi(processIDs?.get_address, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                return res?.data?.returnData;
-              } else {
-                return [];
-              }
-            } else {
-              return [];
-            }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-            return undefined;
-          }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
-          return undefined;
-        });
-      return data;
-    }
-  };
-  const {
-    data: addressData,
-    error,
-    isLoading,
-  } = useSwr(processIDs?.get_address, dataFetcher);
   const [address, setAddress] = useState<any>();
   const [addressInd, setAddressInd] = useState(0);
   const [grandTotal, setGrandTotal] = useState<any>(null);
@@ -79,23 +43,47 @@ const CheckoutCard = (props: CheckoutCardProps) => {
       });
       setAddress(addressArr);
     } else {
-      let addressArr = [];
-      let favItem = addressData?.find((i: any) => {
-        return i?.favorite === true;
-      });
-      addressArr.push(favItem);
-      let otherItems = addressData?.filter((i: any) => {
-        return i?.favorite === false;
-      });
-      otherItems.map((i: any) => {
-        addressArr.push(i);
-      });
-      setAddress(addressArr);
-      if (addressData?.length > 0) {
-        setSessionObjectData(storageConfig?.address, addressData);
-      }
+      callApi(processIDs?.get_address, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              if (res?.data?.returnData) {
+                let addressArr = [];
+                let favItem = res?.data?.returnData?.find((i: any) => {
+                  return i?.favorite === true;
+                });
+                addressArr.push(favItem);
+                let otherItems = res?.data?.returnData?.filter((i: any) => {
+                  return i?.favorite === false;
+                });
+                otherItems.map((i: any) => {
+                  addressArr.push(i);
+                });
+                setAddress(addressArr);
+                setSessionObjectData(
+                  storageConfig?.address,
+                  res?.data?.returnData
+                );
+              } else {
+                setAddress([]);
+                setSessionObjectData(storageConfig?.address, []);
+              }
+            } else {
+              setAddress([]);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
+            setAddress(undefined);
+          }
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setAddress(undefined);
+        });
     }
-  }, [addressData]);
+  }, []);
   useEffect(() => {
     let total = 0;
     cart?.map((i: any) => {
@@ -131,7 +119,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                 address?.length === 0 ? "no-address" : "address"
               }`}
             >
-              {(isLoading || address === undefined) && <>Loading...</>}
+              {address === undefined && <>Loading...</>}
               {address?.length === 0 && (
                 <div
                   style={{
@@ -271,7 +259,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
               : paytmConfig?.stage_mkey
           }
           Total={grandTotal}
-          disable={addressData?.length > 0 ? false : true}
+          disable={address?.length > 0 ? false : true}
         />
       </div>
     </div>

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import useSwr from "swr";
 import { processIDs } from "../../config/processID";
 import { labelConfig, storageConfig } from "../../config/siteConfig";
 import { responseType } from "../../typings";
@@ -16,37 +15,6 @@ import CartCard from "../UI/CartCard";
 import { toast } from "react-toastify";
 
 const Cart = () => {
-  const dataFetcher = async () => {
-    let data = await callApi(processIDs?.get_cart, {
-      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-    }) // @ts-ignore
-      .then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            if (res?.data?.returnData) {
-              return res?.data?.returnData;
-            } else {
-              return [];
-            }
-          } else {
-            return [];
-          }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-          return undefined;
-        }
-      })
-      .catch((err: any) => {
-        toast.error(`Error: ${err?.message}`);
-        return undefined;
-      });
-    return data;
-  };
-  const {
-    data: cartData,
-    isLoading,
-    error,
-  } = useSwr(`${processIDs?.get_cart}`, dataFetcher);
   const [cart, setCart] = useState<any>();
   const [grandTotal, setGrandTotal] = useState<any>(null);
   const router = useRouter();
@@ -70,12 +38,36 @@ const Cart = () => {
     if (getSessionObjectData(storageConfig?.cart)) {
       setCart(getSessionObjectData(storageConfig?.cart));
     } else {
-      if (cartData?.length > 0) {
-        setSessionObjectData(storageConfig?.cart, cartData);
-      }
-      setCart(cartData);
+      callApi(processIDs?.get_cart, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              if (res?.data?.returnData) {
+                setSessionObjectData(
+                  storageConfig?.cart,
+                  res?.data?.returnData
+                );
+                setCart(res?.data?.returnData);
+              } else {
+                setSessionObjectData(storageConfig?.cart, []);
+                setCart([]);
+              }
+            } else {
+              setCart([]);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
+            setCart(undefined);
+          }
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setCart(undefined);
+        });
     }
-  }, [cartData]);
+  }, []);
   useEffect(() => {
     if (cart) {
       let total = 0;
@@ -85,7 +77,7 @@ const Cart = () => {
       setGrandTotal(total);
     }
   }, [cart]);
-  if (isLoading || cart === undefined) return <>Loading...</>;
+  if (cart === undefined) return <>Loading...</>;
   if (cart?.length === 0 || !cart) {
     return (
       <div className="no-cart">

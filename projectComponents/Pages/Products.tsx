@@ -1,5 +1,4 @@
 import Image from "next/image";
-import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 // @ts-ignore
 import Calendar from "react-calendar";
@@ -34,59 +33,6 @@ const Products = (props: ProductProps) => {
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 8);
   minDate.setDate(minDate.getDate() + 1);
-  const wishlistFetcher = async () => {
-    if (getSessionObjectData(storageConfig?.userProfile)) {
-      let data = await callApi(processIDs?.get_wishlist, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.data?.returnCode) {
-            let returnStatement;
-            if (res?.status === 200) {
-              if (res?.data?.returnData) {
-                if (getSessionObjectData(storageConfig?.wishlist) === null) {
-                  setSessionObjectData(
-                    storageConfig?.wishlist,
-                    res?.data?.returnData
-                  );
-                }
-                let data = res?.data?.returnData?.find((i: any) => {
-                  return i?.productId === productDetails?._id;
-                });
-                if (data) {
-                  returnStatement = true;
-                } else {
-                  returnStatement = false;
-                }
-              } else {
-                returnStatement = false;
-              }
-            } else {
-              toast.error(`Error: ${res?.status}`);
-              returnStatement = undefined;
-            }
-            return returnStatement;
-          } else {
-            return false;
-          }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
-          return undefined;
-        });
-      return data;
-    } else {
-      return false;
-    }
-  };
-  const {
-    data: favourite,
-    error,
-    isLoading,
-  } = useSwr(
-    `${processIDs?.get_wishlist}${productDetails?._id}`,
-    wishlistFetcher
-  );
   const [fav, setFav] = useState<any>();
   const [checkOutDetails, setCheckOutDetails] = useState({
     qty: 1,
@@ -133,9 +79,49 @@ const Products = (props: ProductProps) => {
         setFav(false);
       }
     } else {
-      setFav(favourite);
+      if (getSessionObjectData(storageConfig?.userProfile)) {
+        callApi(processIDs?.get_wishlist, {
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            if (res?.data?.returnCode) {
+              let returnStatement;
+              if (res?.status === 200) {
+                if (res?.data?.returnData) {
+                  setSessionObjectData(
+                    storageConfig?.wishlist,
+                    res?.data?.returnData
+                  );
+                  let data = res?.data?.returnData?.find((i: any) => {
+                    return i?.productId === productDetails?._id;
+                  });
+                  if (data) {
+                    returnStatement = true;
+                  } else {
+                    returnStatement = false;
+                  }
+                } else {
+                  setSessionObjectData(storageConfig?.wishlist, []);
+                  returnStatement = false;
+                }
+              } else {
+                toast.error(`Error: ${res?.status}`);
+                returnStatement = undefined;
+              }
+              setFav(returnStatement);
+            } else {
+              setFav(false);
+            }
+          })
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+            setFav(undefined);
+          });
+      } else {
+        setFav(false);
+      }
     }
-  }, [favourite]);
+  }, []);
 
   const loginCardOpen = () => {
     messageService?.sendMessage(
@@ -482,7 +468,7 @@ const Products = (props: ProductProps) => {
             className="product-image"
           />
         )}
-        {isLoading || fav === undefined || loader?.fav ? (
+        {fav === undefined || loader?.fav ? (
           <div className="fav-loader">
             <Loading className="spinner" />
           </div>

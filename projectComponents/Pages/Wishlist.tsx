@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useSwr from "swr";
 import { processIDs } from "../../config/processID";
 import { serverConfig, storageConfig } from "../../config/siteConfig";
 import { responseType } from "../../typings";
@@ -16,51 +15,44 @@ import { toast } from "react-toastify";
 
 const Wishlist = () => {
   const router = useRouter();
-  const dataFetcher = async () => {
-    let data = await callApi(processIDs?.get_wishlist, {
-      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-    }) // @ts-ignore
-      .then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            if (res?.data?.returnData) {
-              return res?.data?.returnData;
-            } else {
-              return [];
-            }
-          } else {
-            return [];
-          }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-          return undefined;
-        }
-      })
-      .catch((err: any) => {
-        toast.error(`Error: ${err?.message}`);
-        return undefined;
-      });
-    return data;
-  };
-  const {
-    data: wishlist,
-    isLoading,
-    error,
-  } = useSwr(`${processIDs?.get_wishlist}`, dataFetcher);
   const [wishList, setWishList] = useState<any>();
 
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.wishlist)) {
       setWishList(getSessionObjectData(storageConfig?.wishlist));
     } else {
-      if (wishlist?.length > 0) {
-        setSessionObjectData(storageConfig?.wishlist, wishlist);
-      }
-      setWishList(wishlist);
+      callApi(processIDs?.get_wishlist, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              if (res?.data?.returnData) {
+                setSessionObjectData(
+                  storageConfig?.wishlist,
+                  res?.data?.returnData
+                );
+                setWishList(res?.data?.returnData);
+              } else {
+                setSessionObjectData(storageConfig?.wishlist, []);
+                setWishList([]);
+              }
+            } else {
+              setWishList([]);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
+            setWishList(undefined);
+          }
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setWishList(undefined);
+        });
     }
-  }, [wishlist]);
+  }, []);
 
-  if (isLoading || wishList === undefined) return <>Loading...</>;
+  if (wishList === undefined) return <>Loading...</>;
   if (wishList?.length === 0) {
     return (
       <div className="no-wishlist">

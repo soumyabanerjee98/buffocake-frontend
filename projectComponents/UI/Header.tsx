@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import {
@@ -35,49 +34,8 @@ import CheckoutCard from "./CheckoutCard";
 import { toast } from "react-toastify";
 import AddressCard from "./AddressCard";
 
-const dataFetcher = async () => {
-  if (getSessionObjectData(storageConfig?.userProfile)) {
-    return getSessionObjectData(storageConfig?.userProfile);
-  } else {
-    if (getLocalStringData(storageConfig?.jwtToken)) {
-      let data = await callApi(processIDs?.verify_login_token, {
-        token: getLocalStringData(storageConfig?.jwtToken),
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              setSessionObjectData(
-                storageConfig?.userProfile,
-                res?.data?.returnData
-              );
-              return res?.data?.returnData;
-            } else {
-              removeLocalData(storageConfig?.jwtToken);
-              return null;
-            }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-            return undefined;
-          }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
-          return undefined;
-        });
-      return data;
-    } else {
-      return null;
-    }
-  }
-};
-
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
-  const {
-    data: userData,
-    error,
-    isLoading,
-  } = useSwr(processIDs?.verify_login_token, dataFetcher);
   const url =
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
@@ -175,8 +133,11 @@ const Header = () => {
         } else if (m?.message?.action === "phone-verify") {
           setPhoneVerifyCardOpen(true);
         } else if (m?.message?.action === "logout") {
-          navigate("/");
           removeSessionData(storageConfig?.userProfile);
+          removeSessionData(storageConfig?.address);
+          removeSessionData(storageConfig?.cart);
+          removeSessionData(storageConfig?.wishlist);
+          navigate("/");
           removeLocalData(storageConfig?.jwtToken);
           setUserProfile(null);
         }
@@ -245,8 +206,39 @@ const Header = () => {
     });
   }, []);
   useEffect(() => {
-    setUserProfile(userData);
-  }, [userData]);
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      setUserProfile(getSessionObjectData(storageConfig?.userProfile));
+    } else {
+      if (getLocalStringData(storageConfig?.jwtToken)) {
+        callApi(processIDs?.verify_login_token, {
+          token: getLocalStringData(storageConfig?.jwtToken),
+        }) // @ts-ignore
+          .then((res: responseType) => {
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                setSessionObjectData(
+                  storageConfig?.userProfile,
+                  res?.data?.returnData
+                );
+                setUserProfile(res?.data?.returnData);
+              } else {
+                removeLocalData(storageConfig?.jwtToken);
+                setUserProfile(null);
+              }
+            } else {
+              toast.error(`Error: ${res?.status}`);
+              setUserProfile(undefined);
+            }
+          })
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+            setUserProfile(undefined);
+          });
+      } else {
+        setUserProfile(null);
+      }
+    }
+  }, []);
   return (
     <header className="main-header">
       <div className="left-col">
@@ -308,7 +300,7 @@ const Header = () => {
           </>
         )}
         <div className="profile-container">
-          {isLoading || userProfile === undefined ? (
+          {userProfile === undefined ? (
             <Loading className="spinner" />
           ) : (
             <>
