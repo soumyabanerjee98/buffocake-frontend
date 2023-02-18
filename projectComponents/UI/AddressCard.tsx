@@ -79,8 +79,8 @@ const AddressCard = (props: AddressCardProps) => {
         receiverContact: formData?.receiverContact?.includes("+91")
           ? formData?.receiverContact
           : `+91${formData?.receiverContact}`,
-        house: formData?.house,
-        street: formData?.street,
+        house: formData?.house?.replaceAll("\n", ", "),
+        street: formData?.street?.replaceAll("\n", ", "),
         pin: formData?.pin,
         favorite: formData?.fav,
       };

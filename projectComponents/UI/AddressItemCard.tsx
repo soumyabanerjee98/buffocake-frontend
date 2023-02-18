@@ -67,7 +67,10 @@ const AddressItemCard = (props: AddressItemCardProps) => {
   };
 
   return (
-    <div className={`address-item ${address?.favorite ? "fav" : ""}`}>
+    <div
+      key={`address-item-${address?._id}`}
+      className={`address-item ${address?.favorite ? "fav" : ""}`}
+    >
       <div className="address-details">
         <div className="address-name">{address?.receiverName}</div>
         <div className="address-details">

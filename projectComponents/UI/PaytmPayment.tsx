@@ -10,29 +10,102 @@ import {
   callApi,
   getLocalObjectData,
   getSessionObjectData,
+  setSessionObjectData,
 } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
 import { responseType } from "../../typings";
 import { toast } from "react-toastify";
+import { messageService } from "../Functions/messageService";
 
 export type PaytmPaymentProps = {
   MID: string;
   MKEY: string;
   Total: number;
   disable: boolean;
+  Address: any;
+  source: any;
+  cart: any;
 };
 
 const PaytmPayment = (props: PaytmPaymentProps) => {
-  const { MID, MKEY, Total, disable } = props;
+  const { MID, MKEY, Total, Address, disable, source, cart } = props;
   const [loading, setLoading] = useState(false);
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
     env === "production" ? paytmConfig?.host : paytmConfig?.stage_host;
+  const checkoutFunc = (response: any) => {
+    let body = {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      oid: response?.orderId,
+      txnId: response?.txnId,
+      items: cart,
+      shippingAddress: response?.address,
+      total: response?.total,
+      paymentStatus:
+        response?.resultInfo?.resultStatus === "TXN_SUCCESS"
+          ? "Completed"
+          : "Pending",
+      orderStatus:
+        response?.resultInfo?.resultStatus === "TXN_SUCCESS"
+          ? "Accepted"
+          : "Pending",
+      orderTimeStamp: response?.txnDate,
+    };
+
+    callApi(processIDs?.create_order, body) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setSessionObjectData(storageConfig?.orders, res?.data?.returnData);
+            if (source === "cart-page") {
+              callApi(processIDs?.clear_cart, {
+                userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    setSessionObjectData(storageConfig?.cart, []);
+                    messageService?.sendMessage(
+                      "checkout-card",
+                      // @ts-ignore
+                      {
+                        action: "clear-cart-payment-successfull",
+                        params: { cart: [], oid: response?.orderId },
+                      },
+                      "global"
+                    );
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err) => {
+                  toast.error(`Error: ${err}`);
+                });
+            } else {
+              messageService?.sendMessage(
+                "checkout-card",
+                // @ts-ignore
+                {
+                  action: "payment-successfull",
+                  params: { oid: response?.orderId },
+                },
+                "global"
+              );
+            }
+            document.getElementById("app-close-btn")?.click();
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+        }
+      })
+      .catch((err) => {
+        toast.error(`Error: ${err}`);
+      });
+  };
   const InitiatePayment = async () => {
     try {
       setLoading(true);
-      let oid = Math.floor(Math.random() * Date.now());
+      let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
       callApi(processIDs?.paytm_transaction_token_generate, {
         mid: MID,
         mkey: MKEY,
@@ -70,12 +143,25 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
                     .then((res: responseType) => {
                       if (res?.status === 200) {
                         if (res?.data?.returnCode) {
-                          document.getElementById("app-close-btn")?.click();
                           //  TXN_SUCCESS, TXN_FAILURE, PENDING
-                          console.log(
-                            "payment status ",
-                            res?.data?.returnData?.resultInfo?.resultStatus
-                          );
+                          if (
+                            res?.data?.returnData?.resultInfo?.resultStatus ===
+                              "TXN_SUCCESS" ||
+                            res?.data?.returnData?.resultInfo?.resultStatus ===
+                              "PENDING"
+                          ) {
+                            checkoutFunc({
+                              ...res?.data?.returnData,
+                              address: Address,
+                              total: Total.toString(),
+                            });
+                          } else if (
+                            res?.data?.returnData?.resultInfo?.resultStatus ===
+                            "TXN_FAILURE"
+                          ) {
+                            toast.error(`Error: Transaction failed`);
+                            document.getElementById("app-close-btn")?.click();
+                          }
                         }
                       } else {
                         toast.error(`Error: ${res?.status}`);

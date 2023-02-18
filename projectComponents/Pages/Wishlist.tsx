@@ -20,36 +20,35 @@ const Wishlist = () => {
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.wishlist)) {
       setWishList(getSessionObjectData(storageConfig?.wishlist));
-    } else {
-      callApi(processIDs?.get_wishlist, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                setSessionObjectData(
-                  storageConfig?.wishlist,
-                  res?.data?.returnData
-                );
-                setWishList(res?.data?.returnData);
-              } else {
-                setSessionObjectData(storageConfig?.wishlist, []);
-                setWishList([]);
-              }
+    }
+    callApi(processIDs?.get_wishlist, {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              setSessionObjectData(
+                storageConfig?.wishlist,
+                res?.data?.returnData
+              );
+              setWishList(res?.data?.returnData);
             } else {
+              setSessionObjectData(storageConfig?.wishlist, []);
               setWishList([]);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
-            setWishList(undefined);
+            setWishList([]);
           }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
+        } else {
+          toast.error(`Error: ${res?.status}`);
           setWishList(undefined);
-        });
-    }
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
+        setWishList(undefined);
+      });
   }, []);
 
   if (wishList === undefined) return <>Loading...</>;

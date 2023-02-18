@@ -70,36 +70,35 @@ const BasicDetails = (props: BasicDetailsProps) => {
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.address)) {
       setAddress(getSessionObjectData(storageConfig?.address));
-    } else {
-      callApi(processIDs?.get_address, {
-        userId: profile?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                setAddress(res?.data?.returnData);
-                setSessionObjectData(
-                  storageConfig?.address,
-                  res?.data?.returnData
-                );
-              } else {
-                setAddress([]);
-                setSessionObjectData(storageConfig?.address, []);
-              }
+    }
+    callApi(processIDs?.get_address, {
+      userId: profile?.id,
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              setAddress(res?.data?.returnData);
+              setSessionObjectData(
+                storageConfig?.address,
+                res?.data?.returnData
+              );
             } else {
               setAddress([]);
+              setSessionObjectData(storageConfig?.address, []);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
-            setAddress(undefined);
+            setAddress([]);
           }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
+        } else {
+          toast.error(`Error: ${res?.status}`);
           setAddress(undefined);
-        });
-    }
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
+        setAddress(undefined);
+      });
   }, []);
   const getEmail = () => {
     gSignInWithPopup().then((res: any) => {

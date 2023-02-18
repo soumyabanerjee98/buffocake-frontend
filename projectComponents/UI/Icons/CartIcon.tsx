@@ -23,36 +23,32 @@ const CartIcon = (props: CartIconProps) => {
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.cart)) {
       setCartCount(getSessionObjectData(storageConfig?.cart)?.length);
-    } else {
-      callApi(processIDs?.get_cart, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                setCartCount(res?.data?.returnData?.length);
-                setSessionObjectData(
-                  storageConfig?.cart,
-                  res?.data?.returnData
-                );
-              } else {
-                setCartCount(0);
-                setSessionObjectData(storageConfig?.cart, []);
-              }
+    }
+    callApi(processIDs?.get_cart, {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              setCartCount(res?.data?.returnData?.length);
+              setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
             } else {
               setCartCount(0);
+              setSessionObjectData(storageConfig?.cart, []);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
-            setCartCount(undefined);
+            setCartCount(0);
           }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
+        } else {
+          toast.error(`Error: ${res?.status}`);
           setCartCount(undefined);
-        });
-    }
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
+        setCartCount(undefined);
+      });
     // @ts-ignore
     messageService?.onReceive()?.subscribe((m: messageType) => {
       if (
@@ -61,6 +57,10 @@ const CartIcon = (props: CartIconProps) => {
       ) {
         if (m?.message?.action === "refresh-count") {
           setCartCount(m?.message?.params);
+        }
+      } else if (m?.sender == "checkout-card" && m?.target === "global") {
+        if (m?.message?.action === "clear-cart-payment-successfull") {
+          setCartCount(0);
         }
       }
     });

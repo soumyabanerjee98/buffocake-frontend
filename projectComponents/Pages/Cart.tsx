@@ -2,7 +2,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import { labelConfig, storageConfig } from "../../config/siteConfig";
-import { responseType } from "../../typings";
+import { messageType, responseType } from "../../typings";
 import {
   callApi,
   getSessionObjectData,
@@ -37,36 +37,40 @@ const Cart = () => {
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.cart)) {
       setCart(getSessionObjectData(storageConfig?.cart));
-    } else {
-      callApi(processIDs?.get_cart, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                setSessionObjectData(
-                  storageConfig?.cart,
-                  res?.data?.returnData
-                );
-                setCart(res?.data?.returnData);
-              } else {
-                setSessionObjectData(storageConfig?.cart, []);
-                setCart([]);
-              }
+    }
+    callApi(processIDs?.get_cart, {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
+              setCart(res?.data?.returnData);
             } else {
+              setSessionObjectData(storageConfig?.cart, []);
               setCart([]);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
-            setCart(undefined);
+            setCart([]);
           }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
+        } else {
+          toast.error(`Error: ${res?.status}`);
           setCart(undefined);
-        });
-    }
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
+        setCart(undefined);
+      });
+    // @ts-ignore
+    messageService?.onReceive()?.subscribe((m: messageType) => {
+      if (m?.sender == "checkout-card" && m?.target === "global") {
+        if (m?.message?.action === "clear-cart-payment-successfull") {
+          setCart(m?.message?.params?.cart);
+        }
+      }
+    });
   }, []);
   useEffect(() => {
     if (cart) {
@@ -83,7 +87,14 @@ const Cart = () => {
       <div className="no-cart">
         <Image src={Broken} alt="Broken" height={100} priority={true} />
         <div>No product found</div>
-        <div className="buy">Buy products</div>
+        <div
+          className="buy"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          Buy products
+        </div>
       </div>
     );
   }

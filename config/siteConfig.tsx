@@ -71,6 +71,7 @@ export const storageConfig = {
   wishlist: "userWishlist",
   jwtToken: "accessToken",
   address: "userAddress",
+  orders: "userOrders",
 };
 
 export const colorPalette = {};

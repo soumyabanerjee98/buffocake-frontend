@@ -42,7 +42,6 @@ const OrdersPage = () => {
             });
         });
       let data = await dataFetcher();
-      console.log(data);
       setAuth(data);
     } else {
       setAuth(null);

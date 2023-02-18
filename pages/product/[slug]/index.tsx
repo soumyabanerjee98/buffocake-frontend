@@ -1,14 +1,11 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from "react-toastify";
-import { processIDs } from "../../config/processID";
-import { callApi } from "../../projectComponents/Functions/util";
-import PageNotFound from "../../projectComponents/Pages/PageNotFound";
-import Products from "../../projectComponents/Pages/Products";
-import { responseType } from "../../typings";
+import { processIDs } from "../../../config/processID";
+import { callApi } from "../../../projectComponents/Functions/util";
+import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
+import Products from "../../../projectComponents/Pages/Products";
 
 const ProductPage = (props: any) => {
   const { productDetails } = props;

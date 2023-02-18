@@ -33,6 +33,7 @@ import OrderIcon from "./Icons/OrderIcon";
 import CheckoutCard from "./CheckoutCard";
 import { toast } from "react-toastify";
 import AddressCard from "./AddressCard";
+import OrderSuccessCard from "./OrderSuccessCard";
 
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
@@ -59,6 +60,10 @@ const Header = () => {
     fav: false,
     action: "",
     addressId: "",
+  });
+  const [orderSuccessCardOpen, setOrderSuccessCardOpen] = useState({
+    state: false,
+    oid: "",
   });
   const redirect = useRouter();
   const navigate = (url: string) => {
@@ -137,6 +142,7 @@ const Header = () => {
           removeSessionData(storageConfig?.address);
           removeSessionData(storageConfig?.cart);
           removeSessionData(storageConfig?.wishlist);
+          removeSessionData(storageConfig?.orders);
           navigate("/");
           removeLocalData(storageConfig?.jwtToken);
           setUserProfile(null);
@@ -200,6 +206,29 @@ const Header = () => {
               action: "",
               addressId: "",
             };
+          });
+        }
+      } else if (m?.sender === "checkout-card" && m?.target === "global") {
+        if (
+          m?.message?.action === "clear-cart-payment-successfull" ||
+          m?.message?.action === "payment-successfull"
+        ) {
+          setCheckOutCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+              source: "",
+              cart: [],
+            };
+          });
+          setOrderSuccessCardOpen((prev: any) => {
+            return { ...prev, oid: m?.message?.params?.oid, state: true };
+          });
+        }
+      } else if (m?.sender === "order-success-card" && m?.target === "header") {
+        if (m?.message?.action === "close-popup") {
+          setOrderSuccessCardOpen((prev: any) => {
+            return { ...prev, oid: "", state: false };
           });
         }
       }
@@ -351,6 +380,9 @@ const Header = () => {
           action={addressCardOpen?.action}
           addressId={addressCardOpen?.addressId}
         />
+      )}
+      {orderSuccessCardOpen?.state && (
+        <OrderSuccessCard oid={orderSuccessCardOpen?.oid} />
       )}
     </header>
   );

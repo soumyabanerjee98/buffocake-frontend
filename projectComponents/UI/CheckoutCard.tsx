@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
 import { paytmConfig, storageConfig } from "../../config/siteConfig";
-import { responseType } from "../../typings";
+import { messageType, responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
 import {
   callApi,
@@ -19,11 +19,29 @@ export type CheckoutCardProps = {
 
 const CheckoutCard = (props: CheckoutCardProps) => {
   const { source, cart } = props;
-  //   console.log(source, cart);
   const router = useRouter();
   const [address, setAddress] = useState<any>();
   const [addressInd, setAddressInd] = useState(0);
   const [grandTotal, setGrandTotal] = useState<any>(null);
+
+  const closePopUp = () => {
+    messageService?.sendMessage(
+      "checkout-card",
+      // @ts-ignore
+      { action: "close-popup" },
+      "header"
+    );
+  };
+  const clickOutSide = (e: any) => {
+    if (e.target.className === "modal") {
+      closePopUp();
+    }
+  };
+  const goToProfile = () => {
+    closePopUp();
+    router.push("/profile");
+  };
+
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.address)) {
       let addressArr = [];
@@ -42,47 +60,46 @@ const CheckoutCard = (props: CheckoutCardProps) => {
         addressArr.push(i);
       });
       setAddress(addressArr);
-    } else {
-      callApi(processIDs?.get_address, {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-      }) // @ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              if (res?.data?.returnData) {
-                let addressArr = [];
-                let favItem = res?.data?.returnData?.find((i: any) => {
-                  return i?.favorite === true;
-                });
-                addressArr.push(favItem);
-                let otherItems = res?.data?.returnData?.filter((i: any) => {
-                  return i?.favorite === false;
-                });
-                otherItems.map((i: any) => {
-                  addressArr.push(i);
-                });
-                setAddress(addressArr);
-                setSessionObjectData(
-                  storageConfig?.address,
-                  res?.data?.returnData
-                );
-              } else {
-                setAddress([]);
-                setSessionObjectData(storageConfig?.address, []);
-              }
+    }
+    callApi(processIDs?.get_address, {
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+    }) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            if (res?.data?.returnData) {
+              let addressArr = [];
+              let favItem = res?.data?.returnData?.find((i: any) => {
+                return i?.favorite === true;
+              });
+              addressArr.push(favItem);
+              let otherItems = res?.data?.returnData?.filter((i: any) => {
+                return i?.favorite === false;
+              });
+              otherItems.map((i: any) => {
+                addressArr.push(i);
+              });
+              setAddress(addressArr);
+              setSessionObjectData(
+                storageConfig?.address,
+                res?.data?.returnData
+              );
             } else {
               setAddress([]);
+              setSessionObjectData(storageConfig?.address, []);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
-            setAddress(undefined);
+            setAddress([]);
           }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
+        } else {
+          toast.error(`Error: ${res?.status}`);
           setAddress(undefined);
-        });
-    }
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err?.message}`);
+        setAddress(undefined);
+      });
   }, []);
   useEffect(() => {
     let total = 0;
@@ -91,23 +108,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     });
     setGrandTotal(total);
   }, []);
-  const closePopUp = () => {
-    messageService?.sendMessage(
-      "checkout-card",
-      // @ts-ignore
-      { action: "close-popup" },
-      "header"
-    );
-  };
-  const clickOutSide = (e: any) => {
-    if (e.target.className === "modal") {
-      closePopUp();
-    }
-  };
-  const goToProfile = () => {
-    closePopUp();
-    router.push("/profile");
-  };
+
   return (
     <div className="modal" onClick={clickOutSide}>
       <div className="checkout-card">
@@ -149,30 +150,32 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                   </div>
                   <div className="address-item">
                     <div className="address-title">
-                      {address[addressInd]?.receiverName}
+                      {address?.[addressInd]?.receiverName}
                     </div>
                     <div className="address-details">
                       <div className="address-section">
                         <div className="label">House / Building : </div>
                         <div className="value">
-                          {address[addressInd]?.house
-                            ? address[addressInd]?.house
+                          {address?.[addressInd]?.house
+                            ? address?.[addressInd]?.house
                             : "NA"}
                         </div>
                       </div>
                       <div className="address-section">
                         <div className="label">Street no. : </div>
                         <div className="value">
-                          {address[addressInd]?.street}
+                          {address?.[addressInd]?.street}
                         </div>
                       </div>
                       <div className="address-section">
                         <div className="label">Pin code : </div>
-                        <div className="value">{address[addressInd]?.pin}</div>
+                        <div className="value">
+                          {address?.[addressInd]?.pin}
+                        </div>
                       </div>
                     </div>
                     <div className="address-contact">
-                      {address[addressInd]?.receiverContact}
+                      {address?.[addressInd]?.receiverContact}
                     </div>
                   </div>
                   <div
@@ -260,6 +263,9 @@ const CheckoutCard = (props: CheckoutCardProps) => {
           }
           Total={grandTotal}
           disable={address?.length > 0 ? false : true}
+          Address={address?.[addressInd]}
+          cart={cart}
+          source={source}
         />
       </div>
     </div>

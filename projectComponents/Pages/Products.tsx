@@ -22,6 +22,7 @@ import { messageService } from "../Functions/messageService";
 import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export type ProductProps = {
   productDetails: any;
@@ -29,6 +30,7 @@ export type ProductProps = {
 
 const Products = (props: ProductProps) => {
   const { productDetails } = props;
+  const router = useRouter();
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 8);
@@ -78,48 +80,47 @@ const Products = (props: ProductProps) => {
       } else {
         setFav(false);
       }
-    } else {
-      if (getSessionObjectData(storageConfig?.userProfile)) {
-        callApi(processIDs?.get_wishlist, {
-          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-        }) // @ts-ignore
-          .then((res: responseType) => {
-            if (res?.data?.returnCode) {
-              let returnStatement;
-              if (res?.status === 200) {
-                if (res?.data?.returnData) {
-                  setSessionObjectData(
-                    storageConfig?.wishlist,
-                    res?.data?.returnData
-                  );
-                  let data = res?.data?.returnData?.find((i: any) => {
-                    return i?.productId === productDetails?._id;
-                  });
-                  if (data) {
-                    returnStatement = true;
-                  } else {
-                    returnStatement = false;
-                  }
+    }
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      callApi(processIDs?.get_wishlist, {
+        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      }) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.data?.returnCode) {
+            let returnStatement;
+            if (res?.status === 200) {
+              if (res?.data?.returnData) {
+                setSessionObjectData(
+                  storageConfig?.wishlist,
+                  res?.data?.returnData
+                );
+                let data = res?.data?.returnData?.find((i: any) => {
+                  return i?.productId === productDetails?._id;
+                });
+                if (data) {
+                  returnStatement = true;
                 } else {
-                  setSessionObjectData(storageConfig?.wishlist, []);
                   returnStatement = false;
                 }
               } else {
-                toast.error(`Error: ${res?.status}`);
-                returnStatement = undefined;
+                setSessionObjectData(storageConfig?.wishlist, []);
+                returnStatement = false;
               }
-              setFav(returnStatement);
             } else {
-              setFav(false);
+              toast.error(`Error: ${res?.status}`);
+              returnStatement = undefined;
             }
-          })
-          .catch((err: any) => {
-            toast.error(`Error: ${err?.message}`);
-            setFav(undefined);
-          });
-      } else {
-        setFav(false);
-      }
+            setFav(returnStatement);
+          } else {
+            setFav(false);
+          }
+        })
+        .catch((err: any) => {
+          toast.error(`Error: ${err?.message}`);
+          setFav(undefined);
+        });
+    } else {
+      setFav(false);
     }
   }, []);
 
@@ -393,6 +394,7 @@ const Products = (props: ProductProps) => {
                 },
                 "cart-icon"
               );
+              router.push("/cart");
             }
           } else {
             toast.error(`Error: ${res?.status}`);

@@ -25,4 +25,8 @@ export const processIDs = {
   add_item_to_cart: "add-item-to-cart",
   remove_item_from_cart: "remove-item-from-cart",
   get_cart: "get-cart",
+  clear_cart: "clear-cart",
+  create_order: "create-order",
+  update_order: "update-order",
+  get_orders: "get-orders",
 };
