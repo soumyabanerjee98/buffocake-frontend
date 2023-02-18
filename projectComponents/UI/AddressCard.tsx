@@ -92,8 +92,8 @@ const AddressCard = (props: AddressCardProps) => {
         receiverContact: formData?.receiverContact?.includes("+91")
           ? formData?.receiverContact
           : `+91${formData?.receiverContact}`,
-        house: formData?.house,
-        street: formData?.street,
+        house: formData?.house?.replaceAll("\n", ", "),
+        street: formData?.street?.replaceAll("\n", ", "),
         pin: formData?.pin,
         favorite: formData?.fav,
       };
@@ -258,7 +258,7 @@ const AddressCard = (props: AddressCardProps) => {
             value={formData?.pin}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (
-                formData?.pin?.length < 6 ||
+                e.target.value.length <= 6 ||
                 // @ts-ignore
                 e.nativeEvent.inputType === "deleteContentBackward"
               ) {
