@@ -50,7 +50,9 @@ const CheckoutCard = (props: CheckoutCardProps) => {
           return i?.favorite === true;
         }
       );
-      addressArr.push(favItem);
+      if (favItem) {
+        addressArr.push(favItem);
+      }
       let otherItems = getSessionObjectData(storageConfig?.address)?.filter(
         (i: any) => {
           return i?.favorite === false;
