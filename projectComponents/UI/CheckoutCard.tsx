@@ -74,7 +74,9 @@ const CheckoutCard = (props: CheckoutCardProps) => {
               let favItem = res?.data?.returnData?.find((i: any) => {
                 return i?.favorite === true;
               });
-              addressArr.push(favItem);
+              if (favItem) {
+                addressArr.push(favItem);
+              }
               let otherItems = res?.data?.returnData?.filter((i: any) => {
                 return i?.favorite === false;
               });
