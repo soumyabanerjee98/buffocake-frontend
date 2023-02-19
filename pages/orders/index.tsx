@@ -12,6 +12,7 @@ import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
 import Orders from "../../projectComponents/Pages/Orders";
 import { toast } from "react-toastify";
+import Script from "next/script";
 
 const OrdersPage = () => {
   const [auth, setAuth] = useState<any>();
@@ -64,6 +65,7 @@ const OrdersPage = () => {
           <meta name="description" content={`Orders`} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
+        <Script src="html2pdf.bundle.min.js" />
         <Orders />
       </>
     );

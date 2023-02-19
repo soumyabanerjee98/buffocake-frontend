@@ -964,6 +964,9 @@ input::-webkit-inner-spin-button {
 .order-screen .order-list .order-item .exp .left-col {
   font-size: small;
 }
+.order-screen .order-list .order-item .order-id {
+  margin-bottom: 0.4rem;
+}
 .order-screen .order-list .order-item .exp .left-col .section{
   padding-bottom: 0.8rem;
 }
@@ -1480,6 +1483,28 @@ input::-webkit-inner-spin-button {
 
 .order-success-card .oid {
   color: #4285f4;
+}
+/* Order receipt card */
+.order-receipt-card{
+  position: relative;
+    padding: 1.2rem 2rem;
+    background-color: white;
+    border-radius: 4px;
+    position: relative;
+}
+.order-receipt-card .download{
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  height: 1.5rem;
+  width: 1.5rem;
+    cursor: pointer;
+    background-color: aliceblue;
+    border: 1px solid rgb(181, 213, 242);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* OTP Field */

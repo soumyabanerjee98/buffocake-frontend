@@ -1,17 +1,33 @@
 import React, { useState } from "react";
 import { labelConfig } from "../../config/siteConfig";
+import { messageService } from "../Functions/messageService";
 
 export type OrderCardProps = { orderItem: any };
 
 const OrderCard = (props: OrderCardProps) => {
   const { orderItem } = props;
   const [expand, setExpand] = useState(false);
+  const OpenReceipt = () => {
+    messageService?.sendMessage(
+      "order-item-card",
+      // @ts-ignore
+      { params: orderItem },
+      "header"
+    );
+  };
   return (
     <div className="order-item">
       <div className="non-exp">
         <div className="left-col">
           <div className="order-id">
             Order Id: <span className="id">#{orderItem?.orderId}</span>
+          </div>
+          <div className="order-date">
+            Order placed on{" "}
+            {orderItem?.orderTimeStamp
+              ?.split(":", 2)
+              .toString()
+              .replace(",", ":")}
           </div>
         </div>
         <div className="right-col">
@@ -20,6 +36,10 @@ const OrderCard = (props: OrderCardProps) => {
           >
             Order {orderItem?.orderStatus}
           </div>
+          <i
+            className="fa-solid fa-file-invoice dropdown"
+            onClick={OpenReceipt}
+          />
           <i
             className={`${
               expand ? "fa-solid fa-caret-up" : "fa-solid fa-caret-down"
@@ -36,6 +56,9 @@ const OrderCard = (props: OrderCardProps) => {
             {orderItem?.items?.map((i: any) => {
               return (
                 <div className="section">
+                  <div>
+                    Sub-Order ID: <span className="id">#{i?.subOrderId}</span>
+                  </div>
                   <div>
                     {i?.qty} x {i?.weight}lbs {i?.productName}
                   </div>

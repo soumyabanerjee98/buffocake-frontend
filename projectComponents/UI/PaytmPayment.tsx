@@ -39,7 +39,14 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       oid: response?.orderId,
       txnId: response?.txnId,
-      items: cart,
+      items: cart?.map((i: any) => {
+        return {
+          ...i,
+          subOrderId: `${response?.orderId}_${Math.floor(
+            Math.random() * Date.now()
+          )}`,
+        };
+      }),
       shippingAddress: response?.address,
       total: response?.total,
       paymentStatus:

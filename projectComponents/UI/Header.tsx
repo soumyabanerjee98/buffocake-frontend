@@ -34,6 +34,7 @@ import CheckoutCard from "./CheckoutCard";
 import { toast } from "react-toastify";
 import AddressCard from "./AddressCard";
 import OrderSuccessCard from "./OrderSuccessCard";
+import OrderReceipt from "./OrderReceipt";
 
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
@@ -64,6 +65,10 @@ const Header = () => {
   const [orderSuccessCardOpen, setOrderSuccessCardOpen] = useState({
     state: false,
     oid: "",
+  });
+  const [receiptCardOpen, setReceiptCardOpen] = useState({
+    state: false,
+    order: {},
   });
   const redirect = useRouter();
   const navigate = (url: string) => {
@@ -231,6 +236,16 @@ const Header = () => {
             return { ...prev, oid: "", state: false };
           });
         }
+      } else if (m?.sender === "receipt-card" && m?.target === "header") {
+        if (m?.message?.action === "close-popup") {
+          setReceiptCardOpen((prev: any) => {
+            return { ...prev, state: false, order: {} };
+          });
+        }
+      } else if (m?.sender === "order-item-card" && m?.target === "header") {
+        setReceiptCardOpen((prev: any) => {
+          return { ...prev, state: true, order: m?.message?.params };
+        });
       }
     });
   }, []);
@@ -383,6 +398,9 @@ const Header = () => {
       )}
       {orderSuccessCardOpen?.state && (
         <OrderSuccessCard oid={orderSuccessCardOpen?.oid} />
+      )}
+      {receiptCardOpen?.state && (
+        <OrderReceipt order={receiptCardOpen?.order} />
       )}
     </header>
   );
