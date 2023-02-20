@@ -33,8 +33,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
   const { MID, MKEY, Total, Address, disable, source, cart } = props;
   const [loading, setLoading] = useState(false);
   const env = process.env.NODE_ENV;
-  const paytmbaseurl =
-    env === "production" ? paytmConfig?.host : paytmConfig?.stage_host;
+  const paytmbaseurl = paytmConfig?.stage_host;
   const checkoutFunc = (response: any) => {
     let body = {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
