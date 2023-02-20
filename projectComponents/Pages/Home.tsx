@@ -18,7 +18,7 @@ const Home = (props: HomeProps) => {
       : serverConfig?.backend_url_server;
   const catagorySet = Array.from(
     new Set(
-      allProducts.map((i: any) => {
+      allProducts?.map((i: any) => {
         return i?.catagory;
       })
     )
@@ -64,8 +64,8 @@ const Home = (props: HomeProps) => {
               <div className="catagory-body">
                 {allProducts
                   ?.filter((v: any) => v?.catagory === i)
-                  .filter((w: any, ind: any) => ind <= 3)
-                  .map((val: any, ind: any) => {
+                  ?.filter((w: any, ind: any) => ind <= 3)
+                  ?.map((val: any, ind: any) => {
                     return (
                       <div
                         key={`product-card-${ind}`}

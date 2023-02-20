@@ -28,17 +28,17 @@ export async function getStaticProps() {
           if (res?.data?.returnCode) {
             return res?.data?.returnData;
           } else {
-            return null;
+            return [];
           }
         } else {
           toast.error(`Error: ${res?.status}`);
-          return null;
+          return [];
         }
       }
     )
     .catch((err: any) => {
       toast.error(`Error: ${err?.message}`);
-      return null;
+      return [];
     });
   return {
     props: {
