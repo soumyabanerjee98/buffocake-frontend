@@ -72,17 +72,17 @@ export async function getStaticPaths() {
           if (res?.data?.returnCode) {
             return res?.data?.returnData;
           } else {
-            return null;
+            return [];
           }
         } else {
           toast.error(`Error: ${res?.status}`);
-          return null;
+          return [];
         }
       }
     )
     .catch((err: any) => {
       toast.error(`Error: ${err?.message}`);
-      return null;
+      return [];
     });
   const paths = data?.map((i: any) => ({
     params: { slug: i?._id },
