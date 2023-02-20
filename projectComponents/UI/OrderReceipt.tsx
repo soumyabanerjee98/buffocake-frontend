@@ -49,9 +49,11 @@ const OrderReceipt = (props: OrderReceiptProps) => {
           </div>
           <table style={{ border: "1px solid black" }}>
             <tr>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Sub-Order ID
-              </th>
+              {order?.items?.length > 1 && (
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Sub-Order ID
+                </th>
+              )}
               <th style={{ border: "1px solid black", padding: "0.8rem" }}>
                 Product name
               </th>
@@ -74,7 +76,9 @@ const OrderReceipt = (props: OrderReceiptProps) => {
             {order?.items?.map((i: any) => {
               return (
                 <tr>
-                  <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
+                  {i?.subOrderId && (
+                    <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
+                  )}
                   <td style={{ textAlign: "center" }}>{i?.productName}</td>
                   <td style={{ textAlign: "center" }}>{i?.qty}</td>
                   <td style={{ textAlign: "center" }}>{i?.weight}lbs</td>

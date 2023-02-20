@@ -56,9 +56,11 @@ const OrderCard = (props: OrderCardProps) => {
             {orderItem?.items?.map((i: any) => {
               return (
                 <div className="section">
-                  <div>
-                    Sub-Order ID: <span className="id">#{i?.subOrderId}</span>
-                  </div>
+                  {i?.subOrderId && (
+                    <div>
+                      Sub-Order ID: <span className="id">#{i?.subOrderId}</span>
+                    </div>
+                  )}
                   <div>
                     {i?.qty} x {i?.weight}lbs {i?.productName}
                   </div>

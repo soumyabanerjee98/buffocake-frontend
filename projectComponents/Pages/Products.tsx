@@ -340,117 +340,128 @@ const Products = (props: ProductProps) => {
   };
 
   const addToCart = () => {
-    if (
-      productDetails?.availableFlavours?.length > 0 &&
-      checkOutDetails?.selectedFlavour === null
-    ) {
-      setErr((prev: any) => {
-        return { ...prev, flavours: true };
-      });
-    } else if (!checkOutDetails?.deliveryTime) {
-      setErr((prev: any) => {
-        return { ...prev, time: true };
-      });
-    } else {
-      setLoader((prev: any) => {
-        return { ...prev, cart: true };
-      });
-      let body = {
-        userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-        productId: productDetails?._id,
-        qty: checkOutDetails?.qty,
-        weight: checkOutDetails?.weight,
-        flavour: checkOutDetails?.selectedFlavour
-          ? checkOutDetails?.selectedFlavour
-          : "",
-        custom: checkOutDetails?.customOption
-          ? checkOutDetails?.customOption
-          : "",
-        message: checkOutDetails?.message,
-        allergy: checkOutDetails?.allergy,
-        delDate: checkOutDetails?.deliveryDate?.toDateString(),
-        delTime: checkOutDetails?.deliveryTime,
-        subTotal:
-          checkOutDetails?.additionalValueCustom +
-          checkOutDetails?.additionalValueFlavour +
-          checkOutDetails?.subTotal,
-      };
-
-      callApi(processIDs?.add_item_to_cart, body)
-        // @ts-ignore
-        .then((res: responseType) => {
-          setLoader((prev: any) => {
-            return { ...prev, cart: false };
-          });
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              setSessionObjectData(storageConfig?.cart, res?.data?.returnData);
-              messageService?.sendMessage(
-                "product-page",
-                // @ts-ignore
-                {
-                  action: "refresh-count",
-                  params: res?.data?.returnData?.length,
-                },
-                "cart-icon"
-              );
-              router.push("/cart");
-            }
-          } else {
-            toast.error(`Error: ${res?.status}`);
-          }
-        })
-        .catch((err: any) => {
-          toast.error(`Error: ${err?.message}`);
-          setLoader((prev: any) => {
-            return { ...prev, cart: false };
-          });
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      if (
+        productDetails?.availableFlavours?.length > 0 &&
+        checkOutDetails?.selectedFlavour === null
+      ) {
+        setErr((prev: any) => {
+          return { ...prev, flavours: true };
         });
+      } else if (!checkOutDetails?.deliveryTime) {
+        setErr((prev: any) => {
+          return { ...prev, time: true };
+        });
+      } else {
+        setLoader((prev: any) => {
+          return { ...prev, cart: true };
+        });
+        let body = {
+          userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+          productId: productDetails?._id,
+          qty: checkOutDetails?.qty,
+          weight: checkOutDetails?.weight,
+          flavour: checkOutDetails?.selectedFlavour
+            ? checkOutDetails?.selectedFlavour
+            : "",
+          custom: checkOutDetails?.customOption
+            ? checkOutDetails?.customOption
+            : "",
+          message: checkOutDetails?.message,
+          allergy: checkOutDetails?.allergy,
+          delDate: checkOutDetails?.deliveryDate?.toDateString(),
+          delTime: checkOutDetails?.deliveryTime,
+          subTotal:
+            checkOutDetails?.additionalValueCustom +
+            checkOutDetails?.additionalValueFlavour +
+            checkOutDetails?.subTotal,
+        };
+
+        callApi(processIDs?.add_item_to_cart, body)
+          // @ts-ignore
+          .then((res: responseType) => {
+            setLoader((prev: any) => {
+              return { ...prev, cart: false };
+            });
+            if (res?.status === 200) {
+              if (res?.data?.returnCode) {
+                setSessionObjectData(
+                  storageConfig?.cart,
+                  res?.data?.returnData
+                );
+                messageService?.sendMessage(
+                  "product-page",
+                  // @ts-ignore
+                  {
+                    action: "refresh-count",
+                    params: res?.data?.returnData?.length,
+                  },
+                  "cart-icon"
+                );
+                router.push("/cart");
+              }
+            } else {
+              toast.error(`Error: ${res?.status}`);
+            }
+          })
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+            setLoader((prev: any) => {
+              return { ...prev, cart: false };
+            });
+          });
+      }
+    } else {
+      loginCardOpen();
     }
   };
 
   const placeOrder = () => {
-    if (
-      productDetails?.availableFlavours?.length > 0 &&
-      checkOutDetails?.selectedFlavour === null
-    ) {
-      setErr((prev: any) => {
-        return { ...prev, flavours: true };
-      });
-    } else if (!checkOutDetails?.deliveryTime) {
-      setErr((prev: any) => {
-        return { ...prev, time: true };
-      });
+    if (getSessionObjectData(storageConfig?.userProfile)) {
+      if (
+        productDetails?.availableFlavours?.length > 0 &&
+        checkOutDetails?.selectedFlavour === null
+      ) {
+        setErr((prev: any) => {
+          return { ...prev, flavours: true };
+        });
+      } else if (!checkOutDetails?.deliveryTime) {
+        setErr((prev: any) => {
+          return { ...prev, time: true };
+        });
+      } else {
+        let body = {
+          productId: productDetails?._id,
+          productName: productDetails?.title,
+          qty: checkOutDetails?.qty,
+          weight: checkOutDetails?.weight,
+          flavour: checkOutDetails?.selectedFlavour
+            ? checkOutDetails?.selectedFlavour
+            : "",
+          custom: checkOutDetails?.customOption
+            ? checkOutDetails?.customOption
+            : "",
+          message: checkOutDetails?.message,
+          allergy: checkOutDetails?.allergy,
+          delDate: checkOutDetails?.deliveryDate?.toDateString(),
+          delTime: checkOutDetails?.deliveryTime,
+          subTotal:
+            checkOutDetails?.additionalValueCustom +
+            checkOutDetails?.additionalValueFlavour +
+            checkOutDetails?.subTotal,
+        };
+        messageService?.sendMessage(
+          "product-page",
+          // @ts-ignore
+          {
+            action: "checkout",
+            params: [body],
+          },
+          "checkout-card"
+        );
+      }
     } else {
-      let body = {
-        productId: productDetails?._id,
-        productName: productDetails?.title,
-        qty: checkOutDetails?.qty,
-        weight: checkOutDetails?.weight,
-        flavour: checkOutDetails?.selectedFlavour
-          ? checkOutDetails?.selectedFlavour
-          : "",
-        custom: checkOutDetails?.customOption
-          ? checkOutDetails?.customOption
-          : "",
-        message: checkOutDetails?.message,
-        allergy: checkOutDetails?.allergy,
-        delDate: checkOutDetails?.deliveryDate?.toDateString(),
-        delTime: checkOutDetails?.deliveryTime,
-        subTotal:
-          checkOutDetails?.additionalValueCustom +
-          checkOutDetails?.additionalValueFlavour +
-          checkOutDetails?.subTotal,
-      };
-      messageService?.sendMessage(
-        "product-page",
-        // @ts-ignore
-        {
-          action: "checkout",
-          params: [body],
-        },
-        "checkout-card"
-      );
+      loginCardOpen();
     }
   };
 

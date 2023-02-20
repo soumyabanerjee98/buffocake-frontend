@@ -30,6 +30,14 @@ export const serverConfig = {
       label: "6PM - 9PM",
     },
   ],
+  smtp_creds: {
+    from: "boffocakes.official@gmail.com",
+    username: "boffocakes.official@gmail.com",
+    password: "EB23ABFC719733BC10089CB19680BA1E8A03",
+    port: 2525,
+    server: "smtp.elasticemail.com",
+    security_token: "48bacb5f-0ce3-443d-8ade-e2821d4c485a",
+  },
 };
 
 export const labelConfig = {
