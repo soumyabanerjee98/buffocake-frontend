@@ -38,6 +38,8 @@ export const serverConfig = {
     server: "smtp.elasticemail.com",
     security_token: "48bacb5f-0ce3-443d-8ade-e2821d4c485a",
   },
+  el_email_apiKey:
+    "6D342CFFCD2F352F60D726F13CD1D2028D7051886CE428C1F0A3AE2991F816E9ABF7D5F0E7EA52F50FFC66D48E50C1A0",
 };
 
 export const labelConfig = {
