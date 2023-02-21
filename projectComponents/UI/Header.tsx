@@ -64,7 +64,7 @@ const Header = () => {
   });
   const [orderSuccessCardOpen, setOrderSuccessCardOpen] = useState({
     state: false,
-    oid: "",
+    order: {},
   });
   const [receiptCardOpen, setReceiptCardOpen] = useState({
     state: false,
@@ -227,13 +227,13 @@ const Header = () => {
             };
           });
           setOrderSuccessCardOpen((prev: any) => {
-            return { ...prev, oid: m?.message?.params?.oid, state: true };
+            return { ...prev, order: m?.message?.params?.order, state: true };
           });
         }
       } else if (m?.sender === "order-success-card" && m?.target === "header") {
         if (m?.message?.action === "close-popup") {
           setOrderSuccessCardOpen((prev: any) => {
-            return { ...prev, oid: "", state: false };
+            return { ...prev, order: {}, state: false };
           });
         }
       } else if (m?.sender === "receipt-card" && m?.target === "header") {
@@ -397,7 +397,7 @@ const Header = () => {
         />
       )}
       {orderSuccessCardOpen?.state && (
-        <OrderSuccessCard oid={orderSuccessCardOpen?.oid} />
+        <OrderSuccessCard order={orderSuccessCardOpen?.order} />
       )}
       {receiptCardOpen?.state && (
         <OrderReceipt order={receiptCardOpen?.order} />

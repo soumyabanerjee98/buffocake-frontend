@@ -35,22 +35,24 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
     env === "production" ? paytmConfig?.host : paytmConfig?.stage_host;
+
   const checkoutFunc = (response: any) => {
+    const cartItem =
+      cart?.length === 1
+        ? cart
+        : cart?.map((i: any) => {
+            return {
+              ...i,
+              subOrderId: `${response?.orderId}_${Math.floor(
+                Math.random() * Date.now()
+              )}`,
+            };
+          });
     let body = {
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       oid: response?.orderId,
       txnId: response?.txnId,
-      items:
-        cart?.length === 1
-          ? cart
-          : cart?.map((i: any) => {
-              return {
-                ...i,
-                subOrderId: `${response?.orderId}_${Math.floor(
-                  Math.random() * Date.now()
-                )}`,
-              };
-            }),
+      items: cartItem,
       shippingAddress: response?.address,
       total: response?.total,
       paymentStatus:
@@ -68,146 +70,48 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       .then((res: responseType) => {
         if (res?.status === 200) {
           if (res?.data?.returnCode) {
-            if (getSessionObjectData(storageConfig?.userProfile)?.email) {
-              let config = {
-                SecureToken: serverConfig?.smtp_creds?.security_token,
-                To: getSessionObjectData(storageConfig?.userProfile)?.email,
-                From: serverConfig?.smtp_creds?.from,
-                Subject: `Order confirmed #${response?.orderId}`,
-                Body: `<strong>Hi ${
-                  getSessionObjectData(storageConfig?.userProfile)?.firstName
-                }, Your Order #${response?.orderId} is confirmed.</strong>`,
-              };
-              if ((window as any).Email) {
-                (window as any).Email.send(config)
-                  .then((res: any) => {
-                    console.log(res, "email success");
-                    setSessionObjectData(
-                      storageConfig?.orders,
-                      res?.data?.returnData
-                    );
-                    if (source === "cart-page") {
-                      callApi(processIDs?.clear_cart, {
-                        userId: getSessionObjectData(storageConfig?.userProfile)
-                          ?.id,
-                      }) // @ts-ignore
-                        .then((res: responseType) => {
-                          if (res?.status === 200) {
-                            setSessionObjectData(storageConfig?.cart, []);
-                            messageService?.sendMessage(
-                              "checkout-card",
-                              // @ts-ignore
-                              {
-                                action: "clear-cart-payment-successfull",
-                                params: { cart: [], oid: response?.orderId },
-                              },
-                              "global"
-                            );
-                          } else {
-                            toast.error(`Error: ${res?.status}`);
-                          }
-                        })
-                        .catch((err) => {
-                          toast.error(`Error: ${err}`);
-                        });
-                    } else {
-                      messageService?.sendMessage(
-                        "checkout-card",
-                        // @ts-ignore
-                        {
-                          action: "payment-successfull",
-                          params: { oid: response?.orderId },
+            setSessionObjectData(storageConfig?.orders, res?.data?.returnData);
+            if (source === "cart-page") {
+              callApi(processIDs?.clear_cart, {
+                userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    setSessionObjectData(storageConfig?.cart, []);
+                    messageService?.sendMessage(
+                      "checkout-card",
+                      // @ts-ignore
+                      {
+                        action: "clear-cart-payment-successfull",
+                        params: {
+                          cart: [],
+                          order: {
+                            ...response,
+                            cart: cartItem,
+                          },
                         },
-                        "global"
-                      );
-                    }
-                    document.getElementById("app-close-btn")?.click();
-                  })
-                  .catch((err: any) => {
-                    console.log("Err", err);
-                    setSessionObjectData(
-                      storageConfig?.orders,
-                      res?.data?.returnData
+                      },
+                      "global"
                     );
-                    if (source === "cart-page") {
-                      callApi(processIDs?.clear_cart, {
-                        userId: getSessionObjectData(storageConfig?.userProfile)
-                          ?.id,
-                      }) // @ts-ignore
-                        .then((res: responseType) => {
-                          if (res?.status === 200) {
-                            setSessionObjectData(storageConfig?.cart, []);
-                            messageService?.sendMessage(
-                              "checkout-card",
-                              // @ts-ignore
-                              {
-                                action: "clear-cart-payment-successfull",
-                                params: { cart: [], oid: response?.orderId },
-                              },
-                              "global"
-                            );
-                          } else {
-                            toast.error(`Error: ${res?.status}`);
-                          }
-                        })
-                        .catch((err) => {
-                          toast.error(`Error: ${err}`);
-                        });
-                    } else {
-                      messageService?.sendMessage(
-                        "checkout-card",
-                        // @ts-ignore
-                        {
-                          action: "payment-successfull",
-                          params: { oid: response?.orderId },
-                        },
-                        "global"
-                      );
-                    }
-                    document.getElementById("app-close-btn")?.click();
-                  });
-              }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err) => {
+                  toast.error(`Error: ${err}`);
+                });
             } else {
-              setSessionObjectData(
-                storageConfig?.orders,
-                res?.data?.returnData
+              messageService?.sendMessage(
+                "checkout-card",
+                // @ts-ignore
+                {
+                  action: "payment-successfull",
+                  params: { order: { ...response, cart: cartItem } },
+                },
+                "global"
               );
-              if (source === "cart-page") {
-                callApi(processIDs?.clear_cart, {
-                  userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-                }) // @ts-ignore
-                  .then((res: responseType) => {
-                    if (res?.status === 200) {
-                      setSessionObjectData(storageConfig?.cart, []);
-                      messageService?.sendMessage(
-                        "checkout-card",
-                        // @ts-ignore
-                        {
-                          action: "clear-cart-payment-successfull",
-                          params: { cart: [], oid: response?.orderId },
-                        },
-                        "global"
-                      );
-                    } else {
-                      toast.error(`Error: ${res?.status}`);
-                    }
-                  })
-                  .catch((err) => {
-                    toast.error(`Error: ${err}`);
-                  });
-              } else {
-                messageService?.sendMessage(
-                  "checkout-card",
-                  // @ts-ignore
-                  {
-                    action: "payment-successfull",
-                    params: { oid: response?.orderId },
-                  },
-                  "global"
-                );
-              }
-              document.getElementById("app-close-btn")?.click();
             }
+            document.getElementById("app-close-btn")?.click();
           }
         } else {
           toast.error(`Error: ${res?.status}`);
@@ -323,7 +227,6 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         src={`${paytmbaseurl}/merchantpgpui/checkoutjs/merchants/${MID}.js`}
         crossOrigin="anonymous"
       />
-      <Script src="https://smtpjs.com/v3/smtp.js" />
       <button
         className={`paytm-button ${disable ? "disable" : ""}`}
         type="button"

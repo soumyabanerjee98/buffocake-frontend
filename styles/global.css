@@ -275,12 +275,13 @@ input::-webkit-inner-spin-button {
 }
 
 .product-screen .image-section {
-  height: 25rem;
-  width: 40%;
-  border-radius: 4px;
-  justify-content: center;
-  display: flex;
-  position: relative;
+  max-height: 20rem;
+    height: 100%;
+    width: max-content;
+    border-radius: 4px;
+    justify-content: center;
+    display: flex;
+    position: relative;
 }
 
 .product-screen .fav {
@@ -331,8 +332,9 @@ input::-webkit-inner-spin-button {
 
 .product-screen .product-image {
   height: 100%;
-  width: max-content;
-  max-width: 100%;
+  width: 100%;
+  max-width: max-content;
+  max-height: 20rem;
   border-radius: 4px;
 }
 
