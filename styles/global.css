@@ -191,7 +191,7 @@ input::-webkit-inner-spin-button {
   padding: 0 0.5rem;
 }
 
-.home-screen .catagory-header>.title {
+.home-screen .catagory-header > .title {
   font-weight: 600;
   color: rgb(107, 39, 51);
 }
@@ -234,13 +234,13 @@ input::-webkit-inner-spin-button {
   transition: all 200ms ease-in-out;
 }
 
-.home-screen .product-card>.product-name {
+.home-screen .product-card > .product-name {
   color: rgb(223, 174, 192);
   text-shadow: 0 0 0.4px black;
   font-weight: 500;
 }
 
-.home-screen .product-card>.product-price {
+.home-screen .product-card > .product-price {
   color: rgb(60, 132, 132);
   font-weight: 500;
 }
@@ -363,7 +363,7 @@ input::-webkit-inner-spin-button {
 .product-screen .available-options {
   display: grid;
   row-gap: 0.8rem;
-  grid-template-columns: repeat(3, 10rem);
+  grid-template-columns: repeat(3, minmax(0%, 100%));
   justify-items: center;
 }
 
@@ -775,7 +775,7 @@ input::-webkit-inner-spin-button {
   bottom: 0;
 }
 
-.profile-screen .right-col .edit-photo-button>div {
+.profile-screen .right-col .edit-photo-button > div {
   cursor: pointer;
 }
 
@@ -1102,7 +1102,12 @@ input::-webkit-inner-spin-button {
   flex-direction: column;
 }
 
-.order-screen .order-list .order-item .exp .right-col .payment-status.completed {
+.order-screen
+  .order-list
+  .order-item
+  .exp
+  .right-col
+  .payment-status.completed {
   border: 1px solid rgb(0, 191, 0);
   color: rgb(0, 191, 0);
   font-weight: 500;
@@ -1143,12 +1148,10 @@ input::-webkit-inner-spin-button {
 }
 
 .order-screen .order-list .order-item .address-item .address-details {
-
   padding-bottom: 0.8rem;
 }
 
 .order-screen .order-list .order-item .address-item .label {
-
   font-size: medium;
   font-weight: 500;
   color: rgba(107, 39, 51);
@@ -1535,7 +1538,12 @@ input::-webkit-inner-spin-button {
   margin-bottom: 0.8rem;
 }
 
-.checkout-card .left-column .address-item .address-details .address-section .label {
+.checkout-card
+  .left-column
+  .address-item
+  .address-details
+  .address-section
+  .label {
   font-weight: 500;
   color: rgba(107, 39, 51);
 }
