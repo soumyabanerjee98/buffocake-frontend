@@ -2,7 +2,7 @@
 
 body {
   margin: 0;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
   -ms-overflow-style: none;
   scrollbar-width: none;
   font-family: "Montserrat", sans-serif;
@@ -239,7 +239,6 @@ input::-webkit-inner-spin-button {
   padding: 1rem 5rem;
   display: flex;
   gap: 5rem;
-  width: 100%;
 }
 .product-screen .image-section {
   height: 25rem;
