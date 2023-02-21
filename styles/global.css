@@ -317,7 +317,7 @@ input::-webkit-inner-spin-button {
 .product-screen .available-options {
   display: grid;
   row-gap: 0.8rem;
-  grid-template-columns: repeat(3, 10rem);
+  grid-template-columns: repeat(3, minmax(0%, 100%));
   justify-items: center;
 }
 .product-screen .options {
@@ -954,12 +954,17 @@ input::-webkit-inner-spin-button {
   justify-content: space-between;
   flex-direction: column;
 }
-.order-screen .order-list .order-item .exp .right-col .payment-status.completed{
+.order-screen
+  .order-list
+  .order-item
+  .exp
+  .right-col
+  .payment-status.completed {
   border: 1px solid rgb(0, 191, 0);
-    color: rgb(0, 191, 0);
-    font-weight: 500;
-    border-radius: 4px;
-    padding: 0.5rem;
+  color: rgb(0, 191, 0);
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 0.5rem;
 }
 .order-screen .order-list .order-item .exp .left-col {
   font-size: small;
@@ -967,7 +972,7 @@ input::-webkit-inner-spin-button {
 .order-screen .order-list .order-item .order-id {
   margin-bottom: 0.4rem;
 }
-.order-screen .order-list .order-item .exp .left-col .section{
+.order-screen .order-list .order-item .exp .left-col .section {
   padding-bottom: 0.8rem;
 }
 .order-screen .order-list .order-item .exp .left-col .subtotal {
@@ -975,7 +980,7 @@ input::-webkit-inner-spin-button {
   font-size: medium;
   font-weight: 500;
 }
-.order-screen .order-list .order-item .address-item{
+.order-screen .order-list .order-item .address-item {
   border: 1px dashed rgba(0, 0, 0, 0.75);
   border-radius: 4px;
   padding: 1rem;
@@ -988,16 +993,14 @@ input::-webkit-inner-spin-button {
   padding-bottom: 0.8rem;
 }
 .order-screen .order-list .order-item .address-item .address-details {
-  
   padding-bottom: 0.8rem;
 }
 .order-screen .order-list .order-item .address-item .label {
-
   font-size: medium;
   font-weight: 500;
   color: rgba(107, 39, 51);
 }
-.order-screen .order-list .order-item .address-item .address-section{
+.order-screen .order-list .order-item .address-item .address-section {
   display: flex;
   gap: 1rem;
 }
@@ -1024,7 +1027,7 @@ input::-webkit-inner-spin-button {
   justify-content: space-between;
   align-items: center;
 }
-.order-screen .order-list .order-item .exp{
+.order-screen .order-list .order-item .exp {
   padding-top: 1rem;
   align-items: flex-start;
 }
@@ -1485,26 +1488,26 @@ input::-webkit-inner-spin-button {
   color: #4285f4;
 }
 /* Order receipt card */
-.order-receipt-card{
+.order-receipt-card {
   position: relative;
-    padding: 1.2rem 2rem;
-    background-color: white;
-    border-radius: 4px;
-    position: relative;
+  padding: 1.2rem 2rem;
+  background-color: white;
+  border-radius: 4px;
+  position: relative;
 }
-.order-receipt-card .download{
+.order-receipt-card .download {
   position: absolute;
   right: 1rem;
   top: 1rem;
   height: 1.5rem;
   width: 1.5rem;
-    cursor: pointer;
-    background-color: aliceblue;
-    border: 1px solid rgb(181, 213, 242);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  cursor: pointer;
+  background-color: aliceblue;
+  border: 1px solid rgb(181, 213, 242);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* OTP Field */
