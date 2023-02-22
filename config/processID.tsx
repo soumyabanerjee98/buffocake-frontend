@@ -29,4 +29,12 @@ export const processIDs = {
   create_order: "create-order",
   update_order: "update-order",
   get_orders: "get-orders",
+  create_catagory: "create-catagory",
+  get_catagory: "get-catagory",
+  update_catagory: "update-catagory",
+  delete_catagory: "delete-catagory",
+  create_subcatagory: "create-subcatagory",
+  get_subcatagory: "get-subcatagory",
+  update_subcatagory: "update-subcatagory",
+  delete_subcatagory: "delete-subcatagory",
 };

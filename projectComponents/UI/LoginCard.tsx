@@ -583,6 +583,21 @@ const LoginCard = () => {
         .then((res: responseType) => {
           if (res?.status === 200) {
             if (res?.data?.returnCode) {
+              setLocalStringData(
+                storageConfig?.jwtToken,
+                res?.data?.returnData?.accessToken
+              );
+              setSessionObjectData(
+                storageConfig?.userProfile,
+                res?.data?.returnData?.profileData
+              );
+              messageService?.sendMessage(
+                "login-card",
+                // @ts-ignore
+                { action: "refresh-profile" },
+                "header"
+              );
+              router.push("/");
               closePopUp();
             } else {
               setLoading((prev: any) => {

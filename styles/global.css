@@ -276,12 +276,12 @@ input::-webkit-inner-spin-button {
 
 .product-screen .image-section {
   max-height: 20rem;
-    height: 100%;
-    width: max-content;
-    border-radius: 4px;
-    justify-content: center;
-    display: flex;
-    position: relative;
+  height: 100%;
+  width: max-content;
+  border-radius: 4px;
+  justify-content: center;
+  display: flex;
+  position: relative;
 }
 
 .product-screen .fav {
@@ -1196,6 +1196,105 @@ input::-webkit-inner-spin-button {
   font-weight: 500;
   border-radius: 4px;
   padding: 0.5rem;
+}
+
+/* admin page */
+
+.admin-screen {
+  padding: 1rem;
+}
+.admin-screen .header {
+  display: flex;
+  gap: 1rem;
+}
+.admin-screen .section-title {
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 1rem;
+  transition: all 200ms ease-in-out;
+}
+.admin-screen .section-title:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.admin-screen .section-title.active {
+  color: #4285f4;
+  font-weight: 600;
+  border: 1px solid #4285f4;
+}
+.manage-products .product-search {
+  padding: 0.4rem;
+  width: 50%;
+  outline: none;
+  margin-right: 1rem;
+}
+.manage-products .product-reset{
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #4285f4;
+  border-radius: 4px;
+}
+.manage-products .data-section{
+  margin: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+.manage-products .new-edit-data{
+  margin: 0 4rem;
+}
+.manage-products .new-edit-data .form{
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  width: 100%;
+  padding: 1rem 2rem;
+  margin-bottom: 1rem;
+}
+.manage-products .new-edit-data .title {
+  font-size: 18px;
+  font-weight: 500;
+}
+.manage-products .data-value {
+  padding: 0.4rem;
+  outline: none;
+  margin-left: 1rem;
+  width: 50%;
+}
+.manage-products .data-value.image{
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+.manage-products .data-value.textarea {
+  height: 20rem;
+  resize: none;
+}
+.manage-products .edit-button {
+height: max-content;
+width: max-content;
+border: 1px solid #4285f4;
+padding: 4px 6px;
+border-radius: 2px;
+}
+.manage-products .form-section{
+  display: flex;
+  align-items: center;
+  margin: 0.2rem 0;
+  justify-content: space-between;
+}
+.manage-products .form-section.selection, .manage-products .form-section.textarea {
+  align-items: start;
+}
+.manage-products .form-section .options {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.4rem;
+}
+.manage-products .form-section .option-items{
+  display: flex;
+  justify-content: space-between;
+  margin: 0.2rem 0;
 }
 
 /* modals */
