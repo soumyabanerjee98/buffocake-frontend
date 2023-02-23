@@ -40,9 +40,44 @@ export async function getStaticProps() {
       toast.error(`Error: ${err?.message}`);
       return [];
     });
+  let catagory = await callApi(processIDs?.get_catagory, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
+  // @ts-ignore
+  let arr = [];
+  catagory?.map((i: any) => {
+    let arrObj = { cat: i?.catagory, prod: [] };
+    data?.map((v: any) => {
+      v?.catagory?.map((w: any) => {
+        if (w?.catagoryId === i?._id) {
+          // @ts-ignore
+          arrObj?.prod.push(v);
+        }
+      });
+    });
+    arr.push(arrObj);
+  });
   return {
     props: {
-      allProducts: data,
+      // @ts-ignore
+      allProducts: arr,
     },
     revalidate: 60,
   };
