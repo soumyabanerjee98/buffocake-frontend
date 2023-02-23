@@ -364,8 +364,8 @@ input::-webkit-inner-spin-button {
 
 .product-screen .available-options {
   display: grid;
-  row-gap: 0.8rem;
-  grid-template-columns: repeat(3, minmax(0%, 100%));
+  gap: 0.8rem;
+  grid-template-columns: repeat(1, minmax(0%, 100%));
   justify-items: center;
 }
 
@@ -1225,6 +1225,9 @@ input::-webkit-inner-spin-button {
   font-weight: 600;
   border: 1px solid #4285f4;
 }
+.admin-screen .all-data{
+  width: 50%;
+}
 .manage-products .product-search {
   padding: 0.4rem;
   width: 50%;
@@ -1243,6 +1246,7 @@ input::-webkit-inner-spin-button {
 }
 .manage-products .new-edit-data{
   margin: 0 4rem;
+  max-width: 40%;
 }
 .manage-products .new-edit-data .form{
   border: 1px solid rgba(0, 0, 0, 0.25);
@@ -1250,6 +1254,9 @@ input::-webkit-inner-spin-button {
   width: 100%;
   padding: 1rem 2rem;
   margin-bottom: 1rem;
+}
+.manage-products label{
+  margin: 1rem 0;
 }
 .manage-products .new-edit-data .title {
   font-size: 18px;
@@ -1259,7 +1266,6 @@ input::-webkit-inner-spin-button {
   padding: 0.4rem;
   outline: none;
   margin-left: 1rem;
-  width: 50%;
 }
 .manage-products .data-value.image{
   display: flex;
@@ -1294,7 +1300,72 @@ border-radius: 2px;
 .manage-products .form-section .option-items{
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 0.2rem 0;
+  gap: 0.2rem ;
+}
+
+.product-manage-accordion {
+  width: 100%;
+  margin: 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+.product-manage-accordion:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.product-manage-accordion .non-exp{
+display: flex;
+justify-content: space-between;
+cursor: pointer;
+padding: 0.8rem;
+}
+
+.product-manage-accordion .exp {
+  padding: 0.8rem;
+  display: flex;
+    justify-content: space-between;
+}
+.product-manage-accordion .details {
+  width: 50%;
+}
+.product-manage-accordion .details-section{
+  display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 0.8rem;
+    gap: 1rem;
+}
+.product-manage-accordion button {
+  padding: 4px 6px;
+  border: 1px solid #4285f4;
+  border-radius: 4px;
+  height: max-content;
+  width: max-content;
+}
+.product-manage-accordion input {
+  padding: 0.4rem;
+  border: 1px solid rgba(0, 0, 0, 0.50);
+  outline: none;
+}
+.product-manage-accordion textarea {
+  resize: none;
+  min-width: 5rem;
+  min-height: 15rem;
+}
+.product-manage-accordion .edit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.product-manage-accordion .options {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 /* modals */

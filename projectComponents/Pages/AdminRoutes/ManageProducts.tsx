@@ -1,11 +1,12 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
 import { responseType } from "../../../typings";
 import { callApi } from "../../Functions/util";
 import CatagoryManageCard from "./AdminRouteComponents/CatagoryManageCard";
+import ProductEditAccordion from "./AdminRouteComponents/ProductEditAccordion";
 import ProductManageCard from "./AdminRouteComponents/ProductManageCard";
 
 const dataFetcher = async () => {
@@ -37,12 +38,8 @@ const ManageProducts = () => {
     data: allProd,
     isLoading,
     error,
-  } = useSwr("manage-products", dataFetcher);
+  } = useSwr("manage-products", dataFetcher, { refreshInterval: 1 });
   const [allProducts, setAllProducts] = useState(allProd);
-  const [eventState, setEventState] = useState<any>({
-    state: false,
-    selectedElement: {},
-  });
   const searchProd = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTxt(e.target.value);
     setAllProducts(
@@ -55,6 +52,9 @@ const ManageProducts = () => {
     setSearchTxt("");
     setAllProducts(allProd);
   };
+  useEffect(() => {
+    setAllProducts(allProd);
+  }, [allProd]);
 
   return (
     <div className="manage-products">
@@ -78,7 +78,7 @@ const ManageProducts = () => {
           {isLoading && <>Loading...</>}
           {allProducts?.length === 0 && <>No products found</>}
           {allProducts?.map((i: any) => {
-            return <div>{i?.title}</div>;
+            return <ProductEditAccordion product={i} />;
           })}
         </div>
         <div className="new-edit-data">
@@ -87,37 +87,7 @@ const ManageProducts = () => {
           <CatagoryManageCard />
           <div className="title">Manage products</div>
           <hr />
-          {eventState?.state ? (
-            <ProductManageCard
-              state={eventState?.state}
-              metaHead={eventState?.selectedElement?.metaHead}
-              metaDesc={eventState?.selectedElement?.metaDesc}
-              title={eventState?.selectedElement?.title}
-              description={eventState?.selectedElement?.description}
-              catagoryArr={eventState?.selectedElement?.catagoryArr}
-              subCatagoryArr={eventState?.selectedElement?.subCatagoryArr}
-              unitValue={eventState?.selectedElement?.unitValue}
-              minWeight={eventState?.selectedElement?.minWeight}
-              productImage={eventState?.selectedElement?.productImage}
-              availableFlavours={eventState?.selectedElement?.availableFlavours}
-              customOptions={eventState?.selectedElement?.customOptions}
-            />
-          ) : (
-            <ProductManageCard
-              state={eventState?.state}
-              metaHead={""}
-              metaDesc={""}
-              title={""}
-              description={""}
-              catagoryArr={[]}
-              subCatagoryArr={[]}
-              unitValue={null}
-              minWeight={1}
-              productImage={null}
-              availableFlavours={[]}
-              customOptions={[]}
-            />
-          )}
+          <ProductManageCard />
         </div>
       </div>
     </div>

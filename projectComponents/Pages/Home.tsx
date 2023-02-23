@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 import MediaCarousel from "../UI/MediaCarousel";
@@ -16,13 +16,6 @@ const Home = (props: HomeProps) => {
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
       : serverConfig?.backend_url_server;
-  const catagorySet = Array.from(
-    new Set(
-      allProducts?.map((i: any) => {
-        return i?.catagory;
-      })
-    )
-  );
 
   const navigate = (path: string) => {
     redirect.push(path);
@@ -46,56 +39,52 @@ const Home = (props: HomeProps) => {
           ]}
         />
         <div className="header">Our Products</div>
-        {catagorySet?.map((i: any) => {
+        {allProducts?.map((i: any) => {
           return (
-            <div key={`catagory-${i}`} className="product-catagory">
+            <div key={`catagory-${i?.cat}`} className="product-catagory">
               <div className="catagory-header">
                 <div className="title">
                   {/* {labelConfig?.home_catagory_header_title} */}
-                  {i}
+                  {i?.cat}
                 </div>
-                {allProducts?.filter((v: any) => v?.catagory === i).length >
-                  4 && (
+                {allProducts?.prod?.length > 4 && (
                   <button className="view-all">
                     {labelConfig?.home_view_all_button}
                   </button>
                 )}
               </div>
               <div className="catagory-body">
-                {allProducts
-                  ?.filter((v: any) => v?.catagory === i)
-                  ?.filter((w: any, ind: any) => ind <= 3)
-                  ?.map((val: any, ind: any) => {
-                    return (
-                      <div
-                        key={`product-card-${ind}`}
-                        className="product-card"
-                        onClick={() => {
-                          navigate(`product/${val?._id}`);
-                        }}
-                      >
-                        <div className="product-image-container">
-                          {val?.productImage ? (
-                            <img
-                              src={`${url}${val?.productImage}`}
-                              alt={labelConfig?.image_not_loaded}
-                              className="product-image"
-                            />
-                          ) : (
-                            <Image
-                              src={NoIMage}
-                              alt={labelConfig?.image_not_loaded}
-                              className="product-image"
-                            />
-                          )}
-                        </div>
-                        <div className="product-name">{val?.title}</div>
-                        <div className="product-price">
-                          &#8377;{val?.unitValue}
-                        </div>
+                {i?.prod?.map((val: any, ind: any) => {
+                  return (
+                    <div
+                      key={`product-card-${ind}`}
+                      className="product-card"
+                      onClick={() => {
+                        navigate(`product/${val?._id}`);
+                      }}
+                    >
+                      <div className="product-image-container">
+                        {val?.productImage ? (
+                          <img
+                            src={`${url}${val?.productImage}`}
+                            alt={labelConfig?.image_not_loaded}
+                            className="product-image"
+                          />
+                        ) : (
+                          <Image
+                            src={NoIMage}
+                            alt={labelConfig?.image_not_loaded}
+                            className="product-image"
+                          />
+                        )}
                       </div>
-                    );
-                  })}
+                      <div className="product-name">{val?.title}</div>
+                      <div className="product-price">
+                        &#8377;{val?.unitValue}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
