@@ -1236,9 +1236,19 @@ input::-webkit-inner-spin-button {
 }
 .manage-products .product-search {
   padding: 0.4rem;
-  width: 50%;
+  width: 100%;
   outline: none;
   margin-right: 1rem;
+}
+.manage-products .search-filter-bar {
+  display: flex;
+  justify-content: space-between;
+}
+.manage-products .search-filter-bar .search{
+  width: 50%;
+  display: flex;
+  gap: 1rem;
+  height: max-content;
 }
 .manage-products .product-reset{
   padding: 0.4rem 0.8rem;
