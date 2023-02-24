@@ -72,6 +72,7 @@ input::-webkit-inner-spin-button {
 .main-header .left-col {
   display: flex;
   align-items: center;
+  position: relative;
   gap: 1rem;
   width: 60%;
 }
@@ -95,6 +96,7 @@ input::-webkit-inner-spin-button {
   border-radius: 4px;
   width: 100%;
   height: max-content;
+  position: relative;
 }
 
 .header-search input {
@@ -104,6 +106,28 @@ input::-webkit-inner-spin-button {
   height: 3rem;
   font-size: 15px;
   padding: 0 1rem;
+}
+.main-header .left-col .search-result {
+  position: absolute;
+  background-color: white;
+  top: 5rem;
+  left: 8rem;
+  width: 80%;
+  border: 1px solid #4285f4;
+  border-radius: 4px;
+}
+.main-header .left-col .search-result .search-items{
+  margin: 0.5rem;
+  padding: 0.5rem;
+  background-color: aliceblue;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+.main-header .left-col .search-result .search-items:hover {
+  border-color: #4285f4;
+  transition: all 200ms ease-in-out;
 }
 
 .search-button {
