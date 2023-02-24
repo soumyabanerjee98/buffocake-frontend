@@ -30,6 +30,24 @@ export const serverConfig = {
       label: "6PM - 9PM",
     },
   ],
+  del_status_arr: [
+    {
+      value: "Accepted",
+      label: "Accepted",
+    },
+    {
+      value: "Preparing",
+      label: "Preparing",
+    },
+    {
+      value: "On the way",
+      label: "On the way",
+    },
+    {
+      value: "Delivered",
+      label: "Delivered",
+    },
+  ],
   smtp_creds: {
     from: "boffocakes.official@gmail.com",
     username: "boffocakes.official@gmail.com",

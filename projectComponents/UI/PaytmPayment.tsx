@@ -46,6 +46,10 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
               subOrderId: `${response?.orderId}_${Math.floor(
                 Math.random() * Date.now()
               )}`,
+              subOrderStatus:
+                response?.resultInfo?.resultStatus === "TXN_SUCCESS"
+                  ? "Accepted"
+                  : "Pending",
             };
           });
     let body = {

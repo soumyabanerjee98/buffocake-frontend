@@ -53,4 +53,7 @@ export const processIDs = {
   get_catagory_map: "get-catagory-map",
   add_catagory_map: "add-catagory-map",
   remove_catagory_map: "remove-catagory-map",
+  get_all_orders: "get-all-orders",
+  update_order_status: "update-order-status",
+  update_order_substatus: "update-order-substatus",
 };

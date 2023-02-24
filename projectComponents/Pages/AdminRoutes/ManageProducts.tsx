@@ -51,19 +51,23 @@ const ManageProducts = () => {
   });
   const searchProd = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTxt(e.target.value);
-    let arr: any = [];
-    allProd?.map((i: any) => {
-      let searchTitle = i?.title
-        ?.toLowerCase()
-        ?.search(e.target.value?.toLowerCase());
-      let searchId = i?._id
-        ?.toLowerCase()
-        ?.search(e.target.value?.toLowerCase());
-      if (searchTitle !== -1 || searchId !== -1) {
-        arr.push(i);
-      }
-    });
-    setAllProducts(arr);
+    if (e.target.value === "") {
+      setAllProducts(allProd);
+    } else {
+      let arr: any = [];
+      allProd?.map((i: any) => {
+        let searchTitle = i?.title
+          ?.toLowerCase()
+          ?.search(e.target.value?.toLowerCase());
+        let searchId = i?._id
+          ?.toLowerCase()
+          ?.search(e.target.value?.toLowerCase());
+        if (searchTitle !== -1 || searchId !== -1) {
+          arr.push(i);
+        }
+      });
+      setAllProducts(arr);
+    }
   };
   const ResetSearch = () => {
     setSearchTxt("");
