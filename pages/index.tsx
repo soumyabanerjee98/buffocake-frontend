@@ -83,7 +83,7 @@ export async function getStaticProps() {
     });
   let arr: any = [];
   catagory?.map((i: any) => {
-    let arrObj = { cat: i?.catagory, prod: [] };
+    let arrObj = { catId: i?._id, cat: i?.catagory, prod: [] };
     data?.map((v: any) => {
       v?.catagory?.map((w: any) => {
         if (w?.catagoryId === i?._id) {

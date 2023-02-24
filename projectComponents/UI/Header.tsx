@@ -102,7 +102,7 @@ const Header = () => {
   const openProfile = () => {
     navigate("/profile");
   };
-  useEffect(() => {
+  const GetAllProducts = () => {
     callApi(processIDs?.get_all_products, {})
       .then(
         // @ts-ignore
@@ -124,6 +124,9 @@ const Header = () => {
         setAllProducts([]);
         toast.error(`Error: ${err?.message}`);
       });
+  };
+  useEffect(() => {
+    GetAllProducts();
     // @ts-ignore
     messageService?.onReceive().subscribe((m: messageType) => {
       if (m?.sender === "login-card" && m?.target === "header") {
@@ -339,8 +342,14 @@ const Header = () => {
             onChange={searchByType}
             placeholder={labelConfig?.header_search_placeholder}
           />
-          <div className="search-button">
-            <Image src={SearchIcon} alt="Search" />
+          <div
+            className="search-button"
+            onClick={() => {
+              setSearchTxt("");
+              setSearchResult([]);
+            }}
+          >
+            <i className="fas fa-undo" />
           </div>
         </div>
         {searchResult?.length > 0 && (
