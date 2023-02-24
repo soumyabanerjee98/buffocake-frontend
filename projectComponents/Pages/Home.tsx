@@ -7,10 +7,11 @@ import MediaCarousel from "../UI/MediaCarousel";
 
 export type HomeProps = {
   allProducts: any;
+  carousel: any;
 };
 
 const Home = (props: HomeProps) => {
-  const { allProducts } = props;
+  const { allProducts, carousel } = props;
   const redirect = useRouter();
   const url =
     process?.env?.NODE_ENV === "development"
@@ -25,18 +26,15 @@ const Home = (props: HomeProps) => {
     <>
       <div className="home-screen">
         <MediaCarousel
-          elementArr={[
-            <Image
-              src={NoIMage}
-              alt={labelConfig?.image_not_loaded}
-              className="product-image"
-            />,
-            <Image
-              src={NoIMage}
-              alt={labelConfig?.image_not_loaded}
-              className="product-image"
-            />,
-          ]}
+          elementArr={carousel?.map((i: any) => {
+            return (
+              <img
+                src={`${url}${i?.mediaPath}`}
+                className="product-image"
+                alt={labelConfig?.image_not_loaded}
+              />
+            );
+          })}
         />
         <div className="header">Our Products</div>
         {allProducts?.map((i: any) => {

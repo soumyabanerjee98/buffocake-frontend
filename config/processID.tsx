@@ -56,4 +56,8 @@ export const processIDs = {
   get_all_orders: "get-all-orders",
   update_order_status: "update-order-status",
   update_order_substatus: "update-order-substatus",
+  get_carousel: "get-carousel",
+  add_carousel: "add-carousel",
+  edit_carousel: "edit-carousel",
+  delete_carousel: "delete-carousel",
 };
