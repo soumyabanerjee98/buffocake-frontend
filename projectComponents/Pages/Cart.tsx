@@ -109,7 +109,7 @@ const Cart = () => {
               className="cart-item"
               onClick={(e: any) => {
                 if (e.target.nodeName !== "BUTTON") {
-                  navigate(`product/${i?.productId}`);
+                  navigate(`/product/${i?.productId}`);
                 }
               }}
             >

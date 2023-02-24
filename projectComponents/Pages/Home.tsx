@@ -67,7 +67,7 @@ const Home = (props: HomeProps) => {
                         key={`product-card-${ind}`}
                         className="product-card"
                         onClick={() => {
-                          navigate(`product/${val?._id}`);
+                          navigate(`/product/${val?._id}`);
                         }}
                       >
                         <div className="product-image-container">

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import {
@@ -35,6 +36,76 @@ import { toast } from "react-toastify";
 import AddressCard from "./AddressCard";
 import OrderSuccessCard from "./OrderSuccessCard";
 import OrderReceipt from "./OrderReceipt";
+const GetAllCatagories = async () => {
+  let catData = await callApi(processIDs?.get_catagory, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            toast.error(`${res?.data?.msg}`);
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
+  let subCatData = await callApi(processIDs?.get_subcatagory, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            toast.error(`${res?.data?.msg}`);
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
+
+  return { cat: catData, subCat: subCatData };
+};
+const GetAllProducts = async () => {
+  let data = await callApi(processIDs?.get_all_products, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            toast.error(`${res?.data?.msg}`);
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
+  return data;
+};
 
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
@@ -70,8 +141,28 @@ const Header = () => {
     state: false,
     order: {},
   });
-  const [allProducts, setAllProducts] = useState([]);
+  const {
+    data: products,
+    isLoading: productLoading,
+    error: productError,
+  } = useSwr("header-get-products", GetAllProducts, { refreshInterval: 30000 });
+  const {
+    data: catagories,
+    isLoading: catagoryLoading,
+    error: catagoryError,
+  } = useSwr("header-get-catagories", GetAllCatagories, {
+    refreshInterval: 30000,
+  });
+  const [allProducts, setAllProducts] = useState<any>(products);
+  const [allCatagory, setAllCatagory] = useState({
+    catArr: catagories?.cat,
+    subCatArr: catagories?.subCat,
+  });
   const [searchResult, setSearchResult] = useState([]);
+  const [catagorySearchResult, setCatagorySearchResult] = useState({
+    cat: [],
+    subCat: [],
+  });
   const redirect = useRouter();
   const navigate = (url: string) => {
     redirect.push(url);
@@ -81,19 +172,55 @@ const Header = () => {
     setSearchTxt(text);
     if (text === "") {
       setSearchResult([]);
+      setCatagorySearchResult((prev: any) => {
+        return {
+          ...prev,
+          cat: [],
+          subCat: [],
+        };
+      });
     } else {
       let arr: any = [];
+      let catArr: any = [];
+      let subCatArr: any = [];
       let filteredArr = [];
+      let filteredCatArr: any = [];
+      let filteredSubCatArr: any = [];
       allProducts?.map((i: any) => {
         let searchTitle = i?.title?.toLowerCase()?.search(text?.toLowerCase());
         if (searchTitle !== -1) {
           arr.push(i);
         }
       });
+      allCatagory?.catArr?.map((i: any) => {
+        let searchTitle = i?.catagory
+          ?.toLowerCase()
+          ?.search(text?.toLowerCase());
+        if (searchTitle !== -1) {
+          catArr.push(i);
+        }
+      });
+      allCatagory?.subCatArr?.map((i: any) => {
+        let searchTitle = i?.subCatagory
+          ?.toLowerCase()
+          ?.search(text?.toLowerCase());
+        if (searchTitle !== -1) {
+          subCatArr.push(i);
+        }
+      });
       filteredArr = arr.filter((i: any, v: number) => {
-        return v <= 5;
+        return v <= 4;
+      });
+      filteredCatArr = catArr.filter((i: any, v: number) => {
+        return v <= 1;
+      });
+      filteredSubCatArr = subCatArr.filter((i: any, v: number) => {
+        return v <= 1;
       });
       setSearchResult(filteredArr);
+      setCatagorySearchResult((prev: any) => {
+        return { ...prev, cat: filteredCatArr, subCat: filteredSubCatArr };
+      });
     }
   };
   const openPopUp = () => {
@@ -102,31 +229,19 @@ const Header = () => {
   const openProfile = () => {
     navigate("/profile");
   };
-  const GetAllProducts = () => {
-    callApi(processIDs?.get_all_products, {})
-      .then(
-        // @ts-ignore
-        (res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              setAllProducts(res?.data?.returnData);
-            } else {
-              setAllProducts([]);
-              toast.error(`${res?.data?.msg}`);
-            }
-          } else {
-            setAllProducts([]);
-            toast.error(`Error: ${res?.status}`);
-          }
-        }
-      )
-      .catch((err: any) => {
-        setAllProducts([]);
-        toast.error(`Error: ${err?.message}`);
-      });
-  };
+
   useEffect(() => {
-    GetAllProducts();
+    setAllProducts(products);
+    setAllCatagory((prev: any) => {
+      return {
+        ...prev,
+        catArr: catagories?.cat,
+        subCatArr: catagories?.subCat,
+      };
+    });
+  }, [products, catagories]);
+
+  useEffect(() => {
     // @ts-ignore
     messageService?.onReceive().subscribe((m: messageType) => {
       if (m?.sender === "login-card" && m?.target === "header") {
@@ -352,7 +467,9 @@ const Header = () => {
             <i className="fas fa-undo" />
           </div>
         </div>
-        {searchResult?.length > 0 && (
+        {(searchResult?.length > 0 ||
+          catagorySearchResult?.cat?.length > 0 ||
+          catagorySearchResult?.subCat?.length > 0) && (
           <div className="search-result">
             {searchResult?.map((i: any) => {
               return (
@@ -362,12 +479,45 @@ const Header = () => {
                     navigate(`/product/${i?._id}`);
                     setSearchTxt("");
                     setSearchResult([]);
+                    setCatagorySearchResult((prev: any) => {
+                      return {
+                        ...prev,
+                        cat: [],
+                        subCat: [],
+                      };
+                    });
                   }}
                 >
                   {i?.title}
                 </div>
               );
             })}
+            {catagorySearchResult?.cat?.length > 0 && (
+              <>
+                <div className="division-title">Catagories</div>
+                {catagorySearchResult?.cat?.map((i: any) => {
+                  return (
+                    <div
+                      className="search-items"
+                      onClick={() => {
+                        navigate(`/catagory/${i?._id}`);
+                        setSearchTxt("");
+                        setSearchResult([]);
+                        setCatagorySearchResult((prev: any) => {
+                          return {
+                            ...prev,
+                            cat: [],
+                            subCat: [],
+                          };
+                        });
+                      }}
+                    >
+                      {i?.catagory}
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
       </div>
