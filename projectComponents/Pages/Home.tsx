@@ -67,13 +67,13 @@ const Home = (props: HomeProps) => {
                         key={`product-card-${ind}`}
                         className="product-card"
                         onClick={() => {
-                          navigate(`product/${val?._id}`);
+                          navigate(`/product/${val?._id}`);
                         }}
                       >
                         <div className="product-image-container">
-                          {val?.productImage ? (
+                          {val?.productImage?.length > 0 ? (
                             <img
-                              src={`${url}${val?.productImage}`}
+                              src={`${url}${val?.productImage?.[0]?.mediaPath}`}
                               alt={labelConfig?.image_not_loaded}
                               className="product-image"
                             />

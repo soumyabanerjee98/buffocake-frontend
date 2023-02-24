@@ -48,7 +48,7 @@ const Orders = () => {
     data: allOrders,
     isLoading,
     error,
-  } = useSwr("get-orders", dataFetcher, { refreshInterval: 1 });
+  } = useSwr("get-orders", dataFetcher, { refreshInterval: 5000 });
   const [orders, setOrders] = useState<any>(allOrders);
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.orders)) {

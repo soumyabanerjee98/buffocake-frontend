@@ -26,13 +26,10 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
     description: product?.description,
     unitValue: product?.unitValue,
     minWeight: product?.minWeight,
-    productImage: {
-      editState: false,
-      preview: null,
-      dataArr: null,
-    },
     availableFlavours: { flavour: "", value: 0 },
     customOptions: { option: "", value: 0 },
+    imageEditId: "",
+    imageEditPath: "",
   });
   const [catagoryData, setCatagoryData] = useState({
     loading: false,
@@ -118,201 +115,166 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
         });
       });
   };
-  const setImage = (e: any) => {
-    const fileArr = Array.from(e.target.files);
-    const imageSrc = URL.createObjectURL(e.target.files[0]);
-    setFormData((prev: any) => {
-      return {
-        ...prev,
-        productImage: {
-          ...prev.productImage,
-          editState: true,
-          dataArr: fileArr,
-          preview: imageSrc,
-        },
-      };
-    });
-  };
-  const UpdateProduct = () => {
-    if (formData?.productImage?.editState) {
-      if (product?.productImage) {
-        callApi(processIDs?.delete_photo, {
-          mediaPath: product?.productImage,
-        })
-          // @ts-ignore
-          .then((resA: responseType) => {
-            if (resA?.status === 200) {
-              if (resA?.data?.returnCode) {
-                if (formData?.productImage?.dataArr) {
-                  uploadImage(formData?.productImage?.dataArr)
-                    // @ts-ignore
-                    .then((resB: responseType) => {
-                      if (resB?.status === 200) {
-                        if (resB?.data?.returnCode) {
-                          callApi(processIDs?.update_product, {
-                            productId: product?._id,
-                            metaHead: formData?.metaHead,
-                            metaDesc: formData?.metaDesc,
-                            title: formData?.title,
-                            description: formData?.description,
-                            unitValue: formData?.unitValue,
-                            minWeight: formData?.minWeight,
-                            productImage: resB?.data?.returnData[0]?.path,
-                          }) //@ts-ignore
-                            .then((res: responseType) => {
-                              if (res?.status === 200) {
-                                if (res?.data?.returnCode) {
-                                  toast.success(`${res?.data?.msg}`);
-                                } else {
-                                  toast.error(`${res?.data?.msg}`);
-                                }
-                              } else {
-                                toast.error(`Error: ${res?.status}`);
-                              }
-                            })
-                            .catch((err: any) => {
-                              toast.error(`Error: ${err}`);
-                            });
-                        } else {
-                          toast.error(`${resB?.data?.msg}`);
-                        }
-                      } else {
-                        toast.error(`Error: ${resB?.status}`);
-                      }
-                    })
-                    .catch((err: any) => {
-                      toast.error(`Error: ${err}`);
-                    });
-                } else {
-                  callApi(processIDs?.update_product, {
-                    productId: product?._id,
-                    metaHead: formData?.metaHead,
-                    metaDesc: formData?.metaDesc,
-                    title: formData?.title,
-                    description: formData?.description,
-                    unitValue: formData?.unitValue,
-                    minWeight: formData?.minWeight,
-                    productImage: null,
-                  }) //@ts-ignore
-                    .then((res: responseType) => {
-                      if (res?.status === 200) {
-                        if (res?.data?.returnCode) {
-                          toast.success(`${res?.data?.msg}`);
-                        } else {
-                          toast.error(`${res?.data?.msg}`);
-                        }
-                      } else {
-                        toast.error(`Error: ${res?.status}`);
-                      }
-                    })
-                    .catch((err: any) => {
-                      toast.error(`Error: ${err}`);
-                    });
-                }
-              } else {
-                toast.error(`${resA?.data?.msg}`);
-              }
+  const addProductImage = (e: any) => {
+    if (product?.productImage?.length >= 5) {
+      const fileArr = Array.from(e.target.files);
+      uploadImage(fileArr)
+        // @ts-ignore
+        .then((resB: responseType) => {
+          if (resB?.status === 200) {
+            if (resB?.data?.returnCode) {
+              callApi(processIDs?.add_product_image, {
+                productId: product?._id,
+                mediaPath: resB?.data?.returnData[0]?.path,
+              }) //@ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    if (res?.data?.returnCode) {
+                      toast.success(`${res?.data?.msg}`);
+                    } else {
+                      toast.error(`${res?.data?.msg}`);
+                    }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err: any) => {
+                  toast.error(`Error: ${err}`);
+                });
             } else {
-              toast.error(`Error: ${resA?.status}`);
-            }
-          })
-          .catch((err: any) => {
-            toast.error(`Error: ${err}`);
-          });
-      } else {
-        if (formData?.productImage?.dataArr) {
-          uploadImage(formData?.productImage?.dataArr)
-            // @ts-ignore
-            .then((resB: responseType) => {
-              if (resB?.status === 200) {
-                if (resB?.data?.returnCode) {
-                  callApi(processIDs?.update_product, {
-                    productId: product?._id,
-                    metaHead: formData?.metaHead,
-                    metaDesc: formData?.metaDesc,
-                    title: formData?.title,
-                    description: formData?.description,
-                    unitValue: formData?.unitValue,
-                    minWeight: formData?.minWeight,
-                    productImage: resB?.data?.returnData[0]?.path,
-                  }) //@ts-ignore
-                    .then((res: responseType) => {
-                      if (res?.status === 200) {
-                        if (res?.data?.returnCode) {
-                          toast.success(`${res?.data?.msg}`);
-                        } else {
-                          toast.error(`${res?.data?.msg}`);
-                        }
-                      } else {
-                        toast.error(`Error: ${res?.status}`);
-                      }
-                    })
-                    .catch((err: any) => {
-                      toast.error(`Error: ${err}`);
-                    });
-                } else {
-                  toast.error(`${resB?.data?.msg}`);
-                }
-              } else {
-                toast.error(`Error: ${resB?.status}`);
-              }
-            })
-            .catch((err: any) => {
-              toast.error(`Error: ${err}`);
-            });
-        } else {
-          callApi(processIDs?.update_product, {
-            productId: product?._id,
-            metaHead: formData?.metaHead,
-            metaDesc: formData?.metaDesc,
-            title: formData?.title,
-            description: formData?.description,
-            unitValue: formData?.unitValue,
-            minWeight: formData?.minWeight,
-            productImage: null,
-          }) //@ts-ignore
-            .then((res: responseType) => {
-              if (res?.status === 200) {
-                if (res?.data?.returnCode) {
-                  toast.success(`${res?.data?.msg}`);
-                } else {
-                  toast.error(`${res?.data?.msg}`);
-                }
-              } else {
-                toast.error(`Error: ${res?.status}`);
-              }
-            })
-            .catch((err: any) => {
-              toast.error(`Error: ${err}`);
-            });
-        }
-      }
-    } else {
-      callApi(processIDs?.update_product, {
-        productId: product?._id,
-        metaHead: formData?.metaHead,
-        metaDesc: formData?.metaDesc,
-        title: formData?.title,
-        description: formData?.description,
-        unitValue: formData?.unitValue,
-        minWeight: formData?.minWeight,
-        productImage: product?.productImage,
-      }) //@ts-ignore
-        .then((res: responseType) => {
-          if (res?.status === 200) {
-            if (res?.data?.returnCode) {
-              toast.success(`${res?.data?.msg}`);
-            } else {
-              toast.error(`${res?.data?.msg}`);
+              toast.error(`${resB?.data?.msg}`);
             }
           } else {
-            toast.error(`Error: ${res?.status}`);
+            toast.error(`Error: ${resB?.status}`);
           }
         })
         .catch((err: any) => {
           toast.error(`Error: ${err}`);
         });
     }
+  };
+  const updateProductImage = (e: any) => {
+    const fileArr = Array.from(e.target.files);
+    callApi(processIDs?.delete_photo, {
+      mediaPath: formData?.imageEditPath,
+    })
+      // @ts-ignore
+      .then((resA: responseType) => {
+        if (resA?.status === 200) {
+          if (resA?.data?.returnCode) {
+            uploadImage(fileArr)
+              // @ts-ignore
+              .then((resB: responseType) => {
+                if (resB?.status === 200) {
+                  if (resB?.data?.returnCode) {
+                    callApi(processIDs?.edit_product_image, {
+                      productId: product?._id,
+                      imageId: formData?.imageEditId,
+                      mediaPath: resB?.data?.returnData[0]?.path,
+                    }) //@ts-ignore
+                      .then((res: responseType) => {
+                        if (res?.status === 200) {
+                          if (res?.data?.returnCode) {
+                            toast.success(`${res?.data?.msg}`);
+                            setFormData((prev: any) => {
+                              return {
+                                ...prev,
+                                imageEditId: "",
+                                imageEditPath: "",
+                              };
+                            });
+                          } else {
+                            toast.error(`${res?.data?.msg}`);
+                          }
+                        } else {
+                          toast.error(`Error: ${res?.status}`);
+                        }
+                      })
+                      .catch((err: any) => {
+                        toast.error(`Error: ${err}`);
+                      });
+                  } else {
+                    toast.error(`${resB?.data?.msg}`);
+                  }
+                } else {
+                  toast.error(`Error: ${resB?.status}`);
+                }
+              })
+              .catch((err: any) => {
+                toast.error(`Error: ${err}`);
+              });
+          } else {
+            toast.error(`${resA?.data?.msg}`);
+          }
+        } else {
+          toast.error(`Error: ${resA?.status}`);
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
+      });
+  };
+  const deleteProductImage = (id: string, mediaPath: string) => {
+    callApi(processIDs?.delete_photo, {
+      mediaPath: mediaPath,
+    })
+      // @ts-ignore
+      .then((resA: responseType) => {
+        if (resA?.status === 200) {
+          if (resA?.data?.returnCode) {
+            callApi(processIDs?.delete_product_image, {
+              productId: product?._id,
+              imageId: id,
+            }) //@ts-ignore
+              .then((res: responseType) => {
+                if (res?.status === 200) {
+                  if (res?.data?.returnCode) {
+                    toast.success(`${res?.data?.msg}`);
+                  } else {
+                    toast.error(`${res?.data?.msg}`);
+                  }
+                } else {
+                  toast.error(`Error: ${res?.status}`);
+                }
+              })
+              .catch((err: any) => {
+                toast.error(`Error: ${err}`);
+              });
+          } else {
+            toast.error(`${resA?.data?.msg}`);
+          }
+        } else {
+          toast.error(`Error: ${resA?.status}`);
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
+      });
+  };
+  const UpdateProduct = () => {
+    callApi(processIDs?.update_product, {
+      productId: product?._id,
+      metaHead: formData?.metaHead,
+      metaDesc: formData?.metaDesc,
+      title: formData?.title,
+      description: formData?.description,
+      unitValue: formData?.unitValue,
+      minWeight: formData?.minWeight,
+    }) //@ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            toast.success(`${res?.data?.msg}`);
+          } else {
+            toast.error(`${res?.data?.msg}`);
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
+      });
   };
   const DeleteProduct = () => {
     if (product?.productImage) {
@@ -954,55 +916,62 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
             <button onClick={DeleteProduct}>Delete Product</button>
           </div>
           <div className="image-section">
-            {formData?.productImage?.preview ? (
-              <img
-                src={formData?.productImage?.preview}
-                alt="Product image"
-                height={100}
-              />
-            ) : product?.productImage && !formData?.productImage?.editState ? (
-              <img
-                src={`${url}${product?.productImage}`}
-                alt="Product image"
-                height={100}
-              />
-            ) : (
-              <Image src={Broken} alt="No image" height={100} />
-            )}
-            <button onClick={UpdateProduct}>Save</button>
+            {product?.productImage?.length === 0 && <div>No image found</div>}
+            {product?.productImage?.map((i: any) => {
+              return (
+                <div>
+                  <img src={`${url}${i?.mediaPath}`} alt="image" height={100} />
+                  <button
+                    onClick={() => {
+                      setFormData((prev: any) => {
+                        return {
+                          ...prev,
+                          imageEditId: i?._id,
+                          imageEditPath: i?.mediaPath,
+                        };
+                      });
+                      document
+                        .getElementById(`image-input-update-${product?._id}`)
+                        ?.click();
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      deleteProductImage(i?._id, i?.mediaPath);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })}
             <button
+              className="add-image-button"
               onClick={() => {
                 document
-                  .getElementById(`image-input-update-${product?._id}`)
+                  .getElementById(`image-input-add-${product?._id}`)
                   ?.click();
               }}
             >
-              Edit
+              Add New image
             </button>
-            <button
-              onClick={() => {
-                setFormData((prev: any) => {
-                  return {
-                    ...prev,
-                    productImage: {
-                      ...prev.productImage,
-                      editState: true,
-                      dataArr: null,
-                      preview: null,
-                    },
-                  };
-                });
-              }}
-            >
-              Delete
-            </button>
+            <input
+              id={`image-input-add-${product?._id}`}
+              style={{ display: "none", appearance: "none" }}
+              type={"file"}
+              accept={"image/*"}
+              multiple={false}
+              onChange={addProductImage}
+            />
             <input
               id={`image-input-update-${product?._id}`}
               style={{ display: "none", appearance: "none" }}
               type={"file"}
               accept={"image/*"}
               multiple={false}
-              onChange={setImage}
+              onChange={updateProductImage}
             />
           </div>
         </div>
