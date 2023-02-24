@@ -18,10 +18,8 @@ const ProductManageCard = () => {
     subCatagoryArr: [],
     unitValue: 0,
     minWeight: 1,
-    productImage: {
-      preview: null,
-      dataArr: null,
-    },
+    productImage: [],
+    productImagePreview: [],
     availableFlavours: [],
     customOptions: [],
   });
@@ -42,16 +40,26 @@ const ProductManageCard = () => {
     data: [],
   });
   const setImage = (e: any) => {
+    if (e?.target?.files?.length === 0) {
+      return;
+    }
+    if (formData?.productImage?.length >= 5) {
+      toast.error("You can add maximum 5 images");
+      return;
+    }
     const fileArr = Array.from(e.target.files);
     const imageSrc = URL.createObjectURL(e.target.files[0]);
+    let arr = formData?.productImage;
+    let previewArr = formData?.productImagePreview;
+    // @ts-ignore
+    arr.push(...fileArr);
+    // @ts-ignore
+    previewArr.push(imageSrc);
     setFormData((prev: any) => {
       return {
         ...prev,
-        productImage: {
-          ...prev.productImage,
-          dataArr: fileArr,
-          preview: imageSrc,
-        },
+        productImage: arr,
+        productImagePreview: previewArr,
       };
     });
   };
@@ -144,8 +152,8 @@ const ProductManageCard = () => {
     ) {
       toast.error("Please fill up required fields");
     } else {
-      if (formData?.productImage?.preview) {
-        uploadImage(formData?.productImage?.dataArr)
+      if (formData?.productImage?.length > 0) {
+        uploadImage(formData?.productImage)
           // @ts-ignore
           .then((res: responseType) => {
             if (res?.status === 200) {
@@ -165,7 +173,9 @@ const ProductManageCard = () => {
                     : formData?.minWeight,
                   availableFlavours: formData?.availableFlavours,
                   customOptions: formData?.customOptions,
-                  productImage: res?.data?.returnData[0]?.path,
+                  productImage: res?.data?.returnData?.map((i: any) => {
+                    return { mediaPath: i?.path };
+                  }),
                 }) // @ts-ignore
                   .then((res: responseType) => {
                     if (res?.status === 200) {
@@ -182,10 +192,8 @@ const ProductManageCard = () => {
                             subCatagoryArr: [],
                             unitValue: 0,
                             minWeight: 1,
-                            productImage: {
-                              preview: null,
-                              dataArr: null,
-                            },
+                            productImage: [],
+                            productImagePreview: [],
                             availableFlavours: [],
                             customOptions: [],
                           };
@@ -242,10 +250,8 @@ const ProductManageCard = () => {
                     subCatagoryArr: [],
                     unitValue: 0,
                     minWeight: 1,
-                    productImage: {
-                      preview: null,
-                      dataArr: null,
-                    },
+                    productImage: [],
+                    productImagePreview: [],
                     availableFlavours: [],
                     customOptions: [],
                   };
@@ -547,15 +553,17 @@ const ProductManageCard = () => {
       <div className="form-section">
         <label>Product image</label>
         <div className="data-value image">
-          {formData?.productImage?.preview ? (
-            <img
-              src={formData?.productImage?.preview}
-              alt="Product image"
-              height={100}
-            />
-          ) : (
+          {formData?.productImagePreview?.length === 0 && (
             <Image src={NOImage} alt="No image" height={100} />
           )}
+          {formData?.productImagePreview?.length > 0 && (
+            <div>
+              {formData?.productImagePreview?.map((i: any) => {
+                return <img src={i} alt="Product image" height={100} />;
+              })}
+            </div>
+          )}
+
           <button
             className="edit-button"
             onClick={() => {
@@ -570,11 +578,8 @@ const ProductManageCard = () => {
               setFormData((prev: any) => {
                 return {
                   ...prev,
-                  productImage: {
-                    ...prev.productImage,
-                    preview: null,
-                    dataArr: null,
-                  },
+                  productImage: [],
+                  productImagePreview: [],
                 };
               });
             }}

@@ -49,6 +49,7 @@ const Products = (props: ProductProps) => {
     deliveryDate: minDate,
     deliveryTime: null,
   });
+  const [imageArrInd, setImageArrInd] = useState(0);
   const [err, setErr] = useState({
     flavours: false,
     time: false,
@@ -467,30 +468,58 @@ const Products = (props: ProductProps) => {
 
   return (
     <div className="product-screen">
-      <div className="image-section">
-        {productDetails?.productImage ? (
-          <img
-            src={`${url}${productDetails?.productImage}`}
-            alt={labelConfig?.image_not_loaded}
-            className="product-image"
-          />
-        ) : (
-          <Image
-            src={NoIMage}
-            alt={labelConfig?.image_not_loaded}
-            className="product-image"
-          />
-        )}
-        {fav === undefined || loader?.fav ? (
-          <div className="fav-loader">
-            <Loading className="spinner" />
-          </div>
-        ) : (
-          <div className="fav" onClick={favSelect}>
-            <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+      <div>
+        <div className="image-section">
+          {productDetails?.productImage?.length > 0 ? (
+            productDetails?.productImage?.length === 1 ? (
+              <img
+                src={`${url}${productDetails?.productImage?.[0]?.mediaPath}`}
+                alt={labelConfig?.image_not_loaded}
+                className="product-image"
+              />
+            ) : (
+              <img
+                src={`${url}${productDetails?.productImage?.[imageArrInd]?.mediaPath}`}
+                alt={labelConfig?.image_not_loaded}
+                className="product-image"
+              />
+            )
+          ) : (
+            <Image
+              src={NoIMage}
+              alt={labelConfig?.image_not_loaded}
+              className="product-image"
+            />
+          )}
+          {fav === undefined || loader?.fav ? (
+            <div className="fav-loader">
+              <Loading className="spinner" />
+            </div>
+          ) : (
+            <div className="fav" onClick={favSelect}>
+              <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+            </div>
+          )}
+        </div>
+        {productDetails?.productImage?.length > 1 && (
+          <div className="image-carousel">
+            {productDetails?.productImage?.map((i: any, ind: number) => {
+              return (
+                <img
+                  src={`${url}${i?.mediaPath}`}
+                  alt={labelConfig?.image_not_loaded}
+                  height={50}
+                  className={"preview-image"}
+                  onClick={() => {
+                    setImageArrInd(ind);
+                  }}
+                />
+              );
+            })}
           </div>
         )}
       </div>
+
       <div className="details-section">
         <div className="info-section">
           <div className="title">{productDetails?.title}</div>

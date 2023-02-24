@@ -63,9 +63,9 @@ const CartCard = (props: CartCardProps) => {
   return (
     <>
       <div className="image-container">
-        {cart?.productImage ? (
+        {cart?.productImage?.length > 0 ? (
           <img
-            src={`${url}${cart?.productImage}`}
+            src={`${url}${cart?.productImage?.[0]?.mediaPath}`}
             className="image"
             alt="Image not found!"
           />

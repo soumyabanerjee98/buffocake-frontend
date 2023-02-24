@@ -14,7 +14,7 @@ import Loading from "./Loading";
 
 export type WishlistCardProps = {
   productId: string;
-  productImage: string;
+  productImage: any;
   productTitle: string;
   setWishList: any;
 };
@@ -54,9 +54,9 @@ const WishlistCard = (props: WishlistCardProps) => {
   return (
     <>
       <div className="image-container">
-        {productImage ? (
+        {productImage?.length > 0 ? (
           <img
-            src={`${url}${productImage}`}
+            src={`${url}${productImage?.[0]?.mediaPath}`}
             className="image"
             alt="Image not found!"
           />
