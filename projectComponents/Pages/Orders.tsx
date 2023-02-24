@@ -11,41 +11,52 @@ import {
 import OrderCard from "../UI/OrderCard";
 import Broken from "../Assets/Images/broken.png";
 import { useRouter } from "next/router";
+import useSwr from "swr";
+const dataFetcher = async () => {
+  let data = await callApi(processIDs?.get_orders, {
+    userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+  }) // @ts-ignore
+    .then((res: responseType) => {
+      if (res?.status === 200) {
+        if (res?.data?.returnCode) {
+          if (res?.data?.returnData) {
+            let array = res?.data?.returnData?.reverse();
+            setSessionObjectData(storageConfig?.orders, array);
+            return array;
+          } else {
+            setSessionObjectData(storageConfig?.orders, []);
+            return [];
+          }
+        } else {
+          return [];
+        }
+      } else {
+        toast.error(`Error: ${res?.status}`);
+        return undefined;
+      }
+    })
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return undefined;
+    });
+  return data;
+};
 
 const Orders = () => {
   const router = useRouter();
-  const [orders, setOrders] = useState<any>();
+  const {
+    data: allOrders,
+    isLoading,
+    error,
+  } = useSwr("get-orders", dataFetcher, { refreshInterval: 1 });
+  const [orders, setOrders] = useState<any>(allOrders);
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.orders)) {
       setOrders(getSessionObjectData(storageConfig?.orders));
+    } else {
+      setOrders(allOrders);
     }
-    callApi(processIDs?.get_orders, {
-      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
-    }) // @ts-ignore
-      .then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            if (res?.data?.returnData) {
-              let array = res?.data?.returnData?.reverse();
-              setSessionObjectData(storageConfig?.orders, array);
-              setOrders(array);
-            } else {
-              setSessionObjectData(storageConfig?.orders, []);
-              setOrders([]);
-            }
-          } else {
-            setOrders([]);
-          }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-          setOrders(undefined);
-        }
-      })
-      .catch((err: any) => {
-        toast.error(`Error: ${err?.message}`);
-        setOrders(undefined);
-      });
-  }, []);
+  }, [allOrders]);
   if (orders === undefined) return <>Loading...</>;
   if (orders?.length === 0)
     return (

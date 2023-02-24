@@ -70,6 +70,8 @@ const Header = () => {
     state: false,
     order: {},
   });
+  const [allProducts, setAllProducts] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
   const redirect = useRouter();
   const navigate = (url: string) => {
     redirect.push(url);
@@ -77,6 +79,22 @@ const Header = () => {
   const searchByType = (e: any) => {
     let text = e.target.value;
     setSearchTxt(text);
+    if (text === "") {
+      setSearchResult([]);
+    } else {
+      let arr: any = [];
+      let filteredArr = [];
+      allProducts?.map((i: any) => {
+        let searchTitle = i?.title?.toLowerCase()?.search(text?.toLowerCase());
+        if (searchTitle !== -1) {
+          arr.push(i);
+        }
+      });
+      filteredArr = arr.filter((i: any, v: number) => {
+        return v <= 5;
+      });
+      setSearchResult(filteredArr);
+    }
   };
   const openPopUp = () => {
     setLoginCardOpen(true);
@@ -84,7 +102,31 @@ const Header = () => {
   const openProfile = () => {
     navigate("/profile");
   };
+  const GetAllProducts = () => {
+    callApi(processIDs?.get_all_products, {})
+      .then(
+        // @ts-ignore
+        (res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              setAllProducts(res?.data?.returnData);
+            } else {
+              setAllProducts([]);
+              toast.error(`${res?.data?.msg}`);
+            }
+          } else {
+            setAllProducts([]);
+            toast.error(`Error: ${res?.status}`);
+          }
+        }
+      )
+      .catch((err: any) => {
+        setAllProducts([]);
+        toast.error(`Error: ${err?.message}`);
+      });
+  };
   useEffect(() => {
+    GetAllProducts();
     // @ts-ignore
     messageService?.onReceive().subscribe((m: messageType) => {
       if (m?.sender === "login-card" && m?.target === "header") {
@@ -300,10 +342,34 @@ const Header = () => {
             onChange={searchByType}
             placeholder={labelConfig?.header_search_placeholder}
           />
-          <div className="search-button">
-            <Image src={SearchIcon} alt="Search" />
+          <div
+            className="search-button"
+            onClick={() => {
+              setSearchTxt("");
+              setSearchResult([]);
+            }}
+          >
+            <i className="fas fa-undo" />
           </div>
         </div>
+        {searchResult?.length > 0 && (
+          <div className="search-result">
+            {searchResult?.map((i: any) => {
+              return (
+                <div
+                  className="search-items"
+                  onClick={() => {
+                    navigate(`/product/${i?._id}`);
+                    setSearchTxt("");
+                    setSearchResult([]);
+                  }}
+                >
+                  {i?.title}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className="right-col">
         {userProfile && (

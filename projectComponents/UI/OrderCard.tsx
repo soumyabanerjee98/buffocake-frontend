@@ -70,6 +70,13 @@ const OrderCard = (props: OrderCardProps) => {
                     {labelConfig?.inr_code}
                     {i?.subTotal}
                   </div>
+                  {i?.subOrderStatus && (
+                    <div
+                      className={`suborder-status ${i?.subOrderStatus?.toLowerCase()}`}
+                    >
+                      {i?.subOrderStatus}
+                    </div>
+                  )}
                 </div>
               );
             })}

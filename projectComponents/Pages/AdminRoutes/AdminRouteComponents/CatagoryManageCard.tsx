@@ -22,6 +22,11 @@ const CatagoryManageCard = () => {
     label: "",
     value: "",
   });
+  const [catagorySubCatagoryMap, setCatagorySubCatagoryMap] = useState({
+    mapLoading: false,
+    catId: "",
+    subCatArr: [],
+  });
   const addCatagory = () => {
     if (catagory) {
       callApi(processIDs?.create_catagory, { label: catagory })
@@ -100,6 +105,107 @@ const CatagoryManageCard = () => {
         setCatagories((prev: any) => {
           return { ...prev, cat_loading: false };
         });
+      });
+  };
+  const fetchCatagoryMap = (id: string) => {
+    setCatagorySubCatagoryMap((prev: any) => {
+      return { ...prev, mapLoading: true };
+    });
+    callApi(processIDs?.get_catagory_map, { catagoryId: id })
+      // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnData) {
+            setCatagorySubCatagoryMap((prev: any) => {
+              return {
+                ...prev,
+                catId: id,
+                subCatArr: res?.data?.returnData,
+                mapLoading: false,
+              };
+            });
+          } else {
+            setCatagorySubCatagoryMap((prev: any) => {
+              return { ...prev, mapLoading: false };
+            });
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          setCatagorySubCatagoryMap((prev: any) => {
+            return { ...prev, mapLoading: false };
+          });
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
+        setCatagorySubCatagoryMap((prev: any) => {
+          return { ...prev, mapLoading: false };
+        });
+      });
+  };
+  const addCatagoryMap = (id: string) => {
+    if (catagorySubCatagoryMap?.catId === "") {
+      toast.error("Select a catagory first");
+      return;
+    }
+    let dupval = catagorySubCatagoryMap?.subCatArr?.find((i: any) => {
+      return i?.subCatagoryId === id;
+    });
+    if (dupval) {
+      toast.error("Already added");
+      return;
+    }
+    callApi(processIDs?.add_catagory_map, {
+      catagoryId: catagorySubCatagoryMap?.catId,
+      subCatagoryId: id,
+    })
+      // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnData) {
+            toast.success(`${res?.data?.msg}`);
+            setCatagorySubCatagoryMap((prev: any) => {
+              return {
+                ...prev,
+                subCatArr: res?.data?.returnData,
+              };
+            });
+          } else {
+            toast.error(`${res?.data?.msg}`);
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
+      });
+  };
+  const removeCatagoryMap = (id: string) => {
+    callApi(processIDs?.remove_catagory_map, {
+      catagoryId: catagorySubCatagoryMap?.catId,
+      subCatagoryMapId: id,
+    })
+      // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnData) {
+            toast.success(`${res?.data?.msg}`);
+            setCatagorySubCatagoryMap((prev: any) => {
+              return {
+                ...prev,
+                subCatArr: res?.data?.returnData,
+              };
+            });
+          } else {
+            toast.error(`${res?.data?.msg}`);
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+        }
+      })
+      .catch((err: any) => {
+        toast.error(`Error: ${err}`);
       });
   };
   const fetchSubCatagory = () => {
@@ -334,6 +440,63 @@ const CatagoryManageCard = () => {
           </div>
         </div>
       )}
+      <div className="title">Catagory - Sub catagory map</div>
+      <hr />
+      <Select
+        isSearchable={true}
+        placeholder={"Select catagory"}
+        onChange={(e: any) => {
+          if (e) {
+            fetchCatagoryMap(e?.value);
+          } else {
+            setCatagorySubCatagoryMap((prev: any) => {
+              return { ...prev, catId: "", subCatArr: [] };
+            });
+          }
+        }}
+        onFocus={fetchCatagory}
+        options={catagories?.cat}
+        isClearable={true}
+        isLoading={
+          catagories?.cat_loading || catagorySubCatagoryMap?.mapLoading
+        }
+      />
+      <div className="form-section">
+        <div className="cat-map">
+          {catagorySubCatagoryMap?.catId !== "" &&
+            catagorySubCatagoryMap?.subCatArr?.length === 0 && (
+              <div className="maps">No sub catagory mapped</div>
+            )}
+          {catagorySubCatagoryMap?.subCatArr?.map((i: any) => {
+            return (
+              <div className="maps">
+                <div className="mapname">{i?.subCatagoryName}</div>
+                <button
+                  className="edit-button"
+                  onClick={() => removeCatagoryMap(i?._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <Select
+          isSearchable={true}
+          placeholder={"Map sub catagory"}
+          onChange={(e: any) => {
+            if (e) {
+              addCatagoryMap(e?.value);
+            }
+          }}
+          onFocus={fetchSubCatagory}
+          options={catagories?.subCat}
+          isClearable={true}
+          isLoading={
+            catagories?.subCat_loading || catagorySubCatagoryMap?.mapLoading
+          }
+        />
+      </div>
     </div>
   );
 };

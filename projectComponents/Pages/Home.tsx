@@ -7,10 +7,11 @@ import MediaCarousel from "../UI/MediaCarousel";
 
 export type HomeProps = {
   allProducts: any;
+  carousel: any;
 };
 
 const Home = (props: HomeProps) => {
-  const { allProducts } = props;
+  const { allProducts, carousel } = props;
   const redirect = useRouter();
   const url =
     process?.env?.NODE_ENV === "development"
@@ -25,18 +26,15 @@ const Home = (props: HomeProps) => {
     <>
       <div className="home-screen">
         <MediaCarousel
-          elementArr={[
-            <Image
-              src={NoIMage}
-              alt={labelConfig?.image_not_loaded}
-              className="product-image"
-            />,
-            <Image
-              src={NoIMage}
-              alt={labelConfig?.image_not_loaded}
-              className="product-image"
-            />,
-          ]}
+          elementArr={carousel?.map((i: any) => {
+            return (
+              <img
+                src={`${url}${i?.mediaPath}`}
+                className="product-image"
+                alt={labelConfig?.image_not_loaded}
+              />
+            );
+          })}
         />
         <div className="header">Our Products</div>
         {allProducts?.map((i: any) => {
@@ -47,44 +45,53 @@ const Home = (props: HomeProps) => {
                   {/* {labelConfig?.home_catagory_header_title} */}
                   {i?.cat}
                 </div>
-                {allProducts?.prod?.length > 4 && (
-                  <button className="view-all">
+                {i?.prod?.length > 4 && (
+                  <button
+                    className="view-all"
+                    onClick={() => {
+                      navigate(`/catagory/${i?.catId}`);
+                    }}
+                  >
                     {labelConfig?.home_view_all_button}
                   </button>
                 )}
               </div>
               <div className="catagory-body">
-                {i?.prod?.map((val: any, ind: any) => {
-                  return (
-                    <div
-                      key={`product-card-${ind}`}
-                      className="product-card"
-                      onClick={() => {
-                        navigate(`product/${val?._id}`);
-                      }}
-                    >
-                      <div className="product-image-container">
-                        {val?.productImage ? (
-                          <img
-                            src={`${url}${val?.productImage}`}
-                            alt={labelConfig?.image_not_loaded}
-                            className="product-image"
-                          />
-                        ) : (
-                          <Image
-                            src={NoIMage}
-                            alt={labelConfig?.image_not_loaded}
-                            className="product-image"
-                          />
-                        )}
+                {i?.prod
+                  ?.filter((i: any, v: number) => {
+                    return v <= 3;
+                  })
+                  ?.map((val: any, ind: any) => {
+                    return (
+                      <div
+                        key={`product-card-${ind}`}
+                        className="product-card"
+                        onClick={() => {
+                          navigate(`product/${val?._id}`);
+                        }}
+                      >
+                        <div className="product-image-container">
+                          {val?.productImage ? (
+                            <img
+                              src={`${url}${val?.productImage}`}
+                              alt={labelConfig?.image_not_loaded}
+                              className="product-image"
+                            />
+                          ) : (
+                            <Image
+                              src={NoIMage}
+                              alt={labelConfig?.image_not_loaded}
+                              className="product-image"
+                            />
+                          )}
+                        </div>
+                        <div className="product-name">{val?.title}</div>
+                        <div className="product-price">
+                          &#8377;{val?.unitValue}
+                        </div>
                       </div>
-                      <div className="product-name">{val?.title}</div>
-                      <div className="product-price">
-                        &#8377;{val?.unitValue}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
           );

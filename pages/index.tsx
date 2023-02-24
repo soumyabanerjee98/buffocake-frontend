@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { metaConfig } from "../config/siteConfig";
+import { labelConfig, metaConfig, serverConfig } from "../config/siteConfig";
 import { processIDs } from "../config/processID";
 import Home from "../projectComponents/Pages/Home";
 import { callApi } from "../projectComponents/Functions/util";
@@ -7,7 +7,7 @@ import { responseType } from "../typings";
 import { toast } from "react-toastify";
 
 const HomePage = (props: any) => {
-  const { allProducts } = props;
+  const { allProducts, carousel } = props;
   return (
     <>
       <Head>
@@ -15,7 +15,7 @@ const HomePage = (props: any) => {
         <meta name="description" content={metaConfig?.home_desc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <Home allProducts={allProducts} />
+      <Home allProducts={allProducts} carousel={carousel} />
     </>
   );
 };
@@ -60,10 +60,30 @@ export async function getStaticProps() {
       toast.error(`Error: ${err?.message}`);
       return [];
     });
-  // @ts-ignore
-  let arr = [];
+  let carousel = await callApi(processIDs?.get_carousel, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            toast.error(`${res?.data?.msg}`);
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
+  let arr: any = [];
   catagory?.map((i: any) => {
-    let arrObj = { cat: i?.catagory, prod: [] };
+    let arrObj = { catId: i?._id, cat: i?.catagory, prod: [] };
     data?.map((v: any) => {
       v?.catagory?.map((w: any) => {
         if (w?.catagoryId === i?._id) {
@@ -78,6 +98,7 @@ export async function getStaticProps() {
     props: {
       // @ts-ignore
       allProducts: arr,
+      carousel: carousel,
     },
     revalidate: 60,
   };
