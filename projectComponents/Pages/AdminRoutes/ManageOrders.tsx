@@ -34,7 +34,10 @@ const ManageOrders = () => {
     data: allOrders,
     isLoading,
     error,
-  } = useSwr("manage-orders", dataFetcher, { refreshInterval: 1 });
+  } = useSwr("manage-orders", dataFetcher, {
+    refreshInterval: 5000,
+    revalidateOnFocus: true,
+  });
   const [orders, setOrders] = useState(allOrders);
   const [search, setSearch] = useState("");
   const searchOrder = (e: React.ChangeEvent<HTMLInputElement>) => {
