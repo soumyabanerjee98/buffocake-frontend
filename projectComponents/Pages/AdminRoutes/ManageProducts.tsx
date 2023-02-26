@@ -39,7 +39,10 @@ const ManageProducts = () => {
     data: allProd,
     isLoading,
     error,
-  } = useSwr("manage-products", dataFetcher, { refreshInterval: 1 });
+  } = useSwr("manage-products", dataFetcher, {
+    refreshInterval: 5000,
+    revalidateOnFocus: true,
+  });
   const [allProducts, setAllProducts] = useState(allProd);
   const [catagoryData, setCatagoryData] = useState({
     loading: false,

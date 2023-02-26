@@ -33,7 +33,10 @@ const ManageCarousel = () => {
     data: allCarousel,
     isLoading,
     error,
-  } = useSwr("manage-carousel", dataFetcher, { refreshInterval: 1 });
+  } = useSwr("manage-carousel", dataFetcher, {
+    refreshInterval: 5000,
+    revalidateOnFocus: true,
+  });
   const url =
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
