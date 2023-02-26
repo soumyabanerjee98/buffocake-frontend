@@ -255,8 +255,16 @@ const CheckoutCard = (props: CheckoutCardProps) => {
           </div>
         </div>
         <PaytmPayment
-          MID={paytmConfig?.stage_mid}
-          MKEY={paytmConfig?.stage_mkey}
+          MID={
+            process.env.NODE_ENV === "production"
+              ? paytmConfig?.mid
+              : paytmConfig?.stage_mid
+          }
+          MKEY={
+            process.env.NODE_ENV === "production"
+              ? paytmConfig?.mkey
+              : paytmConfig?.stage_mkey
+          }
           Total={grandTotal}
           disable={address?.length > 0 ? false : true}
           Address={address?.[addressInd]}
