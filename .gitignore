@@ -18,7 +18,6 @@
 # misc
 .DS_Store
 *.pem
-/config/secret.tsx
 
 # debug
 npm-debug.log*
