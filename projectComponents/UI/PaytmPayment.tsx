@@ -3,7 +3,6 @@ import Head from "next/head";
 import Script from "next/script";
 import {
   labelConfig,
-  paytmConfig,
   serverConfig,
   storageConfig,
 } from "../../config/siteConfig";
@@ -18,6 +17,7 @@ import Loading from "./Loading";
 import { responseType } from "../../typings";
 import { toast } from "react-toastify";
 import { messageService } from "../Functions/messageService";
+import { paytmConfig } from "../../config/secret";
 
 export type PaytmPaymentProps = {
   MID: string;

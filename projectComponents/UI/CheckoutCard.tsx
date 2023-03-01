@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
-import { paytmConfig, storageConfig } from "../../config/siteConfig";
+import { paytmConfig } from "../../config/secret";
+import { storageConfig } from "../../config/siteConfig";
 import { messageType, responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
 import {

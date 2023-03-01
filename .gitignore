@@ -18,7 +18,7 @@
 # misc
 .DS_Store
 *.pem
-/config/siteConfig.tsx
+/config/secret.tsx
 
 # debug
 npm-debug.log*
