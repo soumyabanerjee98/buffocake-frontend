@@ -5,7 +5,8 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { serverConfig, firebaseConfig } from "../../config/siteConfig";
+import { firebaseConfig } from "../../config/secret";
+import { serverConfig } from "../../config/siteConfig";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

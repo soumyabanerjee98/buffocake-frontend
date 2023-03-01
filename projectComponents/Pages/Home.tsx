@@ -5,14 +5,11 @@ import { useRouter } from "next/navigation";
 import React from "react";
 // import Skeleton from "react-loading-skeleton";
 // import "react-loading-skeleton/dist/skeleton.css";
-import {
-  labelConfig,
-  paytmConfig,
-  serverConfig,
-} from "../../config/siteConfig";
+import { labelConfig, serverConfig } from "../../config/siteConfig";
 import { uploadImage } from "../Functions/util";
 import PaytmPayment from "../UI/PaytmPayment";
 import NoIMage from "../Assets/Images/no-image.png";
+import { paytmConfig } from "../../config/secret";
 
 export type HomeProps = {
   allProducts: any;

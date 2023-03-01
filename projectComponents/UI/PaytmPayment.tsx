@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import Script from "next/script";
-import { labelConfig, paytmConfig } from "../../config/siteConfig";
+import { labelConfig } from "../../config/siteConfig";
 import { callApiSSR } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import Loading from "./Loading";
+import { paytmConfig } from "../../config/secret";
 
 export type PaytmPaymentProps = {
   MID: string;
