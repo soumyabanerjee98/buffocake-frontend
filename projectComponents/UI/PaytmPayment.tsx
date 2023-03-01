@@ -20,8 +20,8 @@ import { messageService } from "../Functions/messageService";
 import { paytmConfig } from "../../config/secret";
 
 export type PaytmPaymentProps = {
-  MID: string;
-  MKEY: string;
+  MID: any;
+  MKEY: any;
   Total: number;
   disable: boolean;
   Address: any;
