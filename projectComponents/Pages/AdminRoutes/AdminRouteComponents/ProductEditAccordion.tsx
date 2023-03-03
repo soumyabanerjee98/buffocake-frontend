@@ -277,7 +277,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
       });
   };
   const DeleteProduct = () => {
-    if (product?.productImage) {
+    if (product?.productImage?.length > 0) {
       callApi(processIDs?.delete_photo, { mediaPath: product?.productImage })
         //   @ts-ignore
         .then((res: responseType) => {
