@@ -183,7 +183,11 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
                             "TXN_FAILURE"
                           ) {
                             toast.error(`Error: Transaction failed`);
-                            document.getElementById("app-close-btn")?.click();
+                            // checkoutFunc({
+                            //   ...res?.data?.returnData,
+                            //   address: Address,
+                            //   total: Total.toString(),
+                            // });
                           }
                         }
                       } else {

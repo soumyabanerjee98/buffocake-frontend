@@ -24,10 +24,9 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
     metaDesc: product?.metaDesc,
     title: product?.title,
     description: product?.description,
-    unitValue: product?.unitValue,
-    minWeight: product?.minWeight,
     availableFlavours: { flavour: "", value: 0 },
-    customOptions: { option: "", value: 0 },
+    gourmetOptions: { option: "", value: 0 },
+    weight: { label: "", value: 0 },
     imageEditId: "",
     imageEditPath: "",
   });
@@ -116,8 +115,9 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
       });
   };
   const addProductImage = (e: any) => {
-    if (product?.productImage?.length >= 5) {
+    if (product?.productImage?.length <= 5) {
       const fileArr = Array.from(e.target.files);
+      console.log(fileArr);
       uploadImage(fileArr)
         // @ts-ignore
         .then((resB: responseType) => {
@@ -151,6 +151,8 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
         .catch((err: any) => {
           toast.error(`Error: ${err}`);
         });
+    } else {
+      toast.error("Can not add more than 5 photos!");
     }
   };
   const updateProductImage = (e: any) => {
@@ -258,8 +260,6 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
       metaDesc: formData?.metaDesc,
       title: formData?.title,
       description: formData?.description,
-      unitValue: formData?.unitValue,
-      minWeight: formData?.minWeight,
     }) //@ts-ignore
       .then((res: responseType) => {
         if (res?.status === 200) {
@@ -632,52 +632,128 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
               />
             </div>
             <div className="details-section">
-              <div className="title">Unit price</div>
+              <div className="title">Available weight</div>
               <div className="edit">
-                <span>
-                  {labelConfig?.inr_code}
-                  <input
-                    className="value"
-                    type="number"
-                    value={formData?.unitValue}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFormData((prev: any) => {
-                        return { ...prev, unitValue: parseInt(e.target.value) };
-                      });
-                    }}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === ".") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </span>
-                <button onClick={UpdateProduct}>Save</button>
+                {product?.weight?.map((i: any) => {
+                  return (
+                    <div className="option">
+                      Weight: {i?.label} lbs
+                      <div>
+                        Value: {labelConfig?.inr_code}
+                        {i?.value}
+                      </div>
+                      <button
+                        onClick={() => {
+                          callApi(processIDs?.delete_product_weight, {
+                            productId: product?._id,
+                            weightId: i?._id,
+                          }) //@ts-ignore
+                            .then((res: responseType) => {
+                              if (res?.status === 200) {
+                                if (res?.data?.returnCode) {
+                                  toast.success(`${res?.data?.msg}`);
+                                } else {
+                                  toast.error(`${res?.data?.msg}`);
+                                }
+                              } else {
+                                toast.error(`Error: ${res?.status}`);
+                              }
+                            })
+                            .catch((err: any) => {
+                              toast.error(`Error: ${err}`);
+                            });
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            <div className="details-section">
-              <div className="title">Minimum weight</div>
-              <div className="edit">
-                <span>
-                  <input
-                    className="value"
-                    type="number"
-                    value={formData?.minWeight}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            <div className="edit">
+              <input
+                type={"number"}
+                value={formData?.weight?.label}
+                placeholder="Add weight"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  // @ts-ignore
+                  if (e.nativeEvent.inputType) {
+                    setFormData((prev: any) => {
+                      return {
+                        ...prev,
+                        weight: {
+                          ...prev.weight,
+                          label: parseFloat(e.target.value),
+                        },
+                      };
+                    });
+                  }
+                }}
+              />
+              lbs
+              <span>
+                {labelConfig?.inr_code}
+                <input
+                  type={"number"}
+                  value={formData?.weight?.value}
+                  placeholder="Add value"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    // @ts-ignore
+                    if (e.nativeEvent.inputType) {
                       setFormData((prev: any) => {
-                        return { ...prev, minWeight: parseInt(e.target.value) };
+                        return {
+                          ...prev,
+                          weight: {
+                            ...prev.weight,
+                            value: parseInt(e.target.value),
+                          },
+                        };
                       });
-                    }}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === ".") {
-                        e.preventDefault();
+                    }
+                  }}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === ".") {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </span>
+              <button
+                onClick={() => {
+                  callApi(processIDs?.add_product_weight, {
+                    productId: product?._id,
+                    label: formData?.weight?.label,
+                    value: formData?.weight?.value,
+                  }) //@ts-ignore
+                    .then((res: responseType) => {
+                      if (res?.status === 200) {
+                        if (res?.data?.returnCode) {
+                          toast.success(`${res?.data?.msg}`);
+                          setFormData((prev: any) => {
+                            return {
+                              ...prev,
+                              weight: {
+                                ...prev.weight,
+                                label: "",
+                                value: 0,
+                              },
+                            };
+                          });
+                        } else {
+                          toast.error(`${res?.data?.msg}`);
+                        }
+                      } else {
+                        toast.error(`Error: ${res?.status}`);
                       }
-                    }}
-                  />
-                  lbs
-                </span>
-                <button onClick={UpdateProduct}>Save</button>
-              </div>
+                    })
+                    .catch((err: any) => {
+                      toast.error(`Error: ${err}`);
+                    });
+                }}
+              >
+                Add
+              </button>
             </div>
             <div className="details-section">
               <div className="title">Available flavours</div>
@@ -743,15 +819,18 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                   value={formData?.availableFlavours?.value}
                   placeholder="Add value"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setFormData((prev: any) => {
-                      return {
-                        ...prev,
-                        availableFlavours: {
-                          ...prev.availableFlavours,
-                          value: parseInt(e.target.value),
-                        },
-                      };
-                    });
+                    // @ts-ignore
+                    if (e.nativeEvent.inputType) {
+                      setFormData((prev: any) => {
+                        return {
+                          ...prev,
+                          availableFlavours: {
+                            ...prev.availableFlavours,
+                            value: parseInt(e.target.value),
+                          },
+                        };
+                      });
+                    }
                   }}
                   onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === ".") {
@@ -797,9 +876,9 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
               </button>
             </div>
             <div className="details-section">
-              <div className="title">Available Customizations</div>
+              <div className="title">Available Gourmets</div>
               <div className="edit">
-                {product?.customOptions?.map((i: any) => {
+                {product?.gourmetOptions?.map((i: any) => {
                   return (
                     <div className="option">
                       Option: {i?.option}
@@ -839,14 +918,14 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
             <div className="edit">
               <input
                 type={"text"}
-                value={formData?.customOptions?.option}
+                value={formData?.gourmetOptions?.option}
                 placeholder="Add option"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setFormData((prev: any) => {
                     return {
                       ...prev,
-                      customOptions: {
-                        ...prev.customOptions,
+                      gourmetOptions: {
+                        ...prev.gourmetOptions,
                         option: e.target.value,
                       },
                     };
@@ -857,18 +936,21 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                 {labelConfig?.inr_code}
                 <input
                   type={"number"}
-                  value={formData?.customOptions?.value}
+                  value={formData?.gourmetOptions?.value}
                   placeholder="Add value"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setFormData((prev: any) => {
-                      return {
-                        ...prev,
-                        customOptions: {
-                          ...prev.customOptions,
-                          value: parseInt(e.target.value),
-                        },
-                      };
-                    });
+                    // @ts-ignore
+                    if (e.nativeEvent.inputType) {
+                      setFormData((prev: any) => {
+                        return {
+                          ...prev,
+                          gourmetOptions: {
+                            ...prev.gourmetOptions,
+                            value: parseInt(e.target.value),
+                          },
+                        };
+                      });
+                    }
                   }}
                   onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === ".") {
@@ -881,8 +963,8 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                 onClick={() => {
                   callApi(processIDs?.add_product_custom, {
                     productId: product?._id,
-                    option: formData?.customOptions?.option,
-                    value: formData?.customOptions?.value,
+                    option: formData?.gourmetOptions?.option,
+                    value: formData?.gourmetOptions?.value,
                   }) //@ts-ignore
                     .then((res: responseType) => {
                       if (res?.status === 200) {
@@ -891,8 +973,8 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                           setFormData((prev: any) => {
                             return {
                               ...prev,
-                              customOptions: {
-                                ...prev.customOptions,
+                              gourmetOptions: {
+                                ...prev.gourmetOptions,
                                 option: "",
                                 value: 0,
                               },

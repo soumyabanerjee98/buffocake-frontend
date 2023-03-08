@@ -163,7 +163,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                         <div className="value">
                           {address?.[addressInd]?.house
                             ? address?.[addressInd]?.house
-                            : "NA"}
+                            : "N/A"}
                         </div>
                       </div>
                       <div className="address-section">
@@ -210,35 +210,31 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                   <div key={`item-${idx}`} className="items">
                     <div className="name">{i?.productName}</div>
                     <div className="section">
-                      <div className="label">Qty: </div>
-                      <div className="value">{i?.qty}</div>
-                    </div>
-                    <div className="section">
                       <div className="label">Weight: </div>
                       <div className="value">{i?.weight} lbs</div>
                     </div>
                     <div className="section">
                       <div className="label">Flavour: </div>
                       <div className="value">
-                        {i?.flavour ? i?.flavour : "NA"}
+                        {i?.flavour ? i?.flavour : "N/A"}
                       </div>
                     </div>
                     <div className="section">
                       <div className="label">Customization: </div>
                       <div className="value">
-                        {i?.custom ? i?.custom : "NA"}
+                        {i?.custom ? i?.custom : "N/A"}
                       </div>
                     </div>
                     <div className="section">
                       <div className="label">Message on cake: </div>
                       <div className="value">
-                        {i?.message ? i?.message : "NA"}
+                        {i?.message ? i?.message : "N/A"}
                       </div>
                     </div>
                     <div className="section">
                       <div className="label">Allergies: </div>
                       <div className="value">
-                        {i?.allergy ? i?.allergy : "NA"}
+                        {i?.allergy ? i?.allergy : "N/A"}
                       </div>
                     </div>
                     <div className="section">

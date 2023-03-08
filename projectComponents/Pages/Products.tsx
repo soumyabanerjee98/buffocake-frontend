@@ -37,21 +37,34 @@ const Products = (props: ProductProps) => {
   minDate.setDate(minDate.getDate() + 1);
   const [fav, setFav] = useState<any>();
   const [checkOutDetails, setCheckOutDetails] = useState({
-    qty: 1,
-    weight: productDetails?.minWeight,
-    subTotal: productDetails?.unitValue,
-    additionalValueFlavour: 0,
-    additionalValueCustom: 0,
-    selectedFlavour: null,
+    weight: productDetails?.weight?.sort((a: any, b: any) => {
+      return a?.value - b?.value;
+    })?.[0]?.label,
+    subTotal: productDetails?.weight?.sort((a: any, b: any) => {
+      return a?.value - b?.value;
+    })?.[0]?.value,
+    additionalValueFlavour:
+      productDetails?.availableFlavours?.length > 0
+        ? productDetails?.availableFlavours?.sort((a: any, b: any) => {
+            return a?.value - b?.value;
+          })?.[0]?.value
+        : 0,
+    additionalValueGourmet: 0,
+    selectedFlavour:
+      productDetails?.availableFlavours?.length > 0
+        ? productDetails?.availableFlavours?.sort((a: any, b: any) => {
+            return a?.value - b?.value;
+          })?.[0]?.flavour
+        : "",
     message: "",
-    customOption: null,
+    customization: "",
+    gourmetOption: "",
     allergy: "",
     deliveryDate: minDate,
     deliveryTime: null,
   });
   const [imageArrInd, setImageArrInd] = useState(0);
   const [err, setErr] = useState({
-    flavours: false,
     time: false,
   });
   const [loader, setLoader] = useState({
@@ -63,6 +76,7 @@ const Products = (props: ProductProps) => {
   const [textFieldLimits, setTextFieldLimits] = useState({
     messageLimit: productConfig?.messageFieldLimit,
     allergyLimit: productConfig?.allergyFieldLimit,
+    customLimit: productConfig?.customFieldLimit,
   });
   const url =
     process?.env?.NODE_ENV === "development"
@@ -134,68 +148,6 @@ const Products = (props: ProductProps) => {
     );
   };
 
-  const changeQty = (action: string) => {
-    switch (action) {
-      case "add":
-        setCheckOutDetails((prev: any) => {
-          return {
-            ...prev,
-            qty: prev?.qty + productConfig?.qtyAdjustUnit,
-            subTotal:
-              productDetails?.unitValue *
-              prev?.weight *
-              (prev?.qty + productConfig?.qtyAdjustUnit),
-          };
-        });
-        break;
-      case "deduct":
-        setCheckOutDetails((prev: any) => {
-          return {
-            ...prev,
-            qty: prev?.qty - productConfig?.qtyAdjustUnit,
-            subTotal:
-              productDetails?.unitValue *
-              prev?.weight *
-              (prev?.qty - productConfig?.qtyAdjustUnit),
-          };
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
-  const changeWeight = (action: string) => {
-    switch (action) {
-      case "add":
-        setCheckOutDetails((prev: any) => {
-          return {
-            ...prev,
-            weight: prev?.weight + productConfig?.weightAdjustUnit,
-            subTotal:
-              productDetails?.unitValue *
-              (prev?.weight + productConfig?.weightAdjustUnit) *
-              prev?.qty,
-          };
-        });
-        break;
-      case "deduct":
-        setCheckOutDetails((prev: any) => {
-          return {
-            ...prev,
-            weight: prev?.weight - productConfig?.weightAdjustUnit,
-            subTotal:
-              productDetails?.unitValue *
-              (prev?.weight - productConfig?.weightAdjustUnit) *
-              prev?.qty,
-          };
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
   const selectFlavour = (opt: any, index: number) => {
     setErr((prev: any) => {
       return { ...prev, flavours: false };
@@ -233,31 +185,48 @@ const Products = (props: ProductProps) => {
     }
   };
 
-  const selectCustom = (opt: any, index: number) => {
-    let element = document.getElementById(`product-custom-${index}`);
+  const custom = (e: any) => {
+    if (
+      textFieldLimits?.customLimit > 0 ||
+      e.nativeEvent.inputType === "deleteContentBackward"
+    ) {
+      setCheckOutDetails((prev: any) => {
+        return { ...prev, customization: e.target.value };
+      });
+      setTextFieldLimits((prev: any) => {
+        return {
+          ...prev,
+          customLimit: productConfig?.customFieldLimit - e.target.value.length,
+        };
+      });
+    }
+  };
+
+  const selectGourmet = (opt: any, index: number) => {
+    let element = document.getElementById(`product-gourmet-${index}`);
     if (element?.className.includes("selected-option")) {
-      productDetails?.customOptions?.map((i: any, idx: number) => {
-        let element = document.getElementById(`product-custom-${idx}`);
+      productDetails?.gourmetOptions?.map((i: any, idx: number) => {
+        let element = document.getElementById(`product-gourmet-${idx}`);
         element?.classList.remove("selected-option");
       });
       setCheckOutDetails((prev: any) => {
         return {
           ...prev,
-          customOption: null,
-          additionalValueCustom: 0,
+          gourmetOption: null,
+          additionalValueGourmet: 0,
         };
       });
     } else {
-      productDetails?.customOptions?.map((i: any, idx: number) => {
-        let element = document.getElementById(`product-custom-${idx}`);
+      productDetails?.gourmetOptions?.map((i: any, idx: number) => {
+        let element = document.getElementById(`product-gourmet-${idx}`);
         element?.classList.remove("selected-option");
       });
       element?.classList.add("selected-option");
       setCheckOutDetails((prev: any) => {
         return {
           ...prev,
-          customOption: opt?.option,
-          additionalValueCustom: opt?.value,
+          gourmetOption: opt?.option,
+          additionalValueGourmet: opt?.value,
         };
       });
     }
@@ -342,14 +311,7 @@ const Products = (props: ProductProps) => {
 
   const addToCart = () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
-      if (
-        productDetails?.availableFlavours?.length > 0 &&
-        checkOutDetails?.selectedFlavour === null
-      ) {
-        setErr((prev: any) => {
-          return { ...prev, flavours: true };
-        });
-      } else if (!checkOutDetails?.deliveryTime) {
+      if (!checkOutDetails?.deliveryTime) {
         setErr((prev: any) => {
           return { ...prev, time: true };
         });
@@ -360,22 +322,23 @@ const Products = (props: ProductProps) => {
         let body = {
           userId: getSessionObjectData(storageConfig?.userProfile)?.id,
           productId: productDetails?._id,
-          qty: checkOutDetails?.qty,
           weight: checkOutDetails?.weight,
-          flavour: checkOutDetails?.selectedFlavour
-            ? checkOutDetails?.selectedFlavour
-            : "",
-          custom: checkOutDetails?.customOption
-            ? checkOutDetails?.customOption
-            : "",
+          flavour: checkOutDetails?.selectedFlavour,
+          gourmet: checkOutDetails?.gourmetOption,
+          custom: checkOutDetails?.customization,
           message: checkOutDetails?.message,
           allergy: checkOutDetails?.allergy,
           delDate: checkOutDetails?.deliveryDate?.toDateString(),
           delTime: checkOutDetails?.deliveryTime,
           subTotal:
-            checkOutDetails?.additionalValueCustom +
+            checkOutDetails?.additionalValueGourmet +
             checkOutDetails?.additionalValueFlavour +
-            checkOutDetails?.subTotal,
+            checkOutDetails?.subTotal +
+            ((checkOutDetails?.subTotal +
+              checkOutDetails?.additionalValueFlavour +
+              checkOutDetails?.additionalValueGourmet) *
+              productConfig?.deliveryCharge) /
+              100,
         };
 
         callApi(processIDs?.add_item_to_cart, body)
@@ -419,14 +382,7 @@ const Products = (props: ProductProps) => {
 
   const placeOrder = () => {
     if (getSessionObjectData(storageConfig?.userProfile)) {
-      if (
-        productDetails?.availableFlavours?.length > 0 &&
-        checkOutDetails?.selectedFlavour === null
-      ) {
-        setErr((prev: any) => {
-          return { ...prev, flavours: true };
-        });
-      } else if (!checkOutDetails?.deliveryTime) {
+      if (!checkOutDetails?.deliveryTime) {
         setErr((prev: any) => {
           return { ...prev, time: true };
         });
@@ -434,22 +390,23 @@ const Products = (props: ProductProps) => {
         let body = {
           productId: productDetails?._id,
           productName: productDetails?.title,
-          qty: checkOutDetails?.qty,
           weight: checkOutDetails?.weight,
-          flavour: checkOutDetails?.selectedFlavour
-            ? checkOutDetails?.selectedFlavour
-            : "",
-          custom: checkOutDetails?.customOption
-            ? checkOutDetails?.customOption
-            : "",
+          flavour: checkOutDetails?.selectedFlavour,
+          gourmet: checkOutDetails?.gourmetOption,
           message: checkOutDetails?.message,
+          custom: checkOutDetails?.customization,
           allergy: checkOutDetails?.allergy,
           delDate: checkOutDetails?.deliveryDate?.toDateString(),
           delTime: checkOutDetails?.deliveryTime,
           subTotal:
-            checkOutDetails?.additionalValueCustom +
+            checkOutDetails?.additionalValueGourmet +
             checkOutDetails?.additionalValueFlavour +
-            checkOutDetails?.subTotal,
+            checkOutDetails?.subTotal +
+            ((checkOutDetails?.subTotal +
+              checkOutDetails?.additionalValueFlavour +
+              checkOutDetails?.additionalValueGourmet) *
+              productConfig?.deliveryCharge) /
+              100,
         };
         messageService?.sendMessage(
           "product-page",
@@ -464,6 +421,22 @@ const Products = (props: ProductProps) => {
     } else {
       loginCardOpen();
     }
+  };
+
+  const selectWeight = (opt: any, index: number) => {
+    let element = document.getElementById(`product-weight-${index}`);
+    productDetails?.weight?.map((i: any, idx: number) => {
+      let element = document.getElementById(`product-weight-${idx}`);
+      element?.classList.remove("selected-option");
+    });
+    element?.classList.add("selected-option");
+    setCheckOutDetails((prev: any) => {
+      return {
+        ...prev,
+        weight: opt?.label,
+        subTotal: opt?.value,
+      };
+    });
   };
 
   return (
@@ -506,6 +479,7 @@ const Products = (props: ProductProps) => {
             {productDetails?.productImage?.map((i: any, ind: number) => {
               return (
                 <img
+                  key={`product-image-carousel-${ind}`}
                   src={`${url}${i?.mediaPath}`}
                   alt={labelConfig?.image_not_loaded}
                   height={50}
@@ -525,80 +499,76 @@ const Products = (props: ProductProps) => {
           <div className="title">{productDetails?.title}</div>
           <div className="customise">
             <div className="section">
-              <div className="label">{labelConfig?.product_qty_label}</div>
-              <button
-                disabled={checkOutDetails?.qty === 1}
-                type="button"
-                className={checkOutDetails?.qty === 1 ? "" : "section-button"}
-                onClick={() => {
-                  changeQty("deduct");
-                }}
-              >
-                {labelConfig?.product_unit_deduct}
-              </button>
-              <div>{checkOutDetails?.qty}</div>
-              <button
-                type="button"
-                className="section-button"
-                onClick={() => {
-                  changeQty("add");
-                }}
-              >
-                {labelConfig?.product_unit_add}
-              </button>
-            </div>
-            <div className="section">
               <div className="label">{labelConfig?.product_weight_label}</div>
-              <button
-                disabled={checkOutDetails?.weight === productDetails?.minWeight}
-                type="button"
-                className={
-                  checkOutDetails?.weight === productDetails?.minWeight
-                    ? ""
-                    : "section-button"
-                }
-                onClick={() => {
-                  changeWeight("deduct");
-                }}
-              >
-                {labelConfig?.product_unit_deduct}
-              </button>
-              <div>
-                {checkOutDetails?.weight} {labelConfig?.product_weight_unit}
+              <div className="available-options">
+                {productDetails?.weight
+                  ?.sort((a: any, b: any) => {
+                    return a?.value - b?.value;
+                  })
+                  ?.map((i: any, idx: number) => (
+                    <div
+                      id={`product-weight-${idx}`}
+                      className={`options ${
+                        idx === 0 ? "selected-option" : ""
+                      }`}
+                      key={`weight-${idx}`}
+                      onClick={() => {
+                        selectWeight(i, idx);
+                      }}
+                      onMouseEnter={() => {
+                        // @ts-ignore
+                        document.getElementById(
+                          `product-weight-${idx}`
+                        ).innerText = i?.value;
+                      }}
+                      onMouseLeave={() => {
+                        // @ts-ignore
+                        document.getElementById(
+                          `product-weight-${idx}`
+                        ).innerText = `${i?.label} lbs`;
+                      }}
+                    >
+                      {i?.label} lbs
+                    </div>
+                  ))}
               </div>
-              <button
-                type="button"
-                className="section-button"
-                onClick={() => {
-                  changeWeight("add");
-                }}
-              >
-                {labelConfig?.product_unit_add}
-              </button>
             </div>
             <div className="section">
               <div className="label">
                 {labelConfig?.product_available_flavours_label}
-                {productDetails?.availableFlavours?.length > 0 && (
-                  <span style={{ color: "red" }}> *</span>
-                )}
               </div>
               {productDetails?.availableFlavours?.length > 0 ? (
                 <div className="available-options">
-                  {productDetails?.availableFlavours?.map(
-                    (i: any, idx: number) => (
+                  {productDetails?.availableFlavours
+                    ?.sort((a: any, b: any) => {
+                      return a?.value - b?.value;
+                    })
+                    ?.map((i: any, idx: number) => (
                       <div
                         id={`product-flavour-${idx}`}
-                        className="options"
+                        className={`options ${
+                          idx === 0 ? "selected-option" : ""
+                        }`}
                         key={`flavour-${idx}`}
                         onClick={() => {
                           selectFlavour(i, idx);
                         }}
+                        onMouseEnter={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-flavour-${idx}`
+                          ).innerText = `+${i?.value}`;
+                        }}
+                        onMouseLeave={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-flavour-${idx}`
+                          ).innerText = i?.flavour;
+                        }}
                       >
                         {i?.flavour}
                       </div>
-                    )
-                  )}
+                    ))}
                 </div>
               ) : (
                 <div className="no-option">
@@ -606,9 +576,43 @@ const Products = (props: ProductProps) => {
                 </div>
               )}
             </div>
-            {err?.flavours && (
-              <div className="error">Please select a flavour</div>
-            )}
+            <div className="section">
+              <div className="label">{labelConfig?.product_gourmet_label}</div>
+              {productDetails?.gourmetOptions?.length > 0 ? (
+                <div className="available-options">
+                  {productDetails?.gourmetOptions?.map(
+                    (i: any, idx: number) => (
+                      <div
+                        id={`product-gourmet-${idx}`}
+                        className="options"
+                        key={`gourmet-${idx}`}
+                        onClick={() => {
+                          selectGourmet(i, idx);
+                        }}
+                        onMouseEnter={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-gourmet-${idx}`
+                          ).innerText = `+${i?.value}`;
+                        }}
+                        onMouseLeave={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-gourmet-${idx}`
+                          ).innerText = i?.option;
+                        }}
+                      >
+                        {i?.option}
+                      </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="no-option">
+                  {labelConfig?.product_no_gourmet_label}
+                </div>
+              )}
+            </div>
             <div className="section">
               <div className="label">{labelConfig?.product_message_label}</div>
               <div className="text-section">
@@ -625,29 +629,19 @@ const Products = (props: ProductProps) => {
               </div>
             </div>
             <div className="section">
-              <div className="label">
-                {labelConfig?.product_available_custom_label}
+              <div className="label">{labelConfig?.product_custom_label}</div>
+              <div className="text-section">
+                <textarea
+                  value={checkOutDetails?.customization}
+                  className="text"
+                  onChange={custom}
+                  placeholder={labelConfig?.product_custom_placeholder}
+                />
+                <div className="text-limit">
+                  {textFieldLimits?.customLimit}/
+                  {productConfig?.customFieldLimit}
+                </div>
               </div>
-              {productDetails?.customOptions?.length > 0 ? (
-                <div className="available-options">
-                  {productDetails?.customOptions?.map((i: any, idx: number) => (
-                    <div
-                      id={`product-custom-${idx}`}
-                      className="options"
-                      key={`custom-${idx}`}
-                      onClick={() => {
-                        selectCustom(i, idx);
-                      }}
-                    >
-                      {i?.option}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="no-option">
-                  {labelConfig?.product_no_custom_label}
-                </div>
-              )}
             </div>
             <div className="section">
               <div className="label">{labelConfig?.product_allergy_label}</div>
@@ -739,7 +733,21 @@ const Products = (props: ProductProps) => {
             {labelConfig?.inr_code}
             {checkOutDetails?.subTotal +
               checkOutDetails?.additionalValueFlavour +
-              checkOutDetails?.additionalValueCustom}
+              checkOutDetails?.additionalValueGourmet +
+              ((checkOutDetails?.subTotal +
+                checkOutDetails?.additionalValueFlavour +
+                checkOutDetails?.additionalValueGourmet) *
+                productConfig?.deliveryCharge) /
+                100}
+            <span
+              style={{
+                fontSize: "0.8rem",
+                marginLeft: "1rem",
+                color: "red",
+              }}
+            >
+              Inclusive of delivery charges and GST
+            </span>
           </div>
           <div
             className="description"

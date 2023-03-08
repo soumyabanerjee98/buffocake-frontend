@@ -65,13 +65,15 @@ export const labelConfig = {
   home_view_all_button: "View All",
   // product page
   product_qty_label: "Quantity",
-  product_weight_label: "Weight",
+  product_weight_label: "Available weights",
   product_available_flavours_label: "Available flavours",
   product_no_flavours_label: "No flavour found!",
+  product_custom_label: "Customization",
   product_message_label: "Message on cake",
   product_message_placeholder: "e.g. Happy Birthday David!",
-  product_available_custom_label: "Available Customizations",
-  product_no_custom_label: "No customization available!",
+  product_custom_placeholder: "e.g. Eggless",
+  product_gourmet_label: "Available gourmets",
+  product_no_gourmet_label: "No gourmet customization available!",
   product_allergy_label: "Any allergy?",
   product_allergy_placeholder: "e.g. Lactos intolerance",
   product_delivery_date_label: "Delivery date",
@@ -95,8 +97,8 @@ export const storageConfig = {
 export const colorPalette = {};
 
 export const productConfig = {
-  qtyAdjustUnit: 1,
-  weightAdjustUnit: 0.5,
   messageFieldLimit: 50,
   allergyFieldLimit: 200,
+  customFieldLimit: 200,
+  deliveryCharge: 8,
 };

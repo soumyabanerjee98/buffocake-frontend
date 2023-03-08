@@ -16,19 +16,22 @@ const ProductManageCard = () => {
     description: "",
     catagoryArr: [],
     subCatagoryArr: [],
-    unitValue: 0,
-    minWeight: 1,
     productImage: [],
     productImagePreview: [],
+    weight: [],
     availableFlavours: [],
-    customOptions: [],
+    gourmetOptions: [],
   });
   const [flavourState, setFlavourState] = useState({
     flavour: "",
     value: 0,
   });
-  const [customState, setCustomState] = useState({
+  const [gourmetState, setGourmetState] = useState({
     option: "",
+    value: 0,
+  });
+  const [weightState, setWeightState] = useState({
+    label: "",
     value: 0,
   });
   const [catagoryData, setCatagoryData] = useState({
@@ -147,8 +150,7 @@ const ProductManageCard = () => {
       !formData?.description ||
       formData?.catagoryArr?.length === 0 ||
       formData?.subCatagoryArr?.length === 0 ||
-      !formData?.unitValue ||
-      formData?.unitValue === 0
+      formData?.weight?.length === 0
     ) {
       toast.error("Please fill up required fields");
     } else {
@@ -165,17 +167,12 @@ const ProductManageCard = () => {
                   description: formData?.description,
                   catagoryArr: formData?.catagoryArr,
                   subCatagoryArr: formData?.subCatagoryArr,
-                  unitValue: formData?.unitValue,
-                  minWeight: formData?.minWeight
-                    ? formData?.minWeight
-                    : formData?.minWeight === 0
-                    ? 1
-                    : formData?.minWeight,
                   availableFlavours: formData?.availableFlavours,
-                  customOptions: formData?.customOptions,
+                  gourmetOptions: formData?.gourmetOptions,
                   productImage: res?.data?.returnData?.map((i: any) => {
                     return { mediaPath: i?.path };
                   }),
+                  weight: formData?.weight,
                 }) // @ts-ignore
                   .then((res: responseType) => {
                     if (res?.status === 200) {
@@ -190,12 +187,11 @@ const ProductManageCard = () => {
                             description: "",
                             catagoryArr: [],
                             subCatagoryArr: [],
-                            unitValue: 0,
-                            minWeight: 1,
                             productImage: [],
                             productImagePreview: [],
                             availableFlavours: [],
-                            customOptions: [],
+                            gourmetOptions: [],
+                            weight: [],
                           };
                         });
                       } else {
@@ -226,14 +222,8 @@ const ProductManageCard = () => {
           description: formData?.description,
           catagoryArr: formData?.catagoryArr,
           subCatagoryArr: formData?.subCatagoryArr,
-          unitValue: formData?.unitValue,
-          minWeight: formData?.minWeight
-            ? formData?.minWeight
-            : formData?.minWeight === 0
-            ? 1
-            : formData?.minWeight,
           availableFlavours: formData?.availableFlavours,
-          customOptions: formData?.customOptions,
+          gourmetOptions: formData?.gourmetOptions,
         }) //@ts-ignore
           .then((res: responseType) => {
             if (res?.status === 200) {
@@ -248,12 +238,10 @@ const ProductManageCard = () => {
                     description: "",
                     catagoryArr: [],
                     subCatagoryArr: [],
-                    unitValue: 0,
-                    minWeight: 1,
                     productImage: [],
                     productImagePreview: [],
                     availableFlavours: [],
-                    customOptions: [],
+                    gourmetOptions: [],
                   };
                 });
               } else {
@@ -503,54 +491,6 @@ const ProductManageCard = () => {
         </div>
       </div>
       <div className="form-section">
-        <label>
-          Unit price <span style={{ color: "red" }}>*</span>
-        </label>
-        <div>
-          <span>
-            {labelConfig?.inr_code}
-            <input
-              type={"number"}
-              className="data-value"
-              value={formData?.unitValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setFormData((prev: any) => {
-                  return { ...prev, unitValue: parseInt(e.target.value) };
-                });
-              }}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === ".") {
-                  e.preventDefault();
-                }
-              }}
-            />
-          </span>
-        </div>
-      </div>
-      <div className="form-section">
-        <label>Minimum weight</label>
-        <span>
-          <input
-            type={"number"}
-            className="data-value"
-            value={formData?.minWeight}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              if (parseInt(e.target.value) > -1) {
-                setFormData((prev: any) => {
-                  return { ...prev, minWeight: parseInt(e.target.value) };
-                });
-              }
-            }}
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === ".") {
-                e.preventDefault();
-              }
-            }}
-          />
-          lbs
-        </span>
-      </div>
-      <div className="form-section">
         <label>Product image</label>
         <div className="data-value image">
           {formData?.productImagePreview?.length === 0 && (
@@ -595,6 +535,104 @@ const ProductManageCard = () => {
           multiple={false}
           onChange={setImage}
         />
+      </div>
+      <div className="form-section selection">
+        <label>
+          Available Weights <span style={{ color: "red" }}>*</span>
+        </label>
+        <div className="options">
+          {formData?.weight?.map((i: any, idx: number) => {
+            return (
+              <div className="data-value">
+                <div className="option-items">
+                  <div>Weight:</div>
+                  <div>{i?.label} lbs</div>
+                </div>
+                <div className="option-items">
+                  <div>Value:</div>
+                  <span>
+                    {labelConfig?.inr_code}
+                    {i?.value}
+                  </span>
+                </div>
+                <button
+                  className="edit-button"
+                  onClick={() => {
+                    let arr = formData?.weight?.filter(
+                      (i: any, ind: number) => {
+                        return idx !== ind;
+                      }
+                    );
+                    setFormData((prev: any) => {
+                      return { ...prev, weight: arr };
+                    });
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <div className="options">
+          <div className="option-items">
+            <label>Weight</label>
+            <input
+              className="data-value"
+              type={"number"}
+              value={weightState?.label}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                // @ts-ignore
+                if (e.nativeEvent.inputType) {
+                  setWeightState((prev: any) => {
+                    return { ...prev, label: parseFloat(e.target.value) };
+                  });
+                }
+              }}
+            />
+            lbs
+          </div>
+          <div className="option-items">
+            <label>Value</label>
+            <span>
+              {labelConfig?.inr_code}
+              <input
+                className="data-value"
+                type={"number"}
+                value={weightState?.value}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  // @ts-ignore
+                  if (e.nativeEvent.inputType) {
+                    setWeightState((prev: any) => {
+                      return { ...prev, value: parseInt(e.target.value) };
+                    });
+                  }
+                }}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === ".") {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </span>
+          </div>
+          <button
+            className="edit-button"
+            onClick={() => {
+              let arr = formData?.weight;
+              // @ts-ignore
+              arr.push(weightState);
+              setFormData((prev: any) => {
+                return { ...prev, weight: arr };
+              });
+              setWeightState((prev: any) => {
+                return { ...prev, label: "", value: 0 };
+              });
+            }}
+          >
+            Add
+          </button>
+        </div>
       </div>
       <div className="form-section selection">
         <label>Available flavors</label>
@@ -655,9 +693,12 @@ const ProductManageCard = () => {
                 type={"number"}
                 value={flavourState?.value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setFlavourState((prev: any) => {
-                    return { ...prev, value: parseInt(e.target.value) };
-                  });
+                  // @ts-ignore
+                  if (e.nativeEvent.inputType) {
+                    setFlavourState((prev: any) => {
+                      return { ...prev, value: parseInt(e.target.value) };
+                    });
+                  }
                 }}
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === ".") {
@@ -686,9 +727,9 @@ const ProductManageCard = () => {
         </div>
       </div>
       <div className="form-section selection">
-        <label>Available Customizations</label>
+        <label>Available Gourmets</label>
         <div className="options">
-          {formData?.customOptions?.map((i: any, idx: number) => {
+          {formData?.gourmetOptions?.map((i: any, idx: number) => {
             return (
               <div className="data-value">
                 <div className="option-items">
@@ -705,13 +746,13 @@ const ProductManageCard = () => {
                 <button
                   className="edit-button"
                   onClick={() => {
-                    let arr = formData?.customOptions?.filter(
+                    let arr = formData?.gourmetOptions?.filter(
                       (i: any, ind: number) => {
                         return idx !== ind;
                       }
                     );
                     setFormData((prev: any) => {
-                      return { ...prev, customOptions: arr };
+                      return { ...prev, gourmetOptions: arr };
                     });
                   }}
                 >
@@ -727,9 +768,9 @@ const ProductManageCard = () => {
             <input
               className="data-value"
               type={"text"}
-              value={customState?.option}
+              value={gourmetState?.option}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setCustomState((prev: any) => {
+                setGourmetState((prev: any) => {
                   return { ...prev, option: e.target.value };
                 });
               }}
@@ -742,11 +783,14 @@ const ProductManageCard = () => {
               <input
                 className="data-value"
                 type={"number"}
-                value={customState?.value}
+                value={gourmetState?.value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setCustomState((prev: any) => {
-                    return { ...prev, value: parseInt(e.target.value) };
-                  });
+                  // @ts-ignore
+                  if (e.nativeEvent.inputType) {
+                    setGourmetState((prev: any) => {
+                      return { ...prev, value: parseInt(e.target.value) };
+                    });
+                  }
                 }}
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === ".") {
@@ -759,13 +803,13 @@ const ProductManageCard = () => {
           <button
             className="edit-button"
             onClick={() => {
-              let arr = formData?.customOptions;
+              let arr = formData?.gourmetOptions;
               // @ts-ignore
-              arr.push(customState);
+              arr.push(gourmetState);
               setFormData((prev: any) => {
-                return { ...prev, availableFlavours: arr };
+                return { ...prev, gourmetOptions: arr };
               });
-              setCustomState((prev: any) => {
+              setGourmetState((prev: any) => {
                 return { ...prev, option: "", value: 0 };
               });
             }}

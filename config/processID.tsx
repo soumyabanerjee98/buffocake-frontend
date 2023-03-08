@@ -50,6 +50,8 @@ export const processIDs = {
   delete_product_flavour: "delete-product-flavour",
   add_product_custom: "add-product-custom",
   delete_product_custom: "delete-product-custom",
+  add_product_weight: "add-product-weight",
+  delete_product_weight: "delete-product-weight",
   get_catagory_map: "get-catagory-map",
   add_catagory_map: "add-catagory-map",
   remove_catagory_map: "remove-catagory-map",

@@ -99,8 +99,13 @@ const OrderAccordion = (props: OrderAccordionProps) => {
                     </div>
                   )}
                   <div>
-                    {i?.qty} x {i?.weight}lbs {i?.productName}
+                    {i?.weight}lbs {i?.productName}
                   </div>
+                  <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
+                  <div>Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}</div>
+                  <div>Message on cake: {i?.message ? i?.message : "N/A"}</div>
+                  <div>Customization: {i?.custom ? i?.custom : "N/A"}</div>
+                  <div>Allergy: {i?.allergy ? i?.allergy : "N/A"}</div>
                   <div>Delivery date: {i?.delDate}</div>
                   <div>Delivery time: {i?.delTime}</div>
                   <div className="subtotal">

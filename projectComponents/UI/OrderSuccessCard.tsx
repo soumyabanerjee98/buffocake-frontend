@@ -180,13 +180,25 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
                 </th>
               )}
               <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Product name
+                Product
               </th>
               <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Product quantity
+                Weight
               </th>
               <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Product weight
+                Flavour
+              </th>
+              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                Gourmet option
+              </th>
+              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                Message on cake
+              </th>
+              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                Customization
+              </th>
+              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                Allergy
               </th>
               <th style={{ border: "1px solid black", padding: "0.8rem" }}>
                 Delivery date
@@ -205,8 +217,12 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
                     <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
                   )}
                   <td style={{ textAlign: "center" }}>{i?.productName}</td>
-                  <td style={{ textAlign: "center" }}>{i?.qty}</td>
                   <td style={{ textAlign: "center" }}>{i?.weight}lbs</td>
+                  <td style={{ textAlign: "center" }}>{i?.flavour}</td>
+                  <td style={{ textAlign: "center" }}>{i?.gourmet}</td>
+                  <td style={{ textAlign: "center" }}>{i?.message}</td>
+                  <td style={{ textAlign: "center" }}>{i?.custom}</td>
+                  <td style={{ textAlign: "center" }}>{i?.allergy}</td>
                   <td style={{ textAlign: "center" }}>{i?.delDate}</td>
                   <td style={{ textAlign: "center" }}>{i?.delTime}</td>
                   <td style={{ textAlign: "center" }}>

@@ -81,28 +81,40 @@ const CartCard = (props: CartCardProps) => {
       <div className="details">
         <div className="name">{cart?.productName}</div>
         <div className="section">
-          <div className="title">Qty: </div>
-          <div className="value">{cart?.qty}</div>
-        </div>
-        <div className="section">
           <div className="title">Weight: </div>
           <div className="value">{cart?.weight} lbs</div>
         </div>
         <div className="section">
           <div className="title">Flavour: </div>
-          <div className="value">{cart?.flavour ? cart?.flavour : "NA"}</div>
+          {cart?.flavour ? (
+            <div className="value">{cart?.flavour}</div>
+          ) : (
+            <div className="no-value">No flavour selected</div>
+          )}
         </div>
         <div className="section">
           <div className="title">Customization: </div>
-          <div className="value">{cart?.custom ? cart?.custom : "NA"}</div>
+          {cart?.custom ? (
+            <div className="value">{cart?.custom}</div>
+          ) : (
+            <div className="no-value">No customization</div>
+          )}
         </div>
         <div className="section">
           <div className="title">Message on cake: </div>
-          <div className="value">{cart?.message ? cart?.message : "NA"}</div>
+          {cart?.message ? (
+            <div className="value">{cart?.message}</div>
+          ) : (
+            <div className="no-value">No message</div>
+          )}
         </div>
         <div className="section">
           <div className="title">Allergies: </div>
-          <div className="value">{cart?.allergy ? cart?.allergy : "NA"}</div>
+          {cart?.allergy ? (
+            <div className="value">{cart?.allergy}</div>
+          ) : (
+            <div className="no-value">No allergy</div>
+          )}
         </div>
         <div className="section">
           <div className="title">Delivery Date: </div>
