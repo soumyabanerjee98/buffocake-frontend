@@ -426,7 +426,7 @@ const ManageOfflineOrders = () => {
                           })
                         );
                       }}
-                      options={i?.availableFlavours?.map((i: any) => {
+                      options={i?.gourmetOptions?.map((i: any) => {
                         return { label: i?.option, value: i?.value };
                       })}
                     />
