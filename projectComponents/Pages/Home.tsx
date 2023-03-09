@@ -87,7 +87,12 @@ const Home = (props: HomeProps) => {
                         </div>
                         <div className="product-name">{val?.title}</div>
                         <div className="product-price">
-                          &#8377;{val?.unitValue}
+                          &#8377;
+                          {
+                            val?.weight?.sort((a: any, b: any) => {
+                              return a - b;
+                            })?.[0]?.value
+                          }
                         </div>
                       </div>
                     );

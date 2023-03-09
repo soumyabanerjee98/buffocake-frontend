@@ -336,26 +336,6 @@ const BasicDetails = (props: BasicDetailsProps) => {
     );
   };
 
-  const EditAddress = (item: any) => {
-    messageService?.sendMessage(
-      "profile-page",
-      // @ts-ignore
-      {
-        action: "edit-address",
-        params: {
-          addressId: item?._id,
-          name: item?.receiverName,
-          contact: item?.receiverContact,
-          house: item?.house,
-          street: item?.street,
-          pin: item?.pin,
-          fav: item?.favorite,
-        },
-      },
-      "header"
-    );
-  };
-
   useEffect(() => {
     // @ts-ignore
     messageService?.onReceive()?.subscribe((m: messageType) => {

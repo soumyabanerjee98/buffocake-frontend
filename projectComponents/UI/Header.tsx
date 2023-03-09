@@ -386,6 +386,17 @@ const Header = () => {
           setOrderSuccessCardOpen((prev: any) => {
             return { ...prev, order: m?.message?.params?.order, state: true };
           });
+        } else if (m?.message?.action === "add-address") {
+          setAddressCardOpen((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              receiverName: m?.message?.params?.name,
+              receiverContact: m?.message?.params?.contact,
+              fav: m?.message?.params?.fav,
+              action: m?.message?.action,
+            };
+          });
         }
       } else if (m?.sender === "order-success-card" && m?.target === "header") {
         if (m?.message?.action === "close-popup") {

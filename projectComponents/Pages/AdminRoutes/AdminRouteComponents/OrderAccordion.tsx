@@ -75,6 +75,12 @@ const OrderAccordion = (props: OrderAccordionProps) => {
             Order placed on{" "}
             {order?.orderTimeStamp?.split(":", 2).toString().replace(",", ":")}
           </div>
+          <div className="order-type">
+            Order type:{" "}
+            <span className={`${order?.type?.toLowerCase()}`}>
+              {order?.type}
+            </span>
+          </div>
         </div>
         <div className="status">
           <div

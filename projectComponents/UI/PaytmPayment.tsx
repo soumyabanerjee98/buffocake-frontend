@@ -53,6 +53,7 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
             };
           });
     let body = {
+      type: "Online",
       userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       oid: response?.orderId,
       txnId: response?.txnId,

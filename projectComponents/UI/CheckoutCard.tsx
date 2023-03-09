@@ -20,7 +20,6 @@ export type CheckoutCardProps = {
 
 const CheckoutCard = (props: CheckoutCardProps) => {
   const { source, cart } = props;
-  const router = useRouter();
   const [address, setAddress] = useState<any>();
   const [addressInd, setAddressInd] = useState(0);
   const [grandTotal, setGrandTotal] = useState<any>(null);
@@ -38,9 +37,24 @@ const CheckoutCard = (props: CheckoutCardProps) => {
       closePopUp();
     }
   };
-  const goToProfile = () => {
-    closePopUp();
-    router.push("/profile");
+  const AddAddress = () => {
+    messageService?.sendMessage(
+      "checkout-card",
+      // @ts-ignore
+      {
+        action: "add-address",
+        params: {
+          name: `${
+            getSessionObjectData(storageConfig?.userProfile)?.firstName
+          } ${getSessionObjectData(storageConfig?.userProfile)?.lastName}`,
+          contact: `${
+            getSessionObjectData(storageConfig?.userProfile)?.phoneNumber
+          }`,
+          fav: true,
+        },
+      },
+      "global"
+    );
   };
 
   useEffect(() => {
@@ -105,6 +119,14 @@ const CheckoutCard = (props: CheckoutCardProps) => {
         toast.error(`Error: ${err?.message}`);
         setAddress(undefined);
       });
+    // @ts-ignore
+    messageService?.onReceive()?.subscribe((m: messageType) => {
+      if (m?.sender === "address-card") {
+        if (m?.message?.action === "address-update") {
+          setAddress(m?.message?.params);
+        }
+      }
+    });
   }, []);
   useEffect(() => {
     let total = 0;
@@ -136,8 +158,8 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                   }}
                 >
                   <div style={{ paddingBottom: "1rem" }}>No address found!</div>
-                  <div className="go-to-profile" onClick={goToProfile}>
-                    Go to profile
+                  <div className="go-to-profile" onClick={AddAddress}>
+                    Add address
                   </div>
                 </div>
               )}

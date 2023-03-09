@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import ManageCarousel from "./AdminRoutes/ManageCarousel";
 import ManageCustomNav from "./AdminRoutes/ManageCustomNav";
+import ManageOfflineOrders from "./AdminRoutes/ManageOfflineOrders";
 import ManageOrders from "./AdminRoutes/ManageOrders";
 import ManageProducts from "./AdminRoutes/ManageProducts";
 
 const Admin = () => {
-  const sectionArr = ["Orders", "Products", "Custom Navigation", "Carousel"];
+  const sectionArr = [
+    "Orders",
+    "Products",
+    "Custom Navigation",
+    "Carousel",
+    "Offline Orders",
+  ];
   const [section, setSection] = useState(
     sectionArr.map((i: string, idx: number) => {
       if (idx === 0) {
@@ -43,6 +50,9 @@ const Admin = () => {
         break;
       case 3:
         return <ManageCarousel />;
+        break;
+      case 4:
+        return <ManageOfflineOrders />;
         break;
       default:
         break;
