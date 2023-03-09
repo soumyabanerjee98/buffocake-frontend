@@ -613,7 +613,6 @@ const ManageOfflineOrders = () => {
                   </div>
                   <div className="order-items-section">
                     <div className="label">Delivery time: </div>
-                    <div className="value">{i?.selectedFlavour}</div>
                     <Select
                       isSearchable={false}
                       placeholder={"Select delivery time"}
