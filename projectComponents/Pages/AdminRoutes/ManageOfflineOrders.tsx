@@ -400,8 +400,8 @@ const ManageOfflineOrders = () => {
                           })
                         );
                       }}
-                      options={i?.availableFlavours?.map((i: any) => {
-                        return { label: i?.flavour, value: i?.value };
+                      options={i?.availableFlavours?.map((v: any) => {
+                        return { label: v?.flavour, value: v?.value };
                       })}
                     />
                   </div>
@@ -426,8 +426,8 @@ const ManageOfflineOrders = () => {
                           })
                         );
                       }}
-                      options={i?.gourmetOptions?.map((i: any) => {
-                        return { label: i?.option, value: i?.value };
+                      options={i?.availableGourmets?.map((v: any) => {
+                        return { label: v?.option, value: v?.value };
                       })}
                     />
                   </div>
