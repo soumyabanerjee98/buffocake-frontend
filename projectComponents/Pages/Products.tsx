@@ -511,7 +511,7 @@ const Products = (props: ProductProps) => {
 
   return (
     <div className="product-screen">
-      <div>
+      <div className="left-column">
         <div className="image-section">
           {productDetails?.productImage?.length > 0 ? (
             productDetails?.productImage?.length === 1 ? (
@@ -567,6 +567,30 @@ const Products = (props: ProductProps) => {
       <div className="details-section">
         <div className="info-section">
           <div className="title">{productDetails?.title}</div>
+          <div className="subtotal">
+            {labelConfig?.inr_code}
+            {checkOutDetails?.subTotal +
+              checkOutDetails?.additionalValueFlavour +
+              checkOutDetails?.additionalValueGourmet +
+              ((checkOutDetails?.subTotal +
+                checkOutDetails?.additionalValueFlavour +
+                checkOutDetails?.additionalValueGourmet) *
+                productConfig?.deliveryCharge) /
+                100}
+            <span
+              style={{
+                fontSize: "0.8rem",
+                marginLeft: "1rem",
+                color: "red",
+              }}
+            >
+              Inclusive of all taxes
+            </span>
+          </div>
+          <div
+            className="description"
+            dangerouslySetInnerHTML={{ __html: productDetails?.description }}
+          />
           <div className="customise">
             <div className="section">
               <div className="label">{labelConfig?.product_weight_label}</div>
@@ -605,129 +629,21 @@ const Products = (props: ProductProps) => {
             </div>
             <div className="section">
               <div className="label">
-                {labelConfig?.product_available_flavours_label}
+                {labelConfig?.product_delivery_pin_availibility}
+                <span style={{ color: "red" }}> *</span>
               </div>
-              {productDetails?.availableFlavours?.length > 0 ? (
-                <div className="available-options">
-                  {productDetails?.availableFlavours
-                    ?.sort((a: any, b: any) => {
-                      return a?.value - b?.value;
-                    })
-                    ?.map((i: any, idx: number) => (
-                      <div
-                        id={`product-flavour-${idx}`}
-                        className={`options ${
-                          idx === 0 ? "selected-option" : ""
-                        }`}
-                        key={`flavour-${idx}`}
-                        onClick={() => {
-                          selectFlavour(i, idx);
-                        }}
-                        onMouseEnter={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-flavour-${idx}`
-                          ).innerText = `+${i?.value}`;
-                        }}
-                        onMouseLeave={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-flavour-${idx}`
-                          ).innerText = i?.flavour;
-                        }}
-                      >
-                        {i?.flavour}
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className="no-option">
-                  {labelConfig?.product_no_flavours_label}
-                </div>
-              )}
+              <input
+                id="check-pin"
+                type={"number"}
+                placeholder="Check pin code"
+                className="check-pin"
+                value={checkOutDetails?.pin}
+                onChange={checkPin}
+              />
             </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_gourmet_label}</div>
-              {productDetails?.gourmetOptions?.length > 0 ? (
-                <div className="available-options">
-                  {productDetails?.gourmetOptions?.map(
-                    (i: any, idx: number) => (
-                      <div
-                        id={`product-gourmet-${idx}`}
-                        className="options"
-                        key={`gourmet-${idx}`}
-                        onClick={() => {
-                          selectGourmet(i, idx);
-                        }}
-                        onMouseEnter={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-gourmet-${idx}`
-                          ).innerText = `+${i?.value}`;
-                        }}
-                        onMouseLeave={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-gourmet-${idx}`
-                          ).innerText = i?.option;
-                        }}
-                      >
-                        {i?.option}
-                      </div>
-                    )
-                  )}
-                </div>
-              ) : (
-                <div className="no-option">
-                  {labelConfig?.product_no_gourmet_label}
-                </div>
-              )}
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_message_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.message}
-                  className="text"
-                  onChange={messageOnCake}
-                  placeholder={labelConfig?.product_message_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.messageLimit}/
-                  {productConfig?.messageFieldLimit}
-                </div>
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_custom_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.customization}
-                  className="text"
-                  onChange={custom}
-                  placeholder={labelConfig?.product_custom_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.customLimit}/
-                  {productConfig?.customFieldLimit}
-                </div>
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_allergy_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.allergy}
-                  className="text"
-                  onChange={allergyText}
-                  placeholder={labelConfig?.product_allergy_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.allergyLimit}/
-                  {productConfig?.allergyFieldLimit}
-                </div>
-              </div>
-            </div>
+            {err?.available && (
+              <div className="error">Unavailable at this pincode</div>
+            )}
             <div className="section">
               <div className="label">
                 {labelConfig?.product_delivery_date_label}
@@ -798,48 +714,134 @@ const Products = (props: ProductProps) => {
             {err?.time && (
               <div className="error">Please select a delivery time</div>
             )}
+
             <div className="section">
               <div className="label">
-                {labelConfig?.product_delivery_pin_availibility}
-                <span style={{ color: "red" }}> *</span>
+                {labelConfig?.product_available_flavours_label}
               </div>
-              <input
-                id="check-pin"
-                type={"number"}
-                placeholder="Check pin code"
-                className="check-pin"
-                value={checkOutDetails?.pin}
-                onChange={checkPin}
-              />
+              {productDetails?.availableFlavours?.length > 0 ? (
+                <div className="available-options">
+                  {productDetails?.availableFlavours
+                    ?.sort((a: any, b: any) => {
+                      return a?.value - b?.value;
+                    })
+                    ?.map((i: any, idx: number) => (
+                      <div
+                        id={`product-flavour-${idx}`}
+                        className={`options ${
+                          idx === 0 ? "selected-option" : ""
+                        }`}
+                        key={`flavour-${idx}`}
+                        onClick={() => {
+                          selectFlavour(i, idx);
+                        }}
+                        onMouseEnter={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-flavour-${idx}`
+                          ).innerText = `+${i?.value}`;
+                        }}
+                        onMouseLeave={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-flavour-${idx}`
+                          ).innerText = i?.flavour;
+                        }}
+                      >
+                        {i?.flavour}
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="no-option">
+                  {labelConfig?.product_no_flavours_label}
+                </div>
+              )}
             </div>
-            {err?.available && (
-              <div className="error">Unavailable at this pincode</div>
-            )}
+
+            <div className="section">
+              <div className="label">{labelConfig?.product_message_label}</div>
+              <div className="text-section">
+                <textarea
+                  value={checkOutDetails?.message}
+                  className="text"
+                  onChange={messageOnCake}
+                  placeholder={labelConfig?.product_message_placeholder}
+                />
+                <div className="text-limit">
+                  {textFieldLimits?.messageLimit}/
+                  {productConfig?.messageFieldLimit}
+                </div>
+              </div>
+            </div>
+            <div className="section">
+              <div className="label">{labelConfig?.product_custom_label}</div>
+              <div className="text-section">
+                <textarea
+                  value={checkOutDetails?.customization}
+                  className="text"
+                  onChange={custom}
+                  placeholder={labelConfig?.product_custom_placeholder}
+                />
+                <div className="text-limit">
+                  {textFieldLimits?.customLimit}/
+                  {productConfig?.customFieldLimit}
+                </div>
+              </div>
+            </div>
+            <div className="section">
+              <div className="label">{labelConfig?.product_allergy_label}</div>
+              <div className="text-section">
+                <textarea
+                  value={checkOutDetails?.allergy}
+                  className="text"
+                  onChange={allergyText}
+                  placeholder={labelConfig?.product_allergy_placeholder}
+                />
+                <div className="text-limit">
+                  {textFieldLimits?.allergyLimit}/
+                  {productConfig?.allergyFieldLimit}
+                </div>
+              </div>
+            </div>
+            <div className="section">
+              <div className="label">{labelConfig?.product_gourmet_label}</div>
+              {productDetails?.gourmetOptions?.length > 0 ? (
+                <div className="available-options">
+                  {productDetails?.gourmetOptions?.map(
+                    (i: any, idx: number) => (
+                      <div
+                        id={`product-gourmet-${idx}`}
+                        className="options"
+                        key={`gourmet-${idx}`}
+                        onClick={() => {
+                          selectGourmet(i, idx);
+                        }}
+                        onMouseEnter={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-gourmet-${idx}`
+                          ).innerText = `+${i?.value}`;
+                        }}
+                        onMouseLeave={() => {
+                          // @ts-ignore
+                          document.getElementById(
+                            `product-gourmet-${idx}`
+                          ).innerText = i?.option;
+                        }}
+                      >
+                        {i?.option}
+                      </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="no-option">
+                  {labelConfig?.product_no_gourmet_label}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="subtotal">
-            {labelConfig?.inr_code}
-            {checkOutDetails?.subTotal +
-              checkOutDetails?.additionalValueFlavour +
-              checkOutDetails?.additionalValueGourmet +
-              ((checkOutDetails?.subTotal +
-                checkOutDetails?.additionalValueFlavour +
-                checkOutDetails?.additionalValueGourmet) *
-                productConfig?.deliveryCharge) /
-                100}
-            <span
-              style={{
-                fontSize: "0.8rem",
-                marginLeft: "1rem",
-                color: "red",
-              }}
-            >
-              Inclusive of delivery charges and GST
-            </span>
-          </div>
-          <div
-            className="description"
-            dangerouslySetInnerHTML={{ __html: productDetails?.description }}
-          />
         </div>
         <div className="button-section">
           <button

@@ -303,7 +303,7 @@ input::-webkit-inner-spin-button {
   display: flex;
   gap: 5rem;
 }
-.product-screen .check-pin{
+.product-screen .check-pin {
   padding: 0.4rem;
   outline: none;
 }
@@ -312,6 +312,11 @@ input::-webkit-inner-spin-button {
 }
 .product-screen .check-pin.unavailable {
   border: 1px solid red;
+}
+.product-screen .left-column {
+  position: sticky;
+  top: 7.5rem;
+  height: max-content;
 }
 .product-screen .image-section {
   max-height: 20rem;
@@ -407,12 +412,14 @@ input::-webkit-inner-spin-button {
 
 .product-screen .label {
   padding-right: 1rem;
+  width: 12rem;
 }
 
 .product-screen .section {
   display: flex;
   gap: 0.8rem;
   padding-bottom: 0.5rem;
+  
 }
 
 .product-screen .no-option {
@@ -509,21 +516,21 @@ input::-webkit-inner-spin-button {
 }
 
 .product-screen .subtotal {
-  padding-top: 1rem;
+  padding: 1rem 0;
   color: rgb(0, 191, 0);
   font-size: 26px;
 }
 
 .product-screen .button-section {
   display: flex;
-  flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 0.8rem;
+  gap: 1rem;
+  margin-top: 3rem;
 }
 
 .product-screen .action-button {
-  width: 30rem;
+  width: 18rem;
   padding: 1rem;
   border-radius: 6px;
 }
@@ -1765,7 +1772,8 @@ input::-webkit-inner-spin-button {
   outline: none;
   padding: 4px;
 }
-.manage-offline-orders .header, .manage-offline-orders .details{
+.manage-offline-orders .header,
+.manage-offline-orders .details {
   display: flex;
   justify-content: space-between;
 }
@@ -1847,7 +1855,8 @@ input::-webkit-inner-spin-button {
   height: 5rem;
   width: 20rem;
 }
-.manage-offline-orders .value.total, .manage-offline-orders .grand-total {
+.manage-offline-orders .value.total,
+.manage-offline-orders .grand-total {
   font-size: 22px;
   font-weight: 600;
   color: rgb(0, 191, 0);
@@ -1855,7 +1864,7 @@ input::-webkit-inner-spin-button {
 .manage-users {
   padding: 1rem;
 }
-.manage-users input[type=text]{
+.manage-users input[type="text"] {
   padding: 4px;
   outline: none;
   width: 50%;
@@ -1871,18 +1880,18 @@ input::-webkit-inner-spin-button {
   transition: all 200ms ease-in-out;
 }
 .manage-users .search-section {
- display: flex;
- gap: 1rem;
- align-items: center;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
-.manage-users .users-section{
+.manage-users .users-section {
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 0.8rem;
   margin: 1rem 0;
 }
 .manage-users .user-card {
-  border: 1px solid rgba(0, 0, 0, 0.50);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   padding: 1rem;
   border-radius: 6px;
 }
@@ -1891,12 +1900,13 @@ input::-webkit-inner-spin-button {
   align-items: center;
   gap: 1rem;
 }
-.manage-users .user-auth .admin, .manage-users .user-auth .super-admin {
+.manage-users .user-auth .admin,
+.manage-users .user-auth .super-admin {
   display: flex;
   align-items: center;
 }
 .manage-users .confirm-modal {
-position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -1913,7 +1923,7 @@ position: fixed;
   border-radius: 6px;
   text-align: center;
 }
-.manage-users .confirm-box .warning{
+.manage-users .confirm-box .warning {
   color: red;
   font-size: large;
   font-weight: 500;
@@ -1926,12 +1936,12 @@ position: fixed;
   margin-top: 0.4rem;
   justify-content: center;
 }
-.manage-pincode .input-section{
+.manage-pincode .input-section {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-.manage-pincode input[type=number] {
+.manage-pincode input[type="number"] {
   padding: 4px;
   width: 30%;
   outline: none;
