@@ -78,6 +78,7 @@ export const labelConfig = {
   product_allergy_placeholder: "e.g. Lactos intolerance",
   product_delivery_date_label: "Delivery date",
   product_delivery_time_label: "Delivery time",
+  product_delivery_pin_availibility: "Check availibility",
   product_weight_unit: "lbs",
   product_unit_add: "+",
   product_unit_deduct: "-",

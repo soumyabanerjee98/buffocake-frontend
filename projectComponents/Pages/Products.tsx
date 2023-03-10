@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // @ts-ignore
 import Calendar from "react-calendar";
 import Select from "react-select";
@@ -33,6 +33,7 @@ const Products = (props: ProductProps) => {
   const router = useRouter();
   const minDate = new Date();
   const maxDate = new Date();
+  const timer = useRef<any>();
   maxDate.setDate(maxDate.getDate() + 8);
   minDate.setDate(minDate.getDate() + 1);
   const [fav, setFav] = useState<any>();
@@ -62,9 +63,12 @@ const Products = (props: ProductProps) => {
     allergy: "",
     deliveryDate: minDate,
     deliveryTime: null,
+    pin: "",
+    available: null,
   });
   const [imageArrInd, setImageArrInd] = useState(0);
   const [err, setErr] = useState({
+    available: false,
     time: false,
   });
   const [loader, setLoader] = useState({
@@ -315,6 +319,10 @@ const Products = (props: ProductProps) => {
         setErr((prev: any) => {
           return { ...prev, time: true };
         });
+      } else if (!checkOutDetails?.available) {
+        setErr((prev: any) => {
+          return { ...prev, available: true };
+        });
       } else {
         setLoader((prev: any) => {
           return { ...prev, cart: true };
@@ -386,6 +394,10 @@ const Products = (props: ProductProps) => {
         setErr((prev: any) => {
           return { ...prev, time: true };
         });
+      } else if (!checkOutDetails?.available) {
+        setErr((prev: any) => {
+          return { ...prev, available: true };
+        });
       } else {
         let body = {
           productId: productDetails?._id,
@@ -437,6 +449,64 @@ const Products = (props: ProductProps) => {
         subTotal: opt?.value,
       };
     });
+  };
+
+  const checkPin = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let pin = parseInt(e.target.value);
+    let element = document.getElementById("check-pin");
+    element?.classList.remove("available", "unavailable");
+    setCheckOutDetails((prev: any) => {
+      return { ...prev, pin: pin };
+    });
+    setErr((prev: any) => {
+      return { ...prev, available: false };
+    });
+    if (timer) {
+      clearTimeout(timer.current);
+    }
+    if (pin) {
+      timer.current = setTimeout(() => {
+        callApi(processIDs?.get_pincodes, {})
+          .then(
+            // @ts-ignore
+            (res: responseType) => {
+              if (res?.status === 200) {
+                if (res?.data?.returnCode) {
+                  if (res?.data?.returnData.includes(pin)) {
+                    element?.classList.add("available");
+                    setCheckOutDetails((prev: any) => {
+                      return { ...prev, available: true };
+                    });
+                  } else {
+                    element?.classList.add("unavailable");
+                    setCheckOutDetails((prev: any) => {
+                      return { ...prev, available: false };
+                    });
+                  }
+                } else {
+                  element?.classList.add("unavailable");
+                  setCheckOutDetails((prev: any) => {
+                    return { ...prev, available: false };
+                  });
+                }
+              } else {
+                toast.error(`Error: ${res?.status}`);
+                element?.classList.add("unavailable");
+                setCheckOutDetails((prev: any) => {
+                  return { ...prev, available: false };
+                });
+              }
+            }
+          )
+          .catch((err: any) => {
+            toast.error(`Error: ${err?.message}`);
+            element?.classList.add("unavailable");
+            setCheckOutDetails((prev: any) => {
+              return { ...prev, available: false };
+            });
+          });
+      }, 1000);
+    }
   };
 
   return (
@@ -727,6 +797,23 @@ const Products = (props: ProductProps) => {
             </div>
             {err?.time && (
               <div className="error">Please select a delivery time</div>
+            )}
+            <div className="section">
+              <div className="label">
+                {labelConfig?.product_delivery_pin_availibility}
+                <span style={{ color: "red" }}> *</span>
+              </div>
+              <input
+                id="check-pin"
+                type={"number"}
+                placeholder="Check pin code"
+                className="check-pin"
+                value={checkOutDetails?.pin}
+                onChange={checkPin}
+              />
+            </div>
+            {err?.available && (
+              <div className="error">Unavailable at this pincode</div>
             )}
           </div>
           <div className="subtotal">

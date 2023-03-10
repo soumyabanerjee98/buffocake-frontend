@@ -303,7 +303,16 @@ input::-webkit-inner-spin-button {
   display: flex;
   gap: 5rem;
 }
-
+.product-screen .check-pin{
+  padding: 0.4rem;
+  outline: none;
+}
+.product-screen .check-pin.available {
+  border: 1px solid rgb(0, 191, 0);
+}
+.product-screen .check-pin.unavailable {
+  border: 1px solid red;
+}
 .product-screen .image-section {
   max-height: 20rem;
   height: 100%;
@@ -1917,7 +1926,16 @@ position: fixed;
   margin-top: 0.4rem;
   justify-content: center;
 }
-
+.manage-pincode .input-section{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.manage-pincode input[type=number] {
+  padding: 4px;
+  width: 30%;
+  outline: none;
+}
 /* modals */
 .modal {
   position: fixed;

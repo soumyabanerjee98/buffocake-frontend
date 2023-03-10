@@ -67,4 +67,6 @@ export const processIDs = {
   add_product_image: "add-product-image",
   edit_product_image: "edit-product-image",
   delete_product_image: "delete-product-image",
+  get_pincodes: "get-pincodes",
+  add_pincodes: "add-pincodes",
 };

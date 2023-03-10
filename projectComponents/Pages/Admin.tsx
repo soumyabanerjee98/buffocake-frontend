@@ -5,6 +5,7 @@ import ManageCarousel from "./AdminRoutes/ManageCarousel";
 import ManageCustomNav from "./AdminRoutes/ManageCustomNav";
 import ManageOfflineOrders from "./AdminRoutes/ManageOfflineOrders";
 import ManageOrders from "./AdminRoutes/ManageOrders";
+import ManagePincode from "./AdminRoutes/ManagePincode";
 import ManageProducts from "./AdminRoutes/ManageProducts";
 import ManageUsers from "./AdminRoutes/ManageUsers";
 
@@ -15,6 +16,7 @@ const Admin = () => {
     "Custom Navigation",
     "Carousel",
     "Offline Orders",
+    "Pincode manage",
   ];
   const [section, setSection] = useState(() => {
     let arr = sectionArr.map((i: string, idx: number) => {
@@ -62,6 +64,9 @@ const Admin = () => {
         return <ManageOfflineOrders />;
         break;
       case 5:
+        return <ManagePincode />;
+        break;
+      case 6:
         return <ManageUsers />;
         break;
       default:
