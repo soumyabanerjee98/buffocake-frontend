@@ -8,6 +8,8 @@ export const processIDs = {
   user_phone_check: "user-phone-check",
   create_new_account: "create-new-account",
   update_user: "update-user",
+  get_all_users: "get-all-users",
+  update_user_as_admin: "update-user-as-admin",
   add_address: "add-address",
   edit_address: "edit-address",
   remove_address: "remove-address",

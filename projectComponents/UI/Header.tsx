@@ -309,6 +309,17 @@ const Header = () => {
           removeLocalData(storageConfig?.jwtToken);
           setUserProfile(null);
         }
+      } else if (m?.sender === "admin-page" && m?.target === "global") {
+        if (m?.message?.action === "logout") {
+          removeSessionData(storageConfig?.userProfile);
+          removeSessionData(storageConfig?.address);
+          removeSessionData(storageConfig?.cart);
+          removeSessionData(storageConfig?.wishlist);
+          removeSessionData(storageConfig?.orders);
+          navigate("/");
+          removeLocalData(storageConfig?.jwtToken);
+          setUserProfile(null);
+        }
       } else if (m?.sender === "phone-verify-card" && m?.target === "global") {
         if (
           m?.message?.action === "success-verify" ||

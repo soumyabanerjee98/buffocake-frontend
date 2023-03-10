@@ -1843,6 +1843,81 @@ input::-webkit-inner-spin-button {
   font-weight: 600;
   color: rgb(0, 191, 0);
 }
+.manage-users {
+  padding: 1rem;
+}
+.manage-users input[type=text]{
+  padding: 4px;
+  outline: none;
+  width: 50%;
+}
+.manage-users button {
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+.manage-users button:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
+.manage-users .search-section {
+ display: flex;
+ gap: 1rem;
+ align-items: center;
+}
+.manage-users .users-section{
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.manage-users .user-card {
+  border: 1px solid rgba(0, 0, 0, 0.50);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.manage-users .user-auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.manage-users .user-auth .admin, .manage-users .user-auth .super-admin {
+  display: flex;
+  align-items: center;
+}
+.manage-users .confirm-modal {
+position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.manage-users .confirm-box {
+  padding: 1rem;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 6px;
+  text-align: center;
+}
+.manage-users .confirm-box .warning{
+  color: red;
+  font-size: large;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.manage-users .confirm-box .decision-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.4rem;
+  justify-content: center;
+}
+
 /* modals */
 .modal {
   position: fixed;
