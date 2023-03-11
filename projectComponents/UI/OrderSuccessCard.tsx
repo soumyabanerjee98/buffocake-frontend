@@ -217,7 +217,10 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
                     <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
                   )}
                   <td style={{ textAlign: "center" }}>{i?.productName}</td>
-                  <td style={{ textAlign: "center" }}>{i?.weight}lbs</td>
+                  <td style={{ textAlign: "center" }}>
+                    {i?.weight}
+                    {labelConfig?.product_weight_unit}
+                  </td>
                   <td style={{ textAlign: "center" }}>{i?.flavour}</td>
                   <td style={{ textAlign: "center" }}>{i?.gourmet}</td>
                   <td style={{ textAlign: "center" }}>{i?.message}</td>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
 import { paytmConfig } from "../../config/secret";
-import { storageConfig } from "../../config/siteConfig";
+import { labelConfig, storageConfig } from "../../config/siteConfig";
 import { messageType, responseType } from "../../typings";
 import { messageService } from "../Functions/messageService";
 import {
@@ -233,7 +233,9 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                     <div className="name">{i?.productName}</div>
                     <div className="section">
                       <div className="label">Weight: </div>
-                      <div className="value">{i?.weight} lbs</div>
+                      <div className="value">
+                        {i?.weight} {labelConfig?.product_weight_unit}
+                      </div>
                     </div>
                     <div className="section">
                       <div className="label">Flavour: </div>

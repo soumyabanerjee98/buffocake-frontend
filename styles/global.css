@@ -76,6 +76,14 @@ input::-webkit-inner-spin-button {
   gap: 1rem;
   width: 60%;
 }
+.main-header .left-col .hamburger{
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+}
+.main-header .left-col .hamburger:hover {
+  scale: 1.2;
+  transition: all 150ms ease-in-out;
+}
 
 .main-header .right-col {
   display: flex;
@@ -1946,6 +1954,24 @@ input::-webkit-inner-spin-button {
   width: 30%;
   outline: none;
 }
+.manage-navbar .catagory {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.manage-navbar .dropdown {
+  width: 20%;
+  margin-bottom: 0.8rem;
+}
+.manage-navbar button {
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+.manage-navbar button:hover {
+  border: 1px solid #4285f4;
+  transition: all 200ms ease-in-out;
+}
 /* modals */
 .modal {
   position: fixed;
@@ -2474,6 +2500,50 @@ input::-webkit-inner-spin-button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Navbar */
+
+.navbar{
+  position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+.navbar .nav-container{
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  width: -webkit-fill-available;
+  height: 60%;
+  box-shadow: 0 0 4px;
+  border-radius: 0 0 6px 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+}
+.navbar .catagory {
+  font-size: large;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  width: max-content;
+  color: rgb(107, 39, 51);
+  transition: all 200ms ease-in-out;
+}
+
+.navbar .sub-item{
+  font-size: small;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+}
+
+.navbar .catagory:hover,
+.navbar .sub-item:hover {
+  color: #4285f4;
+  transition: all 200ms ease-in-out;
 }
 
 /* OTP Field */

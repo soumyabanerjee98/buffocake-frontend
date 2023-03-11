@@ -357,7 +357,9 @@ const ManageOfflineOrders = () => {
                 <div className="order-items">
                   <div className="order-items-section">
                     <div className="label">Weight: </div>
-                    <div className="value">{i?.weight} lbs</div>
+                    <div className="value">
+                      {i?.weight} {labelConfig?.product_weight_unit}
+                    </div>
                     <Select
                       isSearchable={false}
                       placeholder={"Select weight"}

@@ -637,7 +637,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                 {product?.weight?.map((i: any) => {
                   return (
                     <div className="option">
-                      Weight: {i?.label} lbs
+                      Weight: {i?.label} {labelConfig?.product_weight_unit}
                       <div>
                         Value: {labelConfig?.inr_code}
                         {i?.value}
@@ -691,7 +691,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                   }
                 }}
               />
-              lbs
+              {labelConfig?.product_weight_unit}
               <span>
                 {labelConfig?.inr_code}
                 <input

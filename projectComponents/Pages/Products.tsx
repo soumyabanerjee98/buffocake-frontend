@@ -619,10 +619,10 @@ const Products = (props: ProductProps) => {
                         // @ts-ignore
                         document.getElementById(
                           `product-weight-${idx}`
-                        ).innerText = `${i?.label} lbs`;
+                        ).innerText = `${i?.label} ${labelConfig?.product_weight_unit}`;
                       }}
                     >
-                      {i?.label} lbs
+                      {i?.label} {labelConfig?.product_weight_unit}
                     </div>
                   ))}
               </div>

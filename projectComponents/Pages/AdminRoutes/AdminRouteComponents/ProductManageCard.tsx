@@ -106,7 +106,7 @@ const ProductManageCard = () => {
   };
   const fetchSubCatagory = () => {
     setSubcatagoryData((prev: any) => {
-      return { ...prev, subCat_loading: true };
+      return { ...prev, loading: true };
     });
     callApi(processIDs?.get_subcatagory, {})
       // @ts-ignore
@@ -546,7 +546,9 @@ const ProductManageCard = () => {
               <div className="data-value">
                 <div className="option-items">
                   <div>Weight:</div>
-                  <div>{i?.label} lbs</div>
+                  <div>
+                    {i?.label} {labelConfig?.product_weight_unit}
+                  </div>
                 </div>
                 <div className="option-items">
                   <div>Value:</div>
@@ -590,7 +592,7 @@ const ProductManageCard = () => {
                 }
               }}
             />
-            lbs
+            {labelConfig?.product_weight_unit}
           </div>
           <div className="option-items">
             <label>Value</label>

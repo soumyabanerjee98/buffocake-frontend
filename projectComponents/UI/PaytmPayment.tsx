@@ -140,75 +140,80 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         // @ts-ignore
         .then((res: responseType) => {
           if (res?.status === 200) {
-            let config = {
-              root: "",
-              flow: "DEFAULT",
-              data: {
-                orderId: oid,
-                token: res?.data?.returnData?.txnToken,
-                tokenType: "TXN_TOKEN",
-                amount: Total,
-              },
-              merchant: {
-                redirect: false,
-              },
-              handler: {
-                notifyMerchant: function (eventType: any, data: any) {
-                  setLoading(false);
-                  console.log("eventType => ", eventType);
-                  console.log("data => ", data);
+            if (res?.data?.returnCode) {
+              let config = {
+                root: "",
+                flow: "DEFAULT",
+                data: {
+                  orderId: oid,
+                  token: res?.data?.returnData?.txnToken,
+                  tokenType: "TXN_TOKEN",
+                  amount: Total,
                 },
-                transactionStatus: function (data: any) {
-                  callApi(processIDs?.paytm_transaction_verify, {
-                    mid: MID,
-                    oid: oid,
-                    mkey: MKEY,
-                  }) // @ts-ignore
-                    .then((res: responseType) => {
-                      if (res?.status === 200) {
-                        if (res?.data?.returnCode) {
-                          //  TXN_SUCCESS, TXN_FAILURE, PENDING
-                          if (
-                            res?.data?.returnData?.resultInfo?.resultStatus ===
-                              "TXN_SUCCESS" ||
-                            res?.data?.returnData?.resultInfo?.resultStatus ===
-                              "PENDING"
-                          ) {
-                            checkoutFunc({
-                              ...res?.data?.returnData,
-                              address: Address,
-                              total: Total.toString(),
-                            });
-                          } else if (
-                            res?.data?.returnData?.resultInfo?.resultStatus ===
-                            "TXN_FAILURE"
-                          ) {
-                            toast.error(`Error: Transaction failed`);
-                            // checkoutFunc({
-                            //   ...res?.data?.returnData,
-                            //   address: Address,
-                            //   total: Total.toString(),
-                            // });
+                merchant: {
+                  redirect: false,
+                },
+                handler: {
+                  notifyMerchant: function (eventType: any, data: any) {
+                    setLoading(false);
+                    console.log("eventType => ", eventType);
+                    console.log("data => ", data);
+                  },
+                  transactionStatus: function (data: any) {
+                    callApi(processIDs?.paytm_transaction_verify, {
+                      mid: MID,
+                      oid: oid,
+                      mkey: MKEY,
+                    }) // @ts-ignore
+                      .then((res: responseType) => {
+                        if (res?.status === 200) {
+                          if (res?.data?.returnCode) {
+                            //  TXN_SUCCESS, TXN_FAILURE, PENDING
+                            if (
+                              res?.data?.returnData?.resultInfo
+                                ?.resultStatus === "TXN_SUCCESS" ||
+                              res?.data?.returnData?.resultInfo
+                                ?.resultStatus === "PENDING"
+                            ) {
+                              checkoutFunc({
+                                ...res?.data?.returnData,
+                                address: Address,
+                                total: Total.toString(),
+                              });
+                            } else if (
+                              res?.data?.returnData?.resultInfo
+                                ?.resultStatus === "TXN_FAILURE"
+                            ) {
+                              toast.error(`Error: Transaction failed`);
+                              // checkoutFunc({
+                              //   ...res?.data?.returnData,
+                              //   address: Address,
+                              //   total: Total.toString(),
+                              // });
+                            }
                           }
+                        } else {
+                          toast.error(`Error: ${res?.status}`);
                         }
-                      } else {
-                        toast.error(`Error: ${res?.status}`);
-                      }
-                    })
-                    .catch((err: any) => {
-                      toast.error(`Error: ${err?.message}`);
-                    });
+                      })
+                      .catch((err: any) => {
+                        toast.error(`Error: ${err?.message}`);
+                      });
+                  },
                 },
-              },
-            };
-            (window as any).Paytm.CheckoutJS.init(config)
-              .then(function onSuccess() {
-                (window as any).Paytm.CheckoutJS.invoke();
-              })
-              .catch(function onError(error: any) {
-                setLoading(false);
-                console.log("error => ", error);
-              });
+              };
+              (window as any).Paytm.CheckoutJS.init(config)
+                .then(function onSuccess() {
+                  (window as any).Paytm.CheckoutJS.invoke();
+                })
+                .catch(function onError(error: any) {
+                  setLoading(false);
+                  console.log("error => ", error);
+                });
+            } else {
+              setLoading(false);
+              toast.error(res?.data?.msg);
+            }
           } else {
             setLoading(false);
             toast.error(`Error: ${res?.status}`);

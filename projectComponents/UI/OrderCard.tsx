@@ -62,7 +62,8 @@ const OrderCard = (props: OrderCardProps) => {
                     </div>
                   )}
                   <div>
-                    {i?.weight}lbs {i?.productName}
+                    {i?.weight}
+                    {labelConfig?.product_weight_unit} {i?.productName}
                   </div>
                   <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
                   <div>Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}</div>

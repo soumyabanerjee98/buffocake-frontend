@@ -82,7 +82,9 @@ const CartCard = (props: CartCardProps) => {
         <div className="name">{cart?.productName}</div>
         <div className="section">
           <div className="title">Weight: </div>
-          <div className="value">{cart?.weight} lbs</div>
+          <div className="value">
+            {cart?.weight} {labelConfig?.product_weight_unit}
+          </div>
         </div>
         <div className="section">
           <div className="title">Flavour: </div>

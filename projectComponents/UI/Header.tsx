@@ -36,6 +36,7 @@ import { toast } from "react-toastify";
 import AddressCard from "./AddressCard";
 import OrderSuccessCard from "./OrderSuccessCard";
 import OrderReceipt from "./OrderReceipt";
+import Navbar from "./Navbar";
 const GetAllCatagories = async () => {
   let catData = await callApi(processIDs?.get_catagory, {})
     .then(
@@ -109,6 +110,7 @@ const GetAllProducts = async () => {
 
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
+  const [navbarOpen, setNavbarOpen] = useState(false);
   const url =
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
@@ -425,6 +427,10 @@ const Header = () => {
         setReceiptCardOpen((prev: any) => {
           return { ...prev, state: true, order: m?.message?.params };
         });
+      } else if (m?.sender === "navbar" && m?.target === "header") {
+        if (m?.message?.action === "close-popup") {
+          setNavbarOpen(false);
+        }
       }
     });
   }, []);
@@ -465,6 +471,12 @@ const Header = () => {
   return (
     <header className="main-header">
       <div className="left-col">
+        <i
+          className="fa-solid fa-lg fa-bars hamburger"
+          onClick={() => {
+            setNavbarOpen(true);
+          }}
+        />
         <Image
           src={Logo}
           alt="Boffocake Logo"
@@ -640,6 +652,7 @@ const Header = () => {
       {receiptCardOpen?.state && (
         <OrderReceipt order={receiptCardOpen?.order} />
       )}
+      {navbarOpen && <Navbar />}
     </header>
   );
 };
