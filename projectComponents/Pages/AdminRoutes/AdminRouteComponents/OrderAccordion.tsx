@@ -11,6 +11,10 @@ export type OrderAccordionProps = {
 
 const OrderAccordion = (props: OrderAccordionProps) => {
   const { order } = props;
+  const url =
+    process?.env?.NODE_ENV === "development"
+      ? serverConfig?.backend_url_test
+      : serverConfig?.backend_url_server;
   const [expand, setExpand] = useState(false);
   const ChangeSubStatus = (subId: string, status: string) => {
     callApi(processIDs?.update_order_substatus, {
@@ -96,53 +100,111 @@ const OrderAccordion = (props: OrderAccordionProps) => {
       {expand && (
         <div className="exp">
           <div className="left-col">
-            {order?.items?.map((i: any) => {
-              return (
-                <div className="section">
-                  {i?.subOrderId && (
-                    <div>
-                      Sub-Order ID: <span className="id">#{i?.subOrderId}</span>
-                    </div>
-                  )}
-                  <div>
-                    {i?.weight}
-                    {labelConfig?.product_weight_unit} {i?.productName}
-                  </div>
-                  <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
-                  <div>Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}</div>
-                  <div>Message on cake: {i?.message ? i?.message : "N/A"}</div>
-                  <div>Customization: {i?.custom ? i?.custom : "N/A"}</div>
-                  <div>Allergy: {i?.allergy ? i?.allergy : "N/A"}</div>
-                  <div>Delivery date: {i?.delDate}</div>
-                  <div>Delivery time: {i?.delTime}</div>
-                  <div className="subtotal">
-                    {labelConfig?.inr_code}
-                    {i?.subTotal}
-                  </div>
-                  {i?.subOrderStatus && (
-                    <div className="sub-status-update">
-                      <div
-                        className={`suborder-status ${i?.subOrderStatus?.toLowerCase()}`}
-                      >
-                        {i?.subOrderStatus}
-                      </div>
-                      <Select
-                        isSearchable={true}
-                        defaultValue={null}
-                        placeholder={"Change status"}
-                        onChange={(e: any) => {
-                          if (e) {
-                            ChangeSubStatus(i?.subOrderId, e.value);
-                          }
-                        }}
-                        options={serverConfig?.del_status_arr}
-                        isClearable={true}
-                      />
-                    </div>
-                  )}
+            {order?.type === "Custom" ? (
+              <div className="section">
+                <img
+                  src={`${url}${order?.items?.[0]?.customImage}`}
+                  alt="Image"
+                  height={150}
+                />
+                <div>
+                  Weight: {order?.items?.[0]?.weight}
+                  {labelConfig?.product_weight_unit}
                 </div>
-              );
-            })}
+                <div>
+                  Flavour:{" "}
+                  {order?.items?.[0]?.flavour
+                    ? order?.items?.[0]?.flavour
+                    : "N/A"}
+                </div>
+                <div>
+                  Gourmet option:{" "}
+                  {order?.items?.[0]?.gourmet
+                    ? order?.items?.[0]?.gourmet
+                    : "N/A"}
+                </div>
+                <div>
+                  Message on cake:{" "}
+                  {order?.items?.[0]?.message
+                    ? order?.items?.[0]?.message
+                    : "N/A"}
+                </div>
+                <div>
+                  Customization:{" "}
+                  {order?.items?.[0]?.custom
+                    ? order?.items?.[0]?.custom
+                    : "N/A"}
+                </div>
+                <div>
+                  Allergy:{" "}
+                  {order?.items?.[0]?.allergy
+                    ? order?.items?.[0]?.allergy
+                    : "N/A"}
+                </div>
+                <div>Delivery date: {order?.items?.[0]?.delDate}</div>
+                <div>Delivery time: {order?.items?.[0]?.delTime}</div>
+                <div className="subtotal">
+                  {labelConfig?.inr_code}
+                  {order?.items?.[0]?.subTotal}
+                </div>
+              </div>
+            ) : (
+              <>
+                {order?.items?.map((i: any) => {
+                  return (
+                    <div className="section">
+                      {i?.subOrderId && (
+                        <div>
+                          Sub-Order ID:{" "}
+                          <span className="id">#{i?.subOrderId}</span>
+                        </div>
+                      )}
+                      <div>
+                        {i?.weight}
+                        {labelConfig?.product_weight_unit} {i?.productName}
+                      </div>
+                      <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
+                      <div>
+                        Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}
+                      </div>
+                      <div>
+                        Message on cake: {i?.message ? i?.message : "N/A"}
+                      </div>
+                      <div>Customization: {i?.custom ? i?.custom : "N/A"}</div>
+                      <div>Allergy: {i?.allergy ? i?.allergy : "N/A"}</div>
+                      <div>Delivery date: {i?.delDate}</div>
+                      <div>Delivery time: {i?.delTime}</div>
+                      <div className="subtotal">
+                        {labelConfig?.inr_code}
+                        {i?.subTotal}
+                      </div>
+                      {i?.subOrderStatus && (
+                        <div className="sub-status-update">
+                          <div
+                            className={`suborder-status ${i?.subOrderStatus?.toLowerCase()}`}
+                          >
+                            {i?.subOrderStatus}
+                          </div>
+                          <Select
+                            isSearchable={true}
+                            defaultValue={null}
+                            placeholder={"Change status"}
+                            onChange={(e: any) => {
+                              if (e) {
+                                ChangeSubStatus(i?.subOrderId, e.value);
+                              }
+                            }}
+                            options={serverConfig?.del_status_arr}
+                            isClearable={true}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
             {order?.items?.length === 1 && (
               <Select
                 isSearchable={true}

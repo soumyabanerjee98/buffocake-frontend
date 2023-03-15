@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
-import { callApi } from "../../Functions/util";
+import { callApi, uploadImage } from "../../Functions/util";
 // @ts-ignore
 import Calendar from "react-calendar";
 import Select from "react-select";
@@ -15,6 +15,8 @@ import {
   serverConfig,
 } from "../../../config/siteConfig";
 import moment from "moment";
+import ToggleButton from "../../UI/ToggleButton";
+import { responseType } from "../../../typings";
 
 const dataFetcher = async () => {
   let data = await callApi(processIDs?.get_all_products, {})
@@ -41,6 +43,7 @@ const dataFetcher = async () => {
 };
 
 const ManageOfflineOrders = () => {
+  const [customerCustom, setCustomerCustom] = useState(false);
   const [searchTxt, setSearchTxt] = useState("");
   const [filterProduct, setFilterProduct] = useState([]);
   const [selectedItem, setSelectedItem] = useState({});
@@ -52,6 +55,7 @@ const ManageOfflineOrders = () => {
     street: "",
     pin: "",
   });
+
   const [grandTotal, setGrandTotal] = useState(0);
   const minDate = new Date();
   const maxDate = new Date();
@@ -64,6 +68,23 @@ const ManageOfflineOrders = () => {
   } = useSwr("manage-offline-orders", dataFetcher, {
     refreshInterval: 5000,
     revalidateOnFocus: true,
+  });
+  const [customOrder, setCustomOrder] = useState({
+    weight: 0,
+    flavour: "",
+    gourmet: "",
+    message: "",
+    custom: "",
+    allergy: "",
+    delDate: minDate,
+    delTime: null,
+    subTotal: 0,
+    messageLimit: productConfig?.messageFieldLimit,
+    customLimit: productConfig?.customFieldLimit,
+    allergyLimit: productConfig?.allergyFieldLimit,
+    calendarOpen: false,
+    imageArr: [],
+    imagePreview: null,
   });
   const FindProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
     let text = e.target.value;
@@ -196,29 +217,45 @@ const ManageOfflineOrders = () => {
       delTime: any;
       subTotal: any;
     }[] = [];
-    order?.map((i: any) => {
+    if (customerCustom) {
       cart.push({
-        productId: i?.id,
-        productName: i?.productName,
-        weight: i?.weight,
-        flavour: i?.selectedFlavour,
-        gourmet: i?.gourmetOption,
-        message: i?.message,
-        custom: i?.customization,
-        allergy: i?.allergy,
-        delDate: i?.deliveryDate?.toDateString(),
-        delTime: i?.deliveryTime,
-        subTotal:
-          i?.additionalValueGourmet +
-          i?.additionalValueFlavour +
-          i?.subTotal +
-          ((i?.subTotal +
-            i?.additionalValueFlavour +
-            i?.additionalValueGourmet) *
-            productConfig?.deliveryCharge) /
-            100,
+        productId: "NA",
+        productName: "NA",
+        weight: customOrder?.weight,
+        flavour: customOrder?.flavour,
+        gourmet: customOrder?.gourmet,
+        message: customOrder?.message,
+        custom: customOrder?.custom,
+        allergy: customOrder?.allergy,
+        delDate: customOrder?.delDate?.toDateString(),
+        delTime: customOrder?.delTime,
+        subTotal: customOrder?.subTotal,
       });
-    });
+    } else {
+      order?.map((i: any) => {
+        cart.push({
+          productId: i?.id,
+          productName: i?.productName,
+          weight: i?.weight,
+          flavour: i?.selectedFlavour,
+          gourmet: i?.gourmetOption,
+          message: i?.message,
+          custom: i?.customization,
+          allergy: i?.allergy,
+          delDate: i?.deliveryDate?.toDateString(),
+          delTime: i?.deliveryTime,
+          subTotal:
+            i?.additionalValueGourmet +
+            i?.additionalValueFlavour +
+            i?.subTotal +
+            ((i?.subTotal +
+              i?.additionalValueFlavour +
+              i?.additionalValueGourmet) *
+              productConfig?.deliveryCharge) /
+              100,
+        });
+      });
+    }
     let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
     let cartItem =
       cart?.length === 1
@@ -231,15 +268,15 @@ const ManageOfflineOrders = () => {
             };
           });
     let body = {
-      type: "Offline",
+      type: customerCustom ? "Custom" : "Offline",
       userId: "NA",
       oid: oid,
       txnId: "NA",
       items: cartItem,
       shippingAddress: address,
-      total: grandTotal,
-      paymentStatus: "Pending",
-      orderStatus: "Pending",
+      total: customerCustom ? customOrder?.subTotal : grandTotal,
+      paymentStatus: "Completed",
+      orderStatus: "Accepted",
       orderTimeStamp: moment().format().split("T").join(" "),
     };
     if (
@@ -261,33 +298,103 @@ const ManageOfflineOrders = () => {
       toast.error("Fill up items delivery time correctly!");
       return;
     }
-    callApi(processIDs?.create_order, body) // @ts-ignore
-      .then((res: responseType) => {
-        if (res?.status === 200) {
-          if (res?.data?.returnCode) {
-            toast.success(res?.data?.msg);
-            setOrder([]);
-            setAddress((prev: any) => {
-              return {
-                ...prev,
-                receiverName: "",
-                receiverContact: "",
-                house: "",
-                street: "",
-                pin: "",
-              };
-            });
-            setGrandTotal(0);
+    if (customerCustom) {
+      uploadImage(customOrder?.imageArr) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              callApi(processIDs?.create_order, {
+                ...body,
+                items: [
+                  {
+                    ...body?.items?.[0],
+                    customImage: res?.data?.returnData?.[0]?.path,
+                  },
+                ],
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    if (res?.data?.returnCode) {
+                      toast.success(res?.data?.msg);
+                      setCustomOrder((prev: any) => {
+                        return {
+                          ...prev,
+                          weight: 0,
+                          flavour: "",
+                          gourmet: "",
+                          message: "",
+                          custom: "",
+                          allergy: "",
+                          delDate: minDate,
+                          delTime: null,
+                          subTotal: 0,
+                          messageLimit: productConfig?.messageFieldLimit,
+                          customLimit: productConfig?.customFieldLimit,
+                          allergyLimit: productConfig?.allergyFieldLimit,
+                          calendarOpen: false,
+                          imageArr: [],
+                          imagePreview: null,
+                        };
+                      });
+                      setAddress((prev: any) => {
+                        return {
+                          ...prev,
+                          receiverName: "",
+                          receiverContact: "",
+                          house: "",
+                          street: "",
+                          pin: "",
+                        };
+                      });
+                    } else {
+                      toast.error(res?.data?.msg);
+                    }
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err) => {
+                  toast.error(`Error: ${err}`);
+                });
+            } else {
+              toast.error(res?.data?.msg);
+            }
           } else {
-            toast.error(res?.data?.msg);
+            toast.error(`Error: ${res?.status}`);
           }
-        } else {
-          toast.error(`Error: ${res?.status}`);
-        }
-      })
-      .catch((err) => {
-        toast.error(`Error: ${err}`);
-      });
+        })
+        .catch((err) => {
+          toast.error(`Error: ${err}`);
+        });
+    } else {
+      callApi(processIDs?.create_order, body) // @ts-ignore
+        .then((res: responseType) => {
+          if (res?.status === 200) {
+            if (res?.data?.returnCode) {
+              toast.success(res?.data?.msg);
+              setOrder([]);
+              setAddress((prev: any) => {
+                return {
+                  ...prev,
+                  receiverName: "",
+                  receiverContact: "",
+                  house: "",
+                  street: "",
+                  pin: "",
+                };
+              });
+              setGrandTotal(0);
+            } else {
+              toast.error(res?.data?.msg);
+            }
+          } else {
+            toast.error(`Error: ${res?.status}`);
+          }
+        })
+        .catch((err) => {
+          toast.error(`Error: ${err}`);
+        });
+    }
   };
 
   useEffect(() => {
@@ -306,53 +413,92 @@ const ManageOfflineOrders = () => {
     });
     setGrandTotal(total);
   }, [order]);
+  useEffect(() => {
+    if (!customerCustom) {
+      setCustomOrder((prev: any) => {
+        return {
+          ...prev,
+          weight: 0,
+          flavour: "",
+          gourmet: "",
+          message: "",
+          custom: "",
+          allergy: "",
+          delDate: minDate,
+          delTime: null,
+          subTotal: 0,
+          messageLimit: productConfig?.messageFieldLimit,
+          customLimit: productConfig?.customFieldLimit,
+          allergyLimit: productConfig?.allergyFieldLimit,
+          calendarOpen: false,
+          imageArr: [],
+          imagePreview: null,
+        };
+      });
+    }
+  }, [customerCustom]);
 
   return (
     <form onSubmit={AddOrder} className="manage-offline-orders">
-      <div className="section search">
-        <div className="search-container">
-          <input
-            type={"text"}
-            value={searchTxt}
-            onChange={FindProduct}
-            placeholder={"Search by ID or name"}
-            className="search-product"
-          />
-          {filterProduct?.length > 0 && (
-            <div className="filter-product">
-              {filterProduct?.map((i: any) => (
-                <div
-                  className="filter-item"
-                  onClick={() => {
-                    SelectProduct(i);
-                  }}
-                >
-                  {i?.title}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={AddItem}
-          disabled={JSON.stringify(selectedItem) === "{}"}
-        >
-          Add item
-        </button>
+      <div>
+        <ToggleButton
+          state={customerCustom}
+          setState={setCustomerCustom}
+          label={"Custom order"}
+        />
       </div>
+      {!customerCustom && (
+        <div className="section search">
+          <div className="search-container">
+            <input
+              type={"text"}
+              value={searchTxt}
+              onChange={FindProduct}
+              placeholder={"Search by ID or name"}
+              className="search-product"
+            />
+            {filterProduct?.length > 0 && (
+              <div className="filter-product">
+                {filterProduct?.map((i: any) => (
+                  <div
+                    className="filter-item"
+                    onClick={() => {
+                      SelectProduct(i);
+                    }}
+                  >
+                    {i?.title}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={AddItem}
+            disabled={JSON.stringify(selectedItem) === "{}"}
+          >
+            Add item
+          </button>
+        </div>
+      )}
+
       <div className="section">
         <div className="header">
-          <div className="title">Items:</div>
+          {!customerCustom ? (
+            <div className="title">Items:</div>
+          ) : (
+            <div className="title">Custom item:</div>
+          )}
+
           <div className="grand-total">
             Total: {labelConfig?.inr_code}
-            {grandTotal}
+            {customerCustom ? customOrder?.subTotal : grandTotal}
           </div>
         </div>
         <div className="details">
-          {order?.length === 0 && <div>No items</div>}
-          {order?.length > 0 && (
-            <div>
+          {order?.length === 0 && !customerCustom && <div>No items</div>}
+          {order?.length > 0 && !customerCustom && (
+            <div className="offline-order">
               {order?.map((i: any, idx: number) => (
                 <div className="order-items">
                   <div className="order-items-section">
@@ -660,7 +806,307 @@ const ManageOfflineOrders = () => {
               ))}
             </div>
           )}
-
+          {customerCustom && (
+            <div className="custom-offline-order">
+              <div className="order-items">
+                <div className="order-items-section">
+                  <div className="label">Image: </div>
+                  <div className="value">
+                    {customOrder?.imagePreview && (
+                      <img
+                        src={`${customOrder?.imagePreview}`}
+                        alt="Image"
+                        height={150}
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        document.getElementById("image-upload")?.click();
+                      }}
+                    >
+                      Add image
+                    </button>
+                    {customOrder?.imagePreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              imageArr: [],
+                              imagePreview: null,
+                            };
+                          });
+                        }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Weight: </div>
+                  <div className="value">
+                    <input
+                      type={"number"}
+                      // @ts-ignore
+                      value={customOrder?.weight}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (
+                          // @ts-ignore
+                          e.nativeEvent.data ||
+                          // @ts-ignore
+                          e.nativeEvent.inputType === "deleteContentBackward"
+                        )
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              weight: parseFloat(e.target.value),
+                            };
+                          });
+                      }}
+                    />
+                    {labelConfig?.product_weight_unit}
+                  </div>
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Flavour: </div>
+                  <input
+                    type={"text"}
+                    value={customOrder?.flavour}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setCustomOrder((prev: any) => {
+                        return {
+                          ...prev,
+                          flavour: e.target.value,
+                        };
+                      });
+                    }}
+                  />
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Gourmet option: </div>
+                  <input
+                    type={"text"}
+                    value={customOrder?.gourmet}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setCustomOrder((prev: any) => {
+                        return {
+                          ...prev,
+                          gourmet: e.target.value,
+                        };
+                      });
+                    }}
+                  />
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Message on cake: </div>
+                  <div className="textarea">
+                    <textarea
+                      className="value"
+                      value={customOrder?.message}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        if (
+                          customOrder?.messageLimit > 0 ||
+                          // @ts-ignore
+                          e.nativeEvent.inputType === "deleteContentBackward"
+                        ) {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              message: e?.target?.value,
+                              messageLimit:
+                                productConfig?.messageFieldLimit -
+                                e?.target?.value?.length,
+                            };
+                          });
+                        }
+                      }}
+                    />
+                    <div className="count">
+                      {customOrder?.messageLimit}/
+                      {productConfig?.messageFieldLimit}
+                    </div>
+                  </div>
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Customization: </div>
+                  <div className="textarea">
+                    <textarea
+                      className="value"
+                      value={customOrder?.custom}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        if (
+                          customOrder?.customLimit > 0 ||
+                          // @ts-ignore
+                          e.nativeEvent.inputType === "deleteContentBackward"
+                        ) {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              custom: e?.target?.value,
+                              customLimit:
+                                productConfig?.customFieldLimit -
+                                e?.target?.value?.length,
+                            };
+                          });
+                        }
+                      }}
+                    />
+                    <div className="count">
+                      {customOrder?.customLimit}/
+                      {productConfig?.customFieldLimit}
+                    </div>
+                  </div>
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Allergy: </div>
+                  <div className="textarea">
+                    <textarea
+                      className="value"
+                      value={customOrder?.allergy}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        if (
+                          customOrder?.allergyLimit > 0 ||
+                          // @ts-ignore
+                          e.nativeEvent.inputType === "deleteContentBackward"
+                        ) {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              allergy: e?.target?.value,
+                              allergyLimit:
+                                productConfig?.allergyFieldLimit -
+                                e?.target?.value?.length,
+                            };
+                          });
+                        }
+                      }}
+                    />
+                    <div className="count">
+                      {customOrder?.allergyLimit}/
+                      {productConfig?.allergyFieldLimit}
+                    </div>
+                  </div>
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Delivery date: </div>
+                  {customOrder?.calendarOpen ? (
+                    <>
+                      <Calendar
+                        onChange={(e: any) => {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              calendarOpen: false,
+                              delDate: e,
+                            };
+                          });
+                        }}
+                        minDate={minDate}
+                        maxDate={maxDate}
+                        value={customOrder?.delDate}
+                      />
+                      <i
+                        className="fa-solid fa-xmark cross"
+                        onClick={() => {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              calendarOpen: false,
+                            };
+                          });
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="value">
+                        {customOrder?.delDate.toDateString()}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              calendarOpen: true,
+                            };
+                          });
+                        }}
+                      >
+                        Select date
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Delivery time: </div>
+                  <Select
+                    isSearchable={false}
+                    placeholder={"Select delivery time"}
+                    onChange={(e: any) => {
+                      setCustomOrder((prev: any) => {
+                        return {
+                          ...prev,
+                          delTime: e?.label,
+                        };
+                      });
+                    }}
+                    options={serverConfig?.del_time_arr}
+                  />
+                </div>
+                <div className="order-items-section">
+                  <div className="label">Total: </div>
+                  <div className="value">
+                    {labelConfig?.inr_code}
+                    <input
+                      type={"number"}
+                      // @ts-ignore
+                      value={customOrder?.subTotal}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (
+                          // @ts-ignore
+                          e.nativeEvent.data ||
+                          // @ts-ignore
+                          e.nativeEvent.inputType === "deleteContentBackward"
+                        )
+                          setCustomOrder((prev: any) => {
+                            return {
+                              ...prev,
+                              subTotal: parseFloat(e.target.value),
+                            };
+                          });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <input
+                style={{ display: "none", appearance: "none" }}
+                id="image-upload"
+                type={"file"}
+                accept={"image/*"}
+                multiple={false}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  // @ts-ignore
+                  const fileArr = Array.from(e?.target?.files);
+                  if (fileArr?.length > 0) {
+                    // @ts-ignore
+                    const imageSrc = URL.createObjectURL(e?.target?.files?.[0]);
+                    setCustomOrder((prev: any) => {
+                      return {
+                        ...prev,
+                        imageArr: fileArr,
+                        imagePreview: imageSrc,
+                      };
+                    });
+                  }
+                }}
+              />
+            </div>
+          )}
           <div className="address">
             <div className="address-section">
               <div className="label">Full name</div>
@@ -741,7 +1187,11 @@ const ManageOfflineOrders = () => {
           </div>
         </div>
       </div>
-      <button disabled={order?.length === 0}>Create order</button>
+      {customerCustom ? (
+        <button>Create custom order</button>
+      ) : (
+        <button disabled={order?.length === 0}>Create order</button>
+      )}
     </form>
   );
 };
