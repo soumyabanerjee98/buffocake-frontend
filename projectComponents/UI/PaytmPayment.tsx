@@ -17,7 +17,7 @@ import Loading from "./Loading";
 import { responseType } from "../../typings";
 import { toast } from "react-toastify";
 import { messageService } from "../Functions/messageService";
-import { paytmConfig } from "../../config/secret";
+import { EncKey, paytmConfig } from "../../config/secret";
 
 export type PaytmPaymentProps = {
   MID: any;
@@ -35,7 +35,15 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
     env === "production" ? paytmConfig?.host : paytmConfig?.stage_host;
-
+  const CryptoJS = require("crypto-js");
+  const encData = (data: string) => {
+    try {
+      const ciphertext = CryptoJS.AES.encrypt(data, EncKey).toString();
+      return ciphertext;
+    } catch (error) {
+      return null;
+    }
+  };
   const checkoutFunc = (response: any) => {
     const cartItem =
       cart?.length === 1
@@ -131,8 +139,8 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       setLoading(true);
       let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
       callApi(processIDs?.paytm_transaction_token_generate, {
-        mid: MID,
-        mkey: MKEY,
+        mid: encData(MID),
+        mkey: encData(MKEY),
         oid: oid,
         value: Total,
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
@@ -161,9 +169,9 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
                   },
                   transactionStatus: function (data: any) {
                     callApi(processIDs?.paytm_transaction_verify, {
-                      mid: MID,
+                      mid: encData(MID),
                       oid: oid,
-                      mkey: MKEY,
+                      mkey: encData(MKEY),
                     }) // @ts-ignore
                       .then((res: responseType) => {
                         if (res?.status === 200) {
