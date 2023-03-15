@@ -17,10 +17,12 @@ const CatagoryManageCard = () => {
   const [selectedCatagory, setSelectedCatagory] = useState({
     label: "",
     value: "",
+    priority: null,
   });
   const [selectedSubCatagory, setSelectedSubCatagory] = useState({
     label: "",
     value: "",
+    priority: null,
   });
   const [catagorySubCatagoryMap, setCatagorySubCatagoryMap] = useState({
     mapLoading: false,
@@ -79,7 +81,11 @@ const CatagoryManageCard = () => {
         if (res?.status === 200) {
           if (res?.data?.returnData) {
             let catArr = res?.data?.returnData?.map((i: any) => {
-              return { label: i?.catagory, value: i?._id };
+              return {
+                label: i?.catagory,
+                value: i?._id,
+                priority: i?.priority,
+              };
             });
             setCatagories((prev: any) => {
               return {
@@ -218,7 +224,11 @@ const CatagoryManageCard = () => {
         if (res?.status === 200) {
           if (res?.data?.returnData) {
             let subcatArr = res?.data?.returnData?.map((i: any) => {
-              return { label: i?.subCatagory, value: i?._id };
+              return {
+                label: i?.subCatagory,
+                value: i?._id,
+                priority: i?.priority,
+              };
             });
             setCatagories((prev: any) => {
               return {
@@ -250,6 +260,7 @@ const CatagoryManageCard = () => {
     callApi(processIDs?.update_catagory, {
       label: selectedCatagory?.label,
       value: selectedCatagory?.value,
+      priority: selectedCatagory?.priority,
     }) // @ts-ignore
       .then((res: responseType) => {
         if (res?.status === 200) {
@@ -273,6 +284,7 @@ const CatagoryManageCard = () => {
     callApi(processIDs?.update_subcatagory, {
       label: selectedSubCatagory?.label,
       value: selectedSubCatagory?.value,
+      priority: selectedSubCatagory?.priority,
     }) // @ts-ignore
       .then((res: responseType) => {
         if (res?.status === 200) {
@@ -359,7 +371,12 @@ const CatagoryManageCard = () => {
           placeholder={"Select catagory"}
           onChange={(e: any) => {
             setSelectedCatagory((prev: any) => {
-              return { ...prev, label: e?.label, value: e?.value };
+              return {
+                ...prev,
+                label: e?.label,
+                value: e?.value,
+                priority: e?.priority,
+              };
             });
           }}
           onFocus={fetchCatagory}
@@ -377,6 +394,28 @@ const CatagoryManageCard = () => {
               setSelectedCatagory((prev: any) => {
                 return { ...prev, label: e.target.value };
               });
+            }}
+          />
+          <input
+            type={"number"}
+            // @ts-ignore
+            value={selectedCatagory?.priority}
+            className="data-value"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (
+                // @ts-ignore
+                e.nativeEvent.data ||
+                // @ts-ignore
+                e.nativeEvent.inputType === "deleteContentBackward"
+              )
+                setSelectedCatagory((prev: any) => {
+                  return { ...prev, priority: parseInt(e.target.value) };
+                });
+            }}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === ".") {
+                e.preventDefault();
+              }
             }}
           />
           <div>
@@ -410,7 +449,12 @@ const CatagoryManageCard = () => {
           placeholder={"Select sub catagory"}
           onChange={(e: any) => {
             setSelectedSubCatagory((prev: any) => {
-              return { ...prev, label: e?.label, value: e?.value };
+              return {
+                ...prev,
+                label: e?.label,
+                value: e?.value,
+                priority: e?.priority,
+              };
             });
           }}
           onFocus={fetchSubCatagory}
@@ -428,6 +472,28 @@ const CatagoryManageCard = () => {
               setSelectedSubCatagory((prev: any) => {
                 return { ...prev, label: e.target.value };
               });
+            }}
+          />
+          <input
+            type={"number"}
+            // @ts-ignore
+            value={selectedSubCatagory?.priority}
+            className="data-value"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (
+                // @ts-ignore
+                e.nativeEvent.data ||
+                // @ts-ignore
+                e.nativeEvent.inputType === "deleteContentBackward"
+              )
+                setSelectedSubCatagory((prev: any) => {
+                  return { ...prev, priority: parseInt(e.target.value) };
+                });
+            }}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === ".") {
+                e.preventDefault();
+              }
             }}
           />
           <div>

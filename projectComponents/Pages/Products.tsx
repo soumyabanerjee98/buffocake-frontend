@@ -452,31 +452,43 @@ const Products = (props: ProductProps) => {
   };
 
   const checkPin = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let pin = parseInt(e.target.value);
-    let element = document.getElementById("check-pin");
-    element?.classList.remove("available", "unavailable");
-    setCheckOutDetails((prev: any) => {
-      return { ...prev, pin: pin };
-    });
-    setErr((prev: any) => {
-      return { ...prev, available: false };
-    });
-    if (timer) {
-      clearTimeout(timer.current);
-    }
-    if (pin) {
-      timer.current = setTimeout(() => {
-        callApi(processIDs?.get_pincodes, {})
-          .then(
-            // @ts-ignore
-            (res: responseType) => {
-              if (res?.status === 200) {
-                if (res?.data?.returnCode) {
-                  if (res?.data?.returnData.includes(pin)) {
-                    element?.classList.add("available");
-                    setCheckOutDetails((prev: any) => {
-                      return { ...prev, available: true };
-                    });
+    if (
+      // @ts-ignore
+      e.nativeEvent.data ||
+      // @ts-ignore
+      e.nativeEvent.inputType === "deleteContentBackward"
+    ) {
+      let pin = parseInt(e.target.value);
+      let element = document.getElementById("check-pin");
+      element?.classList.remove("available", "unavailable");
+      setCheckOutDetails((prev: any) => {
+        return { ...prev, pin: pin };
+      });
+      setErr((prev: any) => {
+        return { ...prev, available: false };
+      });
+      if (timer) {
+        clearTimeout(timer.current);
+      }
+      if (pin) {
+        timer.current = setTimeout(() => {
+          callApi(processIDs?.get_pincodes, {})
+            .then(
+              // @ts-ignore
+              (res: responseType) => {
+                if (res?.status === 200) {
+                  if (res?.data?.returnCode) {
+                    if (res?.data?.returnData.includes(pin)) {
+                      element?.classList.add("available");
+                      setCheckOutDetails((prev: any) => {
+                        return { ...prev, available: true };
+                      });
+                    } else {
+                      element?.classList.add("unavailable");
+                      setCheckOutDetails((prev: any) => {
+                        return { ...prev, available: false };
+                      });
+                    }
                   } else {
                     element?.classList.add("unavailable");
                     setCheckOutDetails((prev: any) => {
@@ -484,28 +496,23 @@ const Products = (props: ProductProps) => {
                     });
                   }
                 } else {
+                  toast.error(`Error: ${res?.status}`);
                   element?.classList.add("unavailable");
                   setCheckOutDetails((prev: any) => {
                     return { ...prev, available: false };
                   });
                 }
-              } else {
-                toast.error(`Error: ${res?.status}`);
-                element?.classList.add("unavailable");
-                setCheckOutDetails((prev: any) => {
-                  return { ...prev, available: false };
-                });
               }
-            }
-          )
-          .catch((err: any) => {
-            toast.error(`Error: ${err?.message}`);
-            element?.classList.add("unavailable");
-            setCheckOutDetails((prev: any) => {
-              return { ...prev, available: false };
+            )
+            .catch((err: any) => {
+              toast.error(`Error: ${err?.message}`);
+              element?.classList.add("unavailable");
+              setCheckOutDetails((prev: any) => {
+                return { ...prev, available: false };
+              });
             });
-          });
-      }, 1000);
+        }, 1000);
+      }
     }
   };
 
@@ -639,6 +646,11 @@ const Products = (props: ProductProps) => {
                 className="check-pin"
                 value={checkOutDetails?.pin}
                 onChange={checkPin}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === ".") {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
             {err?.available && (

@@ -60,6 +60,26 @@ export async function getStaticProps() {
       toast.error(`Error: ${err?.message}`);
       return [];
     });
+  let subcatagory = await callApi(processIDs?.get_subcatagory, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
   let carousel = await callApi(processIDs?.get_carousel, {})
     .then(
       // @ts-ignore
@@ -82,18 +102,38 @@ export async function getStaticProps() {
       return [];
     });
   let arr: any = [];
-  catagory?.map((i: any) => {
-    let arrObj = { catId: i?._id, cat: i?.catagory, prod: [] };
-    data?.map((v: any) => {
-      v?.catagory?.map((w: any) => {
-        if (w?.catagoryId === i?._id) {
-          // @ts-ignore
-          arrObj?.prod.push(v);
-        }
+  catagory
+    ?.sort((a: any, b: any) => {
+      return a?.priority - b?.priority;
+    })
+    ?.map((i: any) => {
+      let arrObj = { catId: i?._id, cat: i?.catagory, prod: [] };
+      data?.map((v: any) => {
+        v?.catagory?.map((w: any) => {
+          if (w?.catagoryId === i?._id) {
+            // @ts-ignore
+            arrObj?.prod.push(v);
+          }
+        });
       });
+      arr.push(arrObj);
     });
-    arr.push(arrObj);
-  });
+  subcatagory
+    ?.sort((a: any, b: any) => {
+      return a?.priority - b?.priority;
+    })
+    ?.map((i: any) => {
+      let arrObj = { catId: i?._id, cat: i?.subCatagory, prod: [] };
+      data?.map((v: any) => {
+        v?.subCatagory?.map((w: any) => {
+          if (w?.subCatagoryId === i?._id) {
+            // @ts-ignore
+            arrObj?.prod.push(v);
+          }
+        });
+      });
+      arr.push(arrObj);
+    });
   return {
     props: {
       // @ts-ignore
