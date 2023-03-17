@@ -5,6 +5,7 @@ import { callApi, uploadImage } from "../../Functions/util";
 import useSwr from "swr";
 import { responseType } from "../../../typings";
 import { serverConfig } from "../../../config/siteConfig";
+import CarouselLinkEdit from "./AdminRouteComponents/CarouselLinkEdit";
 const dataFetcher = async () => {
   let data = await callApi(processIDs?.get_carousel, {})
     .then(
@@ -227,6 +228,7 @@ const ManageCarousel = () => {
                       Delete
                     </button>
                   </div>
+                  <CarouselLinkEdit id={i?._id} link={i?.link} />
                 </div>
               );
             })}

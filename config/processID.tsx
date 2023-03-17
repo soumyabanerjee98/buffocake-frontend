@@ -63,6 +63,7 @@ export const processIDs = {
   get_carousel: "get-carousel",
   add_carousel: "add-carousel",
   edit_carousel: "edit-carousel",
+  edit_carousel_link: "edit-carousel-link",
   delete_carousel: "delete-carousel",
   add_product_image: "add-product-image",
   edit_product_image: "edit-product-image",

@@ -27,13 +27,25 @@ const Home = (props: HomeProps) => {
       <div className="home-screen">
         <MediaCarousel
           elementArr={carousel?.map((i: any) => {
-            return (
-              <img
-                src={`${url}${i?.mediaPath}`}
-                className="product-image"
-                alt={labelConfig?.image_not_loaded}
-              />
-            );
+            if (i?.link) {
+              return (
+                <a href={i?.link} target="_blank" style={{ cursor: "pointer" }}>
+                  <img
+                    src={`${url}${i?.mediaPath}`}
+                    className="product-image"
+                    alt={labelConfig?.image_not_loaded}
+                  />
+                </a>
+              );
+            } else {
+              return (
+                <img
+                  src={`${url}${i?.mediaPath}`}
+                  className="product-image"
+                  alt={labelConfig?.image_not_loaded}
+                />
+              );
+            }
           })}
         />
         <div className="header">Our Products</div>
