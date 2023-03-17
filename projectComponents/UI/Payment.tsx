@@ -18,10 +18,11 @@ import { responseType } from "../../typings";
 import { toast } from "react-toastify";
 import { messageService } from "../Functions/messageService";
 import { EncKey, paytmConfig } from "../../config/secret";
+import moment from "moment";
 
-export type PaytmPaymentProps = {
-  MID: any;
-  MKEY: any;
+export type PaymentProps = {
+  P_MID: any;
+  P_MKEY: any;
   Total: number;
   disable: boolean;
   Address: any;
@@ -29,8 +30,8 @@ export type PaytmPaymentProps = {
   cart: any;
 };
 
-const PaytmPayment = (props: PaytmPaymentProps) => {
-  const { MID, MKEY, Total, Address, disable, source, cart } = props;
+const Payment = (props: PaymentProps) => {
+  const { P_MID, P_MKEY, Total, Address, disable, source, cart } = props;
   const [loading, setLoading] = useState(false);
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
@@ -139,8 +140,8 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       setLoading(true);
       let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
       callApi(processIDs?.paytm_transaction_token_generate, {
-        mid: encData(MID),
-        mkey: encData(MKEY),
+        mid: encData(P_MID),
+        mkey: encData(P_MKEY),
         oid: oid,
         value: Total,
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
@@ -169,9 +170,9 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
                   },
                   transactionStatus: function (data: any) {
                     callApi(processIDs?.paytm_transaction_verify, {
-                      mid: encData(MID),
+                      mid: encData(P_MID),
                       oid: oid,
-                      mkey: encData(MKEY),
+                      mkey: encData(P_MKEY),
                     }) // @ts-ignore
                       .then((res: responseType) => {
                         if (res?.status === 200) {
@@ -233,8 +234,97 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
         });
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      toast.error(`Error: ${error}`);
     }
+  };
+  const CashOnDelivery = () => {
+    setLoading(true);
+    let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
+    const cartItem =
+      cart?.length === 1
+        ? cart
+        : cart?.map((i: any) => {
+            return {
+              ...i,
+              subOrderId: `${oid}_${Math.floor(Math.random() * Date.now())}`,
+              subOrderStatus: "Accepted",
+            };
+          });
+    let body = {
+      type: "Online",
+      userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+      oid: oid,
+      txnId: "NA",
+      items: cartItem,
+      shippingAddress: Address,
+      total: Total.toString(),
+      paymentStatus: "Pending",
+      orderStatus: "Accepted",
+      orderTimeStamp: moment().format().split("T").join(" "),
+    };
+    callApi(processIDs?.create_order, body) // @ts-ignore
+      .then((res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            setSessionObjectData(storageConfig?.orders, res?.data?.returnData);
+            if (source === "cart-page") {
+              callApi(processIDs?.clear_cart, {
+                userId: getSessionObjectData(storageConfig?.userProfile)?.id,
+              }) // @ts-ignore
+                .then((res: responseType) => {
+                  if (res?.status === 200) {
+                    setSessionObjectData(storageConfig?.cart, []);
+                    messageService?.sendMessage(
+                      "checkout-card",
+                      // @ts-ignore
+                      {
+                        action: "clear-cart-payment-successfull",
+                        params: {
+                          cart: [],
+                          order: {
+                            orderId: oid,
+                            cart: cartItem,
+                            total: Total.toString(),
+                            address: Address,
+                          },
+                        },
+                      },
+                      "global"
+                    );
+                  } else {
+                    toast.error(`Error: ${res?.status}`);
+                  }
+                })
+                .catch((err) => {
+                  toast.error(`Error: ${err}`);
+                });
+            } else {
+              messageService?.sendMessage(
+                "checkout-card",
+                // @ts-ignore
+                {
+                  action: "payment-successfull",
+                  params: {
+                    order: {
+                      orderId: oid,
+                      cart: cartItem,
+                      total: Total.toString(),
+                      address: Address,
+                    },
+                  },
+                },
+                "global"
+              );
+            }
+            document.getElementById("app-close-btn")?.click();
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+        }
+      })
+      .catch((err) => {
+        toast.error(`Error: ${err}`);
+      });
   };
   return (
     <>
@@ -246,26 +336,41 @@ const PaytmPayment = (props: PaytmPaymentProps) => {
       </Head>
       <Script
         type="application/javascript"
-        src={`${paytmbaseurl}/merchantpgpui/checkoutjs/merchants/${MID}.js`}
+        src={`${paytmbaseurl}/merchantpgpui/checkoutjs/merchants/${P_MID}.js`}
         crossOrigin="anonymous"
       />
-      <button
-        className={`paytm-button ${disable ? "disable" : ""}`}
-        type="button"
-        disabled={disable || loading}
-        onClick={InitiatePayment}
-      >
-        {loading ? (
-          <Loading className="dot-flashing" />
-        ) : (
-          <>
-            Pay {labelConfig?.inr_code}
-            {Total}
-          </>
-        )}
-      </button>
+      <div className="payment">
+        <div className="total-payment">
+          Total: {labelConfig?.inr_code}
+          {Total}
+        </div>
+        <button
+          className={`payment-button ${disable ? "disable" : ""}`}
+          type="button"
+          disabled={disable || loading}
+          onClick={InitiatePayment}
+        >
+          {loading ? (
+            <Loading className="dot-flashing" />
+          ) : (
+            <>QR code / UPI / Net banking</>
+          )}
+        </button>
+        <button
+          className={`payment-button ${disable ? "disable" : ""}`}
+          type="button"
+          disabled={disable || loading}
+          onClick={CashOnDelivery}
+        >
+          {loading ? (
+            <Loading className="dot-flashing" />
+          ) : (
+            <>Cash on delivery</>
+          )}
+        </button>
+      </div>
     </>
   );
 };
 
-export default PaytmPayment;
+export default Payment;

@@ -11,7 +11,7 @@ import {
   getSessionObjectData,
   setSessionObjectData,
 } from "../Functions/util";
-import PaytmPayment from "./PaytmPayment";
+import Payment from "./Payment";
 
 export type CheckoutCardProps = {
   source: string;
@@ -275,13 +275,13 @@ const CheckoutCard = (props: CheckoutCardProps) => {
             </div>
           </div>
         </div>
-        <PaytmPayment
-          MID={
+        <Payment
+          P_MID={
             process.env.NODE_ENV === "production"
               ? paytmConfig?.mid
               : paytmConfig?.stage_mid
           }
-          MKEY={
+          P_MKEY={
             process.env.NODE_ENV === "production"
               ? paytmConfig?.mkey
               : paytmConfig?.stage_mkey
