@@ -5,21 +5,13 @@ export type FavIconProps = {
   fill: string;
   className: string;
   textColor: string;
+  onClick: any;
 };
 
 const FavIcon = (props: FavIconProps) => {
-  const { fill, className, textColor } = props;
+  const { fill, className, textColor, onClick } = props;
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        cursor: "pointer",
-        gap: "4px",
-      }}
-    >
+    <div className="header-icon" onClick={onClick}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"

@@ -7,6 +7,7 @@ import {
   labelConfig,
   serverConfig,
   storageConfig,
+  styleConfig,
 } from "../../config/siteConfig";
 import Logo from "../Assets/Images/boffocake-logo.png";
 import SearchIcon from "../Assets/Images/search-icon.svg";
@@ -229,6 +230,9 @@ const Header = () => {
     setLoginCardOpen(true);
   };
   const openProfile = () => {
+    if (window.screen.width < styleConfig?.mobile_width) {
+      return;
+    }
     navigate("/profile");
   };
 
@@ -558,39 +562,30 @@ const Header = () => {
       <div className="right-col">
         {userProfile && (
           <>
-            <div
+            <OrderIcon
+              fill="rgb(107, 39, 51)"
+              className="icon-image"
+              textColor="rgb(107, 39, 51)"
               onClick={() => {
                 navigate("/orders");
               }}
-            >
-              <OrderIcon
-                fill="rgb(107, 39, 51)"
-                className="cart-image"
-                textColor="rgb(107, 39, 51)"
-              />
-            </div>
-            <div
+            />
+            <FavIcon
+              fill="rgb(107, 39, 51)"
+              className="icon-image"
+              textColor="rgb(107, 39, 51)"
               onClick={() => {
                 navigate("/wishlist");
               }}
-            >
-              <FavIcon
-                fill="rgb(107, 39, 51)"
-                className="cart-image"
-                textColor="rgb(107, 39, 51)"
-              />
-            </div>
-            <div
+            />
+            <CartIcon
+              fill="rgb(107, 39, 51)"
+              className="icon-image"
+              textColor="rgb(107, 39, 51)"
               onClick={() => {
                 navigate("/cart");
               }}
-            >
-              <CartIcon
-                fill="rgb(107, 39, 51)"
-                className="cart-image"
-                textColor="rgb(107, 39, 51)"
-              />
-            </div>
+            />
           </>
         )}
         <div className="profile-container">

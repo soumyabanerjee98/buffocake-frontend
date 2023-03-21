@@ -15,10 +15,11 @@ export type CartIconProps = {
   fill: string;
   className: string;
   textColor: string;
+  onClick: any;
 };
 
 const CartIcon = (props: CartIconProps) => {
-  const { fill, className, textColor } = props;
+  const { fill, className, textColor, onClick } = props;
   const [cartCount, setCartCount] = useState<any>();
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.cart)) {
@@ -66,17 +67,7 @@ const CartIcon = (props: CartIconProps) => {
     });
   }, []);
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        cursor: "pointer",
-        gap: "4px",
-        position: "relative",
-      }}
-    >
+    <div className="header-icon cart" onClick={onClick}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 576 512"
@@ -89,36 +80,11 @@ const CartIcon = (props: CartIconProps) => {
       </svg>
       <div style={{ color: textColor }}>{labelConfig?.cart_label}</div>
       {cartCount === undefined && (
-        <div
-          style={{
-            position: "absolute",
-            top: "-0.8rem",
-            right: "-0.5rem",
-            height: "1rem",
-            width: "1rem",
-          }}
-        >
+        <div className="loader">
           <Loading className="spinner" />
         </div>
       )}
-      {cartCount !== 0 && (
-        <div
-          style={{
-            position: "absolute",
-            top: "-0.6rem",
-            right: "-0.4rem",
-            backgroundColor: "rgb(224, 135, 168)",
-            height: "1.2rem",
-            width: "1.2rem",
-            borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {cartCount}
-        </div>
-      )}
+      {cartCount !== 0 && <div className="count">{cartCount}</div>}
     </div>
   );
 };

@@ -95,7 +95,10 @@ export const storageConfig = {
   orders: "userOrders",
 };
 
-export const colorPalette = {};
+export const styleConfig = {
+  mobile_width: 426,
+  tablet_width: 769,
+};
 
 export const productConfig = {
   messageFieldLimit: 50,
