@@ -112,6 +112,7 @@ const GetAllProducts = async () => {
 const Header = () => {
   const [searchTxt, setSearchTxt] = useState("");
   const [navbarOpen, setNavbarOpen] = useState(false);
+  const [profileRoutes, setProfileRoutes] = useState(false);
   const url =
     process.env.NODE_ENV === "production"
       ? serverConfig?.backend_url_server
@@ -231,9 +232,26 @@ const Header = () => {
   };
   const openProfile = () => {
     if (window.screen.width < styleConfig?.mobile_width) {
+      setProfileRoutes((prev) => !prev);
       return;
     }
     navigate("/profile");
+  };
+
+  const closeProfileRoute = (e: any) => {
+    if (
+      !Array.from(e.target.classList).includes("routes") &&
+      !Array.from(e.target.classList).includes("profile-route-popup") &&
+      !Array.from(e.target.classList).includes("name-icon") &&
+      !Array.from(e.target.classList).includes("profile-icon-photo")
+    ) {
+      setProfileRoutes(false);
+    }
+  };
+
+  const navigateRoutes = (path: string) => {
+    navigate(path);
+    setProfileRoutes(false);
   };
 
   useEffect(() => {
@@ -471,7 +489,9 @@ const Header = () => {
         setUserProfile(null);
       }
     }
+    window.addEventListener("click", closeProfileRoute);
   }, []);
+
   return (
     <header className="main-header">
       <div className="left-col">
@@ -594,20 +614,58 @@ const Header = () => {
           ) : (
             <>
               {userProfile !== null ? (
-                userProfile?.profilePhoto ? (
-                  <img
-                    src={`${url}${userProfile?.profilePhoto}`}
-                    className="profile-icon-photo"
-                    onClick={openProfile}
-                  />
-                ) : (
-                  <NameIcon
-                    firstName={userProfile?.firstName}
-                    lastName={userProfile?.lastName}
-                    className="name-icon"
-                    onClick={openProfile}
-                  />
-                )
+                <div className="profile-route">
+                  {userProfile?.profilePhoto ? (
+                    <img
+                      src={`${url}${userProfile?.profilePhoto}`}
+                      className="profile-icon-photo"
+                      onClick={openProfile}
+                    />
+                  ) : (
+                    <NameIcon
+                      firstName={userProfile?.firstName}
+                      lastName={userProfile?.lastName}
+                      className="name-icon"
+                      onClick={openProfile}
+                    />
+                  )}
+                  {profileRoutes && (
+                    <div className="profile-route-popup">
+                      <div
+                        className="routes"
+                        onClick={() => {
+                          navigateRoutes("/profile");
+                        }}
+                      >
+                        My profile
+                      </div>
+                      <div
+                        className="routes"
+                        onClick={() => {
+                          navigateRoutes("/orders");
+                        }}
+                      >
+                        Orders
+                      </div>
+                      <div
+                        className="routes"
+                        onClick={() => {
+                          navigateRoutes("/wishlist");
+                        }}
+                      >
+                        Wishlist
+                      </div>
+                      <div
+                        className="routes"
+                        onClick={() => {
+                          navigateRoutes("/cart");
+                        }}
+                      >
+                        Cart
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <ProfileIcon
                   fill="rgb(107, 39, 51)"

@@ -32,7 +32,7 @@ const Home = (props: HomeProps) => {
                 <a href={i?.link} target="_blank" style={{ cursor: "pointer" }}>
                   <img
                     src={`${url}${i?.mediaPath}`}
-                    className="product-image"
+                    className="carousel-image"
                     alt={labelConfig?.image_not_loaded}
                   />
                 </a>
@@ -41,7 +41,7 @@ const Home = (props: HomeProps) => {
               return (
                 <img
                   src={`${url}${i?.mediaPath}`}
-                  className="product-image"
+                  className="carousel-image"
                   alt={labelConfig?.image_not_loaded}
                 />
               );
