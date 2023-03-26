@@ -23,6 +23,7 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
   const html2canvas = require("html2canvas");
   let dataurl: string;
   const closePopUp = () => {
+    // return;
     router.push("/orders");
     messageService?.sendMessage(
       "order-success-card",
@@ -160,112 +161,112 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
             )}
           </div>
         </div>
-      </div>
-      <div style={{ display: "block", opacity: "0", position: "absolute" }}>
-        <div id="order-receipt" style={{ padding: "5rem" }}>
-          <div
-            style={{
-              paddingBottom: "2rem",
-              fontWeight: "500",
-              fontSize: "20px",
-            }}
-          >
-            Order ID: #{order?.orderId}
-          </div>
-          <table style={{ border: "1px solid black" }}>
-            <tr>
-              {order?.cart?.length > 1 && (
+        <div className="order-success-receipt-card">
+          <div id="order-receipt" style={{ padding: "5rem" }}>
+            <div
+              style={{
+                paddingBottom: "2rem",
+                fontWeight: "500",
+                fontSize: "20px",
+              }}
+            >
+              Order ID: #{order?.orderId}
+            </div>
+            <table style={{ border: "1px solid black" }}>
+              <tr>
+                {order?.cart?.length > 1 && (
+                  <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                    Sub-Order ID
+                  </th>
+                )}
                 <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                  Sub-Order ID
+                  Product
                 </th>
-              )}
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Product
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Weight
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Flavour
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Gourmet option
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Message on cake
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Customization
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Allergy
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Delivery date
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Delivery time
-              </th>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Subtotal
-              </th>
-            </tr>
-            {order?.cart?.map((i: any) => {
-              return (
-                <tr>
-                  {i?.subOrderId && (
-                    <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
-                  )}
-                  <td style={{ textAlign: "center" }}>{i?.productName}</td>
-                  <td style={{ textAlign: "center" }}>
-                    {i?.weight}
-                    {labelConfig?.product_weight_unit}
-                  </td>
-                  <td style={{ textAlign: "center" }}>{i?.flavour}</td>
-                  <td style={{ textAlign: "center" }}>{i?.gourmet}</td>
-                  <td style={{ textAlign: "center" }}>{i?.message}</td>
-                  <td style={{ textAlign: "center" }}>{i?.custom}</td>
-                  <td style={{ textAlign: "center" }}>{i?.allergy}</td>
-                  <td style={{ textAlign: "center" }}>{i?.delDate}</td>
-                  <td style={{ textAlign: "center" }}>{i?.delTime}</td>
-                  <td style={{ textAlign: "center" }}>
-                    {labelConfig?.inr_code}
-                    {i?.subTotal}
-                  </td>
-                </tr>
-              );
-            })}
-            <tr>
-              <td
-                style={{
-                  paddingTop: "2rem",
-                  textAlign: "start",
-                  fontWeight: "600",
-                }}
-              >
-                Grand Total: {labelConfig?.inr_code}
-                {order?.total}
-              </td>
-            </tr>
-          </table>
-          <table style={{ marginTop: "2rem", border: "1px solid black" }}>
-            <tr>
-              <th style={{ border: "1px solid black", padding: "0.8rem" }}>
-                Shipping address
-              </th>
-            </tr>
-            <tr>
-              <td>
-                <div>{order?.address?.receiverName}</div>
-                <div>
-                  {order?.address?.house ? `${order?.address?.house}, ` : ""}
-                  {`${order?.address?.street}, `}
-                  {`${order?.address?.pin}`}
-                </div>
-                <div>{`${order?.address?.receiverContact}`}</div>
-              </td>
-            </tr>
-          </table>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Weight
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Flavour
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Gourmet option
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Message on cake
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Customization
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Allergy
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Delivery date
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Delivery time
+                </th>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Subtotal
+                </th>
+              </tr>
+              {order?.cart?.map((i: any) => {
+                return (
+                  <tr>
+                    {i?.subOrderId && (
+                      <td style={{ textAlign: "center" }}>#{i?.subOrderId}</td>
+                    )}
+                    <td style={{ textAlign: "center" }}>{i?.productName}</td>
+                    <td style={{ textAlign: "center" }}>
+                      {i?.weight}
+                      {labelConfig?.product_weight_unit}
+                    </td>
+                    <td style={{ textAlign: "center" }}>{i?.flavour}</td>
+                    <td style={{ textAlign: "center" }}>{i?.gourmet}</td>
+                    <td style={{ textAlign: "center" }}>{i?.message}</td>
+                    <td style={{ textAlign: "center" }}>{i?.custom}</td>
+                    <td style={{ textAlign: "center" }}>{i?.allergy}</td>
+                    <td style={{ textAlign: "center" }}>{i?.delDate}</td>
+                    <td style={{ textAlign: "center" }}>{i?.delTime}</td>
+                    <td style={{ textAlign: "center" }}>
+                      {labelConfig?.inr_code}
+                      {i?.subTotal}
+                    </td>
+                  </tr>
+                );
+              })}
+              <tr>
+                <td
+                  style={{
+                    paddingTop: "2rem",
+                    textAlign: "start",
+                    fontWeight: "600",
+                  }}
+                >
+                  Grand Total: {labelConfig?.inr_code}
+                  {order?.total}
+                </td>
+              </tr>
+            </table>
+            <table style={{ marginTop: "2rem", border: "1px solid black" }}>
+              <tr>
+                <th style={{ border: "1px solid black", padding: "0.8rem" }}>
+                  Shipping address
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <div>{order?.address?.receiverName}</div>
+                  <div>
+                    {order?.address?.house ? `${order?.address?.house}, ` : ""}
+                    {`${order?.address?.street}, `}
+                    {`${order?.address?.pin}`}
+                  </div>
+                  <div>{`${order?.address?.receiverContact}`}</div>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
     </>

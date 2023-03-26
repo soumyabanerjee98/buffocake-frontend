@@ -107,7 +107,12 @@ export async function getStaticProps() {
       return a?.priority - b?.priority;
     })
     ?.map((i: any) => {
-      let arrObj = { catId: i?._id, cat: i?.catagory, prod: [] };
+      let arrObj = {
+        catId: i?._id,
+        cat: i?.catagory,
+        type: "catagory",
+        prod: [],
+      };
       data?.map((v: any) => {
         v?.catagory?.map((w: any) => {
           if (w?.catagoryId === i?._id) {
@@ -123,7 +128,12 @@ export async function getStaticProps() {
       return a?.priority - b?.priority;
     })
     ?.map((i: any) => {
-      let arrObj = { catId: i?._id, cat: i?.subCatagory, prod: [] };
+      let arrObj = {
+        catId: i?._id,
+        cat: i?.subCatagory,
+        type: "subCatagory",
+        prod: [],
+      };
       data?.map((v: any) => {
         v?.subCatagory?.map((w: any) => {
           if (w?.subCatagoryId === i?._id) {

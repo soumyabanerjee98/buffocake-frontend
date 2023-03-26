@@ -529,7 +529,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
             {profileData?.phoneNumber}
             <button
               type="button"
-              className="google-button"
+              className="verify-button"
               onClick={VerifyAndUpdatePhone}
             >
               Verify and update

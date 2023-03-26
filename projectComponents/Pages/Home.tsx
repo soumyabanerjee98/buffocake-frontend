@@ -61,7 +61,11 @@ const Home = (props: HomeProps) => {
                   <button
                     className="view-all"
                     onClick={() => {
-                      navigate(`/catagory/${i?.catId}`);
+                      if (i?.type === "catagory") {
+                        navigate(`/catagory/${i?.catId}`);
+                      } else {
+                        navigate(`/subcatagory/${i?.catId}`);
+                      }
                     }}
                   >
                     {labelConfig?.home_view_all_button}
