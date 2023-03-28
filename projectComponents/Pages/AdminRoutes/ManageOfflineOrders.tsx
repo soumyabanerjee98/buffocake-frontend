@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import useSwr from "swr";
 import { processIDs } from "../../../config/processID";
-import { callApi, uploadImage } from "../../Functions/util";
+import { callApi, uploadImage, weightConverter } from "../../Functions/util";
 // @ts-ignore
 import Calendar from "react-calendar";
 import Select from "react-select";
@@ -58,6 +58,7 @@ const ManageOfflineOrders = () => {
 
   const [grandTotal, setGrandTotal] = useState(0);
   const minDate = new Date();
+  const today = new Date();
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 8);
   minDate.setDate(minDate.getDate() + 1);
@@ -149,7 +150,7 @@ const ManageOfflineOrders = () => {
       customization: "",
       gourmetOption: "",
       allergy: "",
-      deliveryDate: minDate,
+      deliveryDate: item?.sameDay ? today : minDate,
       deliveryTime: null,
     };
     setSelectedItem((prev: any) => {
@@ -503,9 +504,7 @@ const ManageOfflineOrders = () => {
                 <div className="order-items">
                   <div className="order-items-section">
                     <div className="label">Weight: </div>
-                    <div className="value">
-                      {i?.weight} {labelConfig?.product_weight_unit}
-                    </div>
+                    <div className="value">{weightConverter(i?.weight)}</div>
                     <Select
                       isSearchable={false}
                       placeholder={"Select weight"}
@@ -710,7 +709,7 @@ const ManageOfflineOrders = () => {
                               })
                             );
                           }}
-                          minDate={minDate}
+                          minDate={i?.sameDay ? today : minDate}
                           maxDate={maxDate}
                           value={i?.deliveryDate}
                         />

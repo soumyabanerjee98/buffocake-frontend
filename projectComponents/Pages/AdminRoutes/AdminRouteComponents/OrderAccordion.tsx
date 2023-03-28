@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { labelConfig, serverConfig } from "../../../../config/siteConfig";
 import Select from "react-select";
-import { callApi } from "../../../Functions/util";
+import { callApi, weightConverter } from "../../../Functions/util";
 import { processIDs } from "../../../../config/processID";
 import { toast } from "react-toastify";
 import { responseType } from "../../../../typings";
@@ -107,10 +107,7 @@ const OrderAccordion = (props: OrderAccordionProps) => {
                   alt="Image"
                   height={150}
                 />
-                <div>
-                  Weight: {order?.items?.[0]?.weight}
-                  {labelConfig?.product_weight_unit}
-                </div>
+                <div>Weight: {weightConverter(order?.items?.[0]?.weight)}</div>
                 <div>
                   Flavour:{" "}
                   {order?.items?.[0]?.flavour
@@ -159,10 +156,7 @@ const OrderAccordion = (props: OrderAccordionProps) => {
                           <span className="id">#{i?.subOrderId}</span>
                         </div>
                       )}
-                      <div>
-                        {i?.weight}
-                        {labelConfig?.product_weight_unit} {i?.productName}
-                      </div>
+                      <div>{weightConverter(i?.weight)}</div>
                       <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
                       <div>
                         Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}

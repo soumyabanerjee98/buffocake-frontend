@@ -11,6 +11,7 @@ import {
   callApi,
   getSessionObjectData,
   setSessionObjectData,
+  weightConverter,
 } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import { responseType } from "../../typings";
@@ -82,9 +83,7 @@ const CartCard = (props: CartCardProps) => {
         <div className="name">{cart?.productName}</div>
         <div className="section">
           <div className="title">Weight: </div>
-          <div className="value">
-            {cart?.weight} {labelConfig?.product_weight_unit}
-          </div>
+          <div className="value">{weightConverter(cart?.weight)}</div>
         </div>
         <div className="section">
           <div className="title">Flavour: </div>

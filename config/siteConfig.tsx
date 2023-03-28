@@ -80,6 +80,7 @@ export const labelConfig = {
   product_delivery_time_label: "Delivery time",
   product_delivery_pin_availibility: "Check availibility",
   product_weight_unit: "kg",
+  product_weight_unit_small: "gm",
   product_unit_add: "+",
   product_unit_deduct: "-",
   product_add_to_cart: "Add to Cart",

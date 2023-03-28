@@ -1807,6 +1807,10 @@ input::-webkit-inner-spin-button {
 .manage-products .form-section.textarea {
   align-items: start;
 }
+.manage-products .form-section.checkbox {
+  justify-content: flex-start;
+  gap: 1rem;
+}
 .manage-products .form-section .options {
   display: flex;
   flex-direction: column;

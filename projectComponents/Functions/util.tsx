@@ -7,7 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { EncKey, firebaseConfig } from "../../config/secret";
-import { serverConfig } from "../../config/siteConfig";
+import { labelConfig, serverConfig } from "../../config/siteConfig";
 const CryptoJS = require("crypto-js");
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -157,4 +157,11 @@ export const removeLocalData = (key: string) => {
   } catch (error) {
     return null;
   }
+};
+
+export const weightConverter = (value: number) => {
+  if (Math.floor(value) === 0) {
+    return `${value * 1000} ${labelConfig?.product_weight_unit_small}`;
+  }
+  return `${value} ${labelConfig?.product_weight_unit}`;
 };

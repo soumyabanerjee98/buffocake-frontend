@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { processIDs } from "../../../../config/processID";
-import { callApi, uploadImage } from "../../../Functions/util";
+import { callApi, uploadImage, weightConverter } from "../../../Functions/util";
 import { responseType } from "../../../../typings";
 import { labelConfig, serverConfig } from "../../../../config/siteConfig";
 import Image from "next/image";
@@ -29,6 +29,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
     weight: { label: "", value: 0 },
     imageEditId: "",
     imageEditPath: "",
+    sameDay: product?.sameDay ? true : false,
   });
   const [catagoryData, setCatagoryData] = useState({
     loading: false,
@@ -260,6 +261,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
       metaDesc: formData?.metaDesc,
       title: formData?.title,
       description: formData?.description,
+      sameDay: formData?.sameDay,
     }) //@ts-ignore
       .then((res: responseType) => {
         if (res?.status === 200) {
@@ -637,7 +639,7 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
                 {product?.weight?.map((i: any) => {
                   return (
                     <div className="option">
-                      Weight: {i?.label} {labelConfig?.product_weight_unit}
+                      Weight: {weightConverter(i?.label)}
                       <div>
                         Value: {labelConfig?.inr_code}
                         {i?.value}
@@ -994,6 +996,22 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
               >
                 Add
               </button>
+            </div>
+            <div className="details-section">
+              <div className="title">Same day</div>
+              <div className="edit">
+                <input
+                  className="value"
+                  type="checkbox"
+                  checked={formData?.sameDay}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setFormData((prev: any) => {
+                      return { ...prev, sameDay: !prev.sameDay };
+                    });
+                  }}
+                />
+                <button onClick={UpdateProduct}>Save</button>
+              </div>
             </div>
             <button onClick={DeleteProduct}>Delete Product</button>
           </div>

@@ -4,7 +4,7 @@ import NOImage from "../../../Assets/Images/no-image.png";
 import Select from "react-select";
 import { labelConfig } from "../../../../config/siteConfig";
 import { toast } from "react-toastify";
-import { callApi, uploadImage } from "../../../Functions/util";
+import { callApi, uploadImage, weightConverter } from "../../../Functions/util";
 import { processIDs } from "../../../../config/processID";
 import { responseType } from "../../../../typings";
 
@@ -21,6 +21,7 @@ const ProductManageCard = () => {
     weight: [],
     availableFlavours: [],
     gourmetOptions: [],
+    sameDay: false,
   });
   const [flavourState, setFlavourState] = useState({
     flavour: "",
@@ -173,6 +174,7 @@ const ProductManageCard = () => {
                     return { mediaPath: i?.path };
                   }),
                   weight: formData?.weight,
+                  sameDay: formData?.sameDay,
                 }) // @ts-ignore
                   .then((res: responseType) => {
                     if (res?.status === 200) {
@@ -224,6 +226,7 @@ const ProductManageCard = () => {
           subCatagoryArr: formData?.subCatagoryArr,
           availableFlavours: formData?.availableFlavours,
           gourmetOptions: formData?.gourmetOptions,
+          sameDay: formData?.sameDay,
         }) //@ts-ignore
           .then((res: responseType) => {
             if (res?.status === 200) {
@@ -546,9 +549,7 @@ const ProductManageCard = () => {
               <div className="data-value">
                 <div className="option-items">
                   <div>Weight:</div>
-                  <div>
-                    {i?.label} {labelConfig?.product_weight_unit}
-                  </div>
+                  <div>{weightConverter(i?.label)}</div>
                 </div>
                 <div className="option-items">
                   <div>Value:</div>
@@ -819,6 +820,20 @@ const ProductManageCard = () => {
             Add
           </button>
         </div>
+      </div>
+      <div className="form-section checkbox">
+        <label>
+          Same day delivery <span style={{ color: "red" }}>*</span>
+        </label>
+        <input
+          type={"checkbox"}
+          checked={formData?.sameDay}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData((prev: any) => {
+              return { ...prev, sameDay: !prev.sameDay };
+            });
+          }}
+        />
       </div>
       <button className="edit-button" onClick={AddProduct}>
         Add product

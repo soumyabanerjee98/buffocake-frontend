@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { labelConfig } from "../../config/siteConfig";
 import { messageService } from "../Functions/messageService";
+import { weightConverter } from "../Functions/util";
 
 export type OrderCardProps = { orderItem: any };
 
@@ -62,8 +63,7 @@ const OrderCard = (props: OrderCardProps) => {
                     </div>
                   )}
                   <div>
-                    {i?.weight}
-                    {labelConfig?.product_weight_unit} {i?.productName}
+                    {weightConverter(i?.weight)} {i?.productName}
                   </div>
                   <div>Flavour: {i?.flavour ? i?.flavour : "N/A"}</div>
                   <div>Gourmet option: {i?.gourmet ? i?.gourmet : "N/A"}</div>

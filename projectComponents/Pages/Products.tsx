@@ -16,6 +16,7 @@ import {
   callApi,
   getSessionObjectData,
   setSessionObjectData,
+  weightConverter,
 } from "../Functions/util";
 import HeartIcon from "../UI/Icons/HeartIcon";
 import { messageService } from "../Functions/messageService";
@@ -23,6 +24,7 @@ import { responseType } from "../../typings";
 import Loading from "../UI/Loading";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import VegSign from "../Assets/Images/veg-small.png";
 
 export type ProductProps = {
   productDetails: any;
@@ -32,6 +34,7 @@ const Products = (props: ProductProps) => {
   const { productDetails } = props;
   const router = useRouter();
   const minDate = new Date();
+  const today = new Date();
   const maxDate = new Date();
   const timer = useRef<any>();
   maxDate.setDate(maxDate.getDate() + 8);
@@ -61,7 +64,7 @@ const Products = (props: ProductProps) => {
     customization: "",
     gourmetOption: "",
     allergy: "",
-    deliveryDate: minDate,
+    deliveryDate: productDetails?.sameDay ? today : minDate,
     deliveryTime: null,
     pin: "",
     available: null,
@@ -573,7 +576,17 @@ const Products = (props: ProductProps) => {
 
       <div className="details-section">
         <div className="info-section">
-          <div className="title">{productDetails?.title}</div>
+          <div className="title">
+            {productDetails?.title}{" "}
+            <span>
+              <Image
+                src={VegSign}
+                alt="Veg"
+                height={20}
+                style={{ marginBottom: "1rem" }}
+              />
+            </span>
+          </div>
           <div className="subtotal">
             {labelConfig?.inr_code}
             {checkOutDetails?.subTotal +
@@ -626,10 +639,10 @@ const Products = (props: ProductProps) => {
                         // @ts-ignore
                         document.getElementById(
                           `product-weight-${idx}`
-                        ).innerText = `${i?.label} ${labelConfig?.product_weight_unit}`;
+                        ).innerText = weightConverter(i?.label);
                       }}
                     >
-                      {i?.label} {labelConfig?.product_weight_unit}
+                      {weightConverter(i?.label)}
                     </div>
                   ))}
               </div>
@@ -673,7 +686,7 @@ const Products = (props: ProductProps) => {
                         });
                         setCalendarOpen(false);
                       }}
-                      minDate={minDate}
+                      minDate={productDetails?.sameDay ? today : minDate}
                       maxDate={maxDate}
                       value={checkOutDetails?.deliveryDate}
                       className="calendar"
@@ -687,7 +700,17 @@ const Products = (props: ProductProps) => {
                   </>
                 ) : (
                   <>
-                    <div>{checkOutDetails?.deliveryDate.toDateString()}</div>
+                    <div>
+                      {checkOutDetails?.deliveryDate.toDateString()}
+                      {productDetails?.sameDay && (
+                        <>
+                          <span style={{ color: "green", marginLeft: "1rem" }}>
+                            (Same day delivery available)
+                          </span>
+                          <span style={{ color: "red" }}> *</span>
+                        </>
+                      )}
+                    </div>
                     <button
                       className="calendar-popup"
                       onClick={() => {

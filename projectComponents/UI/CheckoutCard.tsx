@@ -10,6 +10,7 @@ import {
   callApi,
   getSessionObjectData,
   setSessionObjectData,
+  weightConverter,
 } from "../Functions/util";
 import Payment from "./Payment";
 
@@ -233,9 +234,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
                     <div className="name">{i?.productName}</div>
                     <div className="section">
                       <div className="label">Weight: </div>
-                      <div className="value">
-                        {i?.weight} {labelConfig?.product_weight_unit}
-                      </div>
+                      <div className="value">{weightConverter(i?.weight)}</div>
                     </div>
                     <div className="section">
                       <div className="label">Flavour: </div>

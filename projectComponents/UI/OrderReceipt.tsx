@@ -1,6 +1,7 @@
 import React from "react";
 import { labelConfig } from "../../config/siteConfig";
 import { messageService } from "../Functions/messageService";
+import { weightConverter } from "../Functions/util";
 export type OrderReceiptProps = {
   order: any;
 };
@@ -93,8 +94,7 @@ const OrderReceipt = (props: OrderReceiptProps) => {
                   )}
                   <td style={{ textAlign: "center" }}>{i?.productName}</td>
                   <td style={{ textAlign: "center" }}>
-                    {i?.weight}
-                    {labelConfig?.product_weight_unit}
+                    {weightConverter(i?.weight)}
                   </td>
                   <td style={{ textAlign: "center" }}>{i?.flavour}</td>
                   <td style={{ textAlign: "center" }}>{i?.gourmet}</td>
