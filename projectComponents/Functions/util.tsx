@@ -165,3 +165,24 @@ export const weightConverter = (value: number) => {
   }
   return `${value} ${labelConfig?.product_weight_unit}`;
 };
+
+export const callPaymentApi = (processid: string, datajson: object) => {
+  try {
+    let url =
+      process?.env?.NODE_ENV === "development"
+        ? serverConfig?.backend_url_test
+        : serverConfig?.payment_server;
+    let data = {
+      processId: processid,
+      datajson: datajson,
+    };
+    return axios.post(url, JSON.stringify(data), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      timeout: serverConfig?.request_timeout,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -45,7 +45,14 @@ const SubCatagory = (props: SubCatagoryProps) => {
               )}
             </div>
             <div className="product-name">{val?.title}</div>
-            <div className="product-price">&#8377;{val?.unitValue}</div>
+            <div className="product-price">
+              &#8377;
+              {Math.min(
+                ...val?.weight?.map((i: any) => {
+                  return i?.value;
+                })
+              )}
+            </div>
           </div>
         );
       })}

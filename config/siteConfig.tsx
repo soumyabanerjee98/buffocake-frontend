@@ -11,6 +11,7 @@ export const metaConfig = {
 export const serverConfig = {
   backend_url_test: "http://localhost:9000/",
   backend_url_server: "https://boffocakes-api.onrender.com/",
+  payment_server: "https://boffocakes-api.onrender.com/",
   request_timeout: 10000,
   del_time_arr: [
     {

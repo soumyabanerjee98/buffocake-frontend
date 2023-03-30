@@ -8,6 +8,7 @@ import {
 } from "../../config/siteConfig";
 import {
   callApi,
+  callPaymentApi,
   getLocalObjectData,
   getSessionObjectData,
   setSessionObjectData,
@@ -139,7 +140,8 @@ const Payment = (props: PaymentProps) => {
     try {
       setLoading(true);
       let oid = `ORDER_${Math.floor(Math.random() * Date.now())}`;
-      callApi(processIDs?.paytm_transaction_token_generate, {
+      // @ts-ignore
+      callPaymentApi(processIDs?.paytm_transaction_token_generate, {
         mid: encData(P_MID),
         mkey: encData(P_MKEY),
         oid: oid,
@@ -169,7 +171,8 @@ const Payment = (props: PaymentProps) => {
                     console.log("data => ", data);
                   },
                   transactionStatus: function (data: any) {
-                    callApi(processIDs?.paytm_transaction_verify, {
+                    // @ts-ignore
+                    callPaymentApi(processIDs?.paytm_transaction_verify, {
                       mid: encData(P_MID),
                       oid: oid,
                       mkey: encData(P_MKEY),
