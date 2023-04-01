@@ -102,6 +102,17 @@ export const styleConfig = {
   tablet_width: 769,
 };
 
+export const colorConfig = {
+  p_1: "#f89cac",
+  p_2: "#f7b3b7",
+  p_3: "#f3cfc5",
+  p_4: "#eee2d5",
+  s_1: "#40e1d1",
+  s_2: "#47cfcb",
+  s_3: "rgb(107, 39, 51)",
+  s_3_light: "rgba(107, 39, 51, 0.25)",
+};
+
 export const productConfig = {
   messageFieldLimit: 50,
   allergyFieldLimit: 200,

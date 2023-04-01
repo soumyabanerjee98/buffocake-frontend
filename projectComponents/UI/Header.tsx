@@ -4,6 +4,7 @@ import useSwr from "swr";
 import React, { useEffect, useState } from "react";
 import { processIDs } from "../../config/processID";
 import {
+  colorConfig,
   labelConfig,
   serverConfig,
   storageConfig,
@@ -583,25 +584,25 @@ const Header = () => {
         {userProfile && (
           <>
             <OrderIcon
-              fill="rgb(107, 39, 51)"
+              fill={colorConfig?.s_3}
               className="icon-image"
-              textColor="rgb(107, 39, 51)"
+              textColor={colorConfig?.s_3}
               onClick={() => {
                 navigate("/orders");
               }}
             />
             <FavIcon
-              fill="rgb(107, 39, 51)"
+              fill={colorConfig?.s_3}
               className="icon-image"
-              textColor="rgb(107, 39, 51)"
+              textColor={colorConfig?.s_3}
               onClick={() => {
                 navigate("/wishlist");
               }}
             />
             <CartIcon
-              fill="rgb(107, 39, 51)"
+              fill={colorConfig?.s_3}
               className="icon-image"
-              textColor="rgb(107, 39, 51)"
+              textColor={colorConfig?.s_3}
               onClick={() => {
                 navigate("/cart");
               }}
@@ -668,9 +669,9 @@ const Header = () => {
                 </div>
               ) : (
                 <ProfileIcon
-                  fill="rgb(107, 39, 51)"
+                  fill={colorConfig?.s_3}
                   className="profile-icon"
-                  textColor="rgb(107, 39, 51)"
+                  textColor={colorConfig?.s_3}
                   onClick={openPopUp}
                 />
               )}
