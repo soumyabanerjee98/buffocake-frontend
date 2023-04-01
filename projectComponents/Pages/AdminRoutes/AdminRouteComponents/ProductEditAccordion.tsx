@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { processIDs } from "../../../../config/processID";
@@ -7,6 +8,7 @@ import { responseType } from "../../../../typings";
 import { labelConfig, serverConfig } from "../../../../config/siteConfig";
 import Image from "next/image";
 import Broken from "../../../Assets/Images/no-image.png";
+const RTEditor = dynamic(() => import("../../../UI/RTEditor"), { ssr: false });
 
 export type ProductEditAccordionProps = {
   product: any;
@@ -395,14 +397,11 @@ const ProductEditAccordion = (props: ProductEditAccordionProps) => {
             <div className="details-section">
               <div className="title">Product description</div>
               <div className="edit">
-                <textarea
-                  className="value texarea"
-                  value={formData?.description}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    setFormData((prev: any) => {
-                      return { ...prev, description: e.target.value };
-                    });
-                  }}
+                <RTEditor
+                  editorClassName="value textarea"
+                  wrapperClassName="editor-wrapper-edit"
+                  text={formData?.description}
+                  setText={setFormData}
                 />
                 <button onClick={UpdateProduct}>Save</button>
               </div>

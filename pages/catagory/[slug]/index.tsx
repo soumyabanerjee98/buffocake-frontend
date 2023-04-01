@@ -26,7 +26,10 @@ const CatagoryPage = (props: any) => {
               content="width=device-width, initial-scale=1"
             />
           </Head>
-          <Catagory productList={catagoryProducts} />
+          <Catagory
+            catagoryName={catagoryName}
+            productList={catagoryProducts}
+          />
         </>
       ) : (
         <PageNotFound />

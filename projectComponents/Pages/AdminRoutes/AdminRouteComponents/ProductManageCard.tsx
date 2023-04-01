@@ -1,4 +1,5 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import NOImage from "../../../Assets/Images/no-image.png";
 import Select from "react-select";
@@ -7,6 +8,7 @@ import { toast } from "react-toastify";
 import { callApi, uploadImage, weightConverter } from "../../../Functions/util";
 import { processIDs } from "../../../../config/processID";
 import { responseType } from "../../../../typings";
+const RTEditor = dynamic(() => import("../../../UI/RTEditor"), { ssr: false });
 
 const ProductManageCard = () => {
   const [formData, setFormData] = useState({
@@ -311,14 +313,11 @@ const ProductManageCard = () => {
         <label>
           Product description <span style={{ color: "red" }}>*</span>
         </label>
-        <textarea
-          className="data-value textarea"
-          value={formData?.description}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setFormData((prev: any) => {
-              return { ...prev, description: e.target.value };
-            });
-          }}
+        <RTEditor
+          editorClassName="data-value textarea"
+          wrapperClassName="editor-wrapper"
+          text={formData?.description}
+          setText={setFormData}
         />
       </div>
       <div className="form-section selection">

@@ -4,8 +4,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../../config/processID";
 import { callApi } from "../../../projectComponents/Functions/util";
+import Catagory from "../../../projectComponents/Pages/Catagory";
 import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
-import SubCatagory from "../../../projectComponents/Pages/SubCatagory";
 
 const SubCatagoryPage = (props: any) => {
   const { subCatagoryProducts, subCatagoryName } = props;
@@ -26,7 +26,10 @@ const SubCatagoryPage = (props: any) => {
               content="width=device-width, initial-scale=1"
             />
           </Head>
-          <SubCatagory productList={subCatagoryProducts} />
+          <Catagory
+            catagoryName={subCatagoryName}
+            productList={subCatagoryProducts}
+          />
         </>
       ) : (
         <PageNotFound />

@@ -5,10 +5,11 @@ import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 
 export type CatagoryProps = {
+  catagoryName: string;
   productList: any;
 };
 const Catagory = (props: CatagoryProps) => {
-  const { productList } = props;
+  const { productList, catagoryName } = props;
   const redirect = useRouter();
   const url =
     process?.env?.NODE_ENV === "development"
@@ -19,42 +20,45 @@ const Catagory = (props: CatagoryProps) => {
   };
   return (
     <div className="catagory-screen">
-      {productList?.map((val: any, ind: number) => {
-        return (
-          <div
-            key={`product-card-${ind}`}
-            className="product-card"
-            onClick={() => {
-              navigate(`/product/${val?._id}`);
-            }}
-          >
-            <div className="product-image-container">
-              {val?.productImage?.length > 0 ? (
-                <img
-                  src={`${url}${val?.productImage?.[0]?.mediaPath}`}
-                  alt={labelConfig?.image_not_loaded}
-                  className="product-image"
-                />
-              ) : (
-                <Image
-                  src={NoIMage}
-                  alt={labelConfig?.image_not_loaded}
-                  className="product-image"
-                />
-              )}
+      <div className="header">{catagoryName}</div>
+      <div className="catagory-list">
+        {productList?.map((val: any, ind: number) => {
+          return (
+            <div
+              key={`product-card-${ind}`}
+              className="product-card"
+              onClick={() => {
+                navigate(`/product/${val?._id}`);
+              }}
+            >
+              <div className="product-image-container">
+                {val?.productImage?.length > 0 ? (
+                  <img
+                    src={`${url}${val?.productImage?.[0]?.mediaPath}`}
+                    alt={labelConfig?.image_not_loaded}
+                    className="product-image"
+                  />
+                ) : (
+                  <Image
+                    src={NoIMage}
+                    alt={labelConfig?.image_not_loaded}
+                    className="product-image"
+                  />
+                )}
+              </div>
+              <div className="product-name">{val?.title}</div>
+              <div className="product-price">
+                &#8377;
+                {Math.min(
+                  ...val?.weight?.map((i: any) => {
+                    return i?.value;
+                  })
+                )}
+              </div>
             </div>
-            <div className="product-name">{val?.title}</div>
-            <div className="product-price">
-              &#8377;
-              {Math.min(
-                ...val?.weight?.map((i: any) => {
-                  return i?.value;
-                })
-              )}
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
