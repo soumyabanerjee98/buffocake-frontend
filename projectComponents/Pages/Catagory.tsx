@@ -54,6 +54,9 @@ const Catagory = (props: CatagoryProps) => {
                     return i?.value;
                   })
                 )}
+                {val?.sameDay && (
+                  <span className="same-day">Same day delivery</span>
+                )}
               </div>
             </div>
           );
