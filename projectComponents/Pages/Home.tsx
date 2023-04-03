@@ -109,6 +109,9 @@ const Home = (props: HomeProps) => {
                               return i?.value;
                             })
                           )}
+                          {val?.sameDay && (
+                            <span className="same-day">Same day delivery</span>
+                          )}
                         </div>
                       </div>
                     );
