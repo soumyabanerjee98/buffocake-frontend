@@ -629,20 +629,12 @@ const Products = (props: ProductProps) => {
                       onClick={() => {
                         selectWeight(i, idx);
                       }}
-                      onMouseEnter={() => {
-                        // @ts-ignore
-                        document.getElementById(
-                          `product-weight-${idx}`
-                        ).innerText = i?.value;
-                      }}
-                      onMouseLeave={() => {
-                        // @ts-ignore
-                        document.getElementById(
-                          `product-weight-${idx}`
-                        ).innerText = weightConverter(i?.label);
-                      }}
                     >
                       {weightConverter(i?.label)}
+                      <div className="variant-price">
+                        {labelConfig?.inr_code}
+                        {i?.value}
+                      </div>
                     </div>
                   ))}
               </div>
@@ -770,20 +762,14 @@ const Products = (props: ProductProps) => {
                         onClick={() => {
                           selectFlavour(i, idx);
                         }}
-                        onMouseEnter={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-flavour-${idx}`
-                          ).innerText = `+${i?.value}`;
-                        }}
-                        onMouseLeave={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-flavour-${idx}`
-                          ).innerText = i?.flavour;
-                        }}
                       >
                         {i?.flavour}
+                        {i?.value !== 0 && (
+                          <div className="variant-price">
+                            {labelConfig?.inr_code}
+                            {i?.value}
+                          </div>
+                        )}
                       </div>
                     ))}
                 </div>
@@ -852,20 +838,14 @@ const Products = (props: ProductProps) => {
                         onClick={() => {
                           selectGourmet(i, idx);
                         }}
-                        onMouseEnter={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-gourmet-${idx}`
-                          ).innerText = `+${i?.value}`;
-                        }}
-                        onMouseLeave={() => {
-                          // @ts-ignore
-                          document.getElementById(
-                            `product-gourmet-${idx}`
-                          ).innerText = i?.option;
-                        }}
                       >
                         {i?.option}
+                        {i?.value !== 0 && (
+                          <div className="variant-price">
+                            {labelConfig?.inr_code}
+                            {i?.value}
+                          </div>
+                        )}
                       </div>
                     )
                   )}

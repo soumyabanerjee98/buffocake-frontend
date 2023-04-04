@@ -521,6 +521,9 @@ const Header = () => {
             onClick={() => {
               setSearchTxt("");
               setSearchResult([]);
+              setCatagorySearchResult((prev: any) => {
+                return { ...prev, cat: [], subCat: [] };
+              });
             }}
           >
             <i className="fas fa-undo" />
@@ -706,7 +709,7 @@ const Header = () => {
       {receiptCardOpen?.state && (
         <OrderReceipt order={receiptCardOpen?.order} />
       )}
-      {navbarOpen && <Navbar />}
+      {navbarOpen && <Navbar products={products} catagories={catagories} />}
     </header>
   );
 };

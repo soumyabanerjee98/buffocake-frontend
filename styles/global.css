@@ -638,12 +638,25 @@ input::-webkit-inner-spin-button {
   background-color: var(--chocolate-hover);
   cursor: pointer;
   transition: all 200ms ease-in-out;
+  position: relative;
 }
 
 .product-screen .options:hover {
   background-color: var(--chocolate);
   color: white;
   transition: all 200ms ease-in-out;
+}
+
+.product-screen .options .variant-price{
+  position: absolute;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  background-color: var(--green-hover);
+  color: var(--white);
+  padding: 0.1rem 0.2rem;
+  font-size: small;
+  top: -6px;
+  right: -6px;
 }
 
 .product-screen .selected-option {
@@ -2997,6 +3010,48 @@ input::-webkit-inner-spin-button {
   width: 100%;
   height: 100%;
   z-index: 10;
+}
+.navbar .nav-search{
+  display: none;
+}
+@media only screen and (max-width: 426px) {
+  .navbar .nav-search {
+      display: flex;
+      justify-content: space-between;
+    }
+}
+.navbar .nav-search input{
+  width: -webkit-fill-available;
+  border: none;
+}
+.navbar .search-result {
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+}
+
+.navbar .search-result .division-title {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  font-weight: 500;
+  font-size: large;
+}
+
+.navbar .search-result .search-items {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  background-color: aliceblue;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 200ms ease-in-out;
+}
+
+.navbar .search-result .search-items:hover {
+  border-color: var(--blue);
+  transition: all 200ms ease-in-out;
 }
 .navbar .nav-container {
   background-color: white;
