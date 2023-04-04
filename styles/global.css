@@ -360,7 +360,7 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-.home-screen .product-card .same-day-container{
+.home-screen .product-card .same-day-container {
   margin: 1rem;
   height: 0.6rem;
 }
@@ -412,6 +412,9 @@ input::-webkit-inner-spin-button {
   text-shadow: 0 0 0.4px black;
   font-weight: 500;
   padding: 0.2rem 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .home-screen .product-card > .product-price {
@@ -1724,7 +1727,7 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-.catagory-screen .catagory-list .product-card .same-day-container{
+.catagory-screen .catagory-list .product-card .same-day-container {
   margin: 1rem;
   height: 0.6rem;
 }
@@ -1763,6 +1766,9 @@ input::-webkit-inner-spin-button {
   text-shadow: 0 0 0.4px black;
   font-weight: 500;
   padding: 0.2rem 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .catagory-screen .catagory-list .product-card > .product-price {
