@@ -101,6 +101,11 @@ const Home = (props: HomeProps) => {
                             />
                           )}
                         </div>
+                        <div className="same-day-container">
+                          {val?.sameDay && (
+                            <span className="same-day">Same day delivery</span>
+                          )}
+                        </div>
                         <div className="product-name">{val?.title}</div>
                         <div className="product-price">
                           &#8377;
@@ -108,9 +113,6 @@ const Home = (props: HomeProps) => {
                             ...val?.weight?.map((i: any) => {
                               return i?.value;
                             })
-                          )}
-                          {val?.sameDay && (
-                            <span className="same-day">Same day delivery</span>
                           )}
                         </div>
                       </div>

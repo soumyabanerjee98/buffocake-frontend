@@ -46,6 +46,11 @@ const Catagory = (props: CatagoryProps) => {
                   />
                 )}
               </div>
+              <div className="same-day-container">
+                {val?.sameDay && (
+                  <span className="same-day">Same day delivery</span>
+                )}
+              </div>
               <div className="product-name">{val?.title}</div>
               <div className="product-price">
                 &#8377;
@@ -53,9 +58,6 @@ const Catagory = (props: CatagoryProps) => {
                   ...val?.weight?.map((i: any) => {
                     return i?.value;
                   })
-                )}
-                {val?.sameDay && (
-                  <span className="same-day">Same day delivery</span>
                 )}
               </div>
             </div>
