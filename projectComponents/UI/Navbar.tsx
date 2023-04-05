@@ -68,6 +68,7 @@ const Navbar = (props: NavbarProps) => {
   };
   const redirect = (path: string) => {
     router.push(path);
+    closePopUp();
   };
   const searchByType = (e: any) => {
     let text = e.target.value;
