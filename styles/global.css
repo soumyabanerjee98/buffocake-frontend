@@ -308,6 +308,11 @@ input::-webkit-inner-spin-button {
 }
 
 /* home page */
+
+.home-screen{ 
+  position: relative;
+}
+
 .home-screen .header {
   padding: 1rem;
   margin: 1rem;
@@ -317,6 +322,20 @@ input::-webkit-inner-spin-button {
   /* border-bottom: 1px solid black;
   border-top: 1px solid black; */
   color: var(--chocolate);
+}
+
+.home-screen .scroll-to-top{
+  position:fixed;
+  top: 88vh;
+  right: 1rem;
+  height: 3.5rem;
+  width: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: var(--pink-2);
 }
 
 .home-screen .product-catagory {

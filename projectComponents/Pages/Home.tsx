@@ -22,6 +22,9 @@ const Home = (props: HomeProps) => {
   const navigate = (path: string) => {
     redirect.push(path);
   };
+  const scrolltoTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -123,6 +126,9 @@ const Home = (props: HomeProps) => {
             </div>
           );
         })}
+        <div className="scroll-to-top" onClick={scrolltoTop}>
+          <i className="fa-solid fa-arrow-up scroll-arrow" />
+        </div>
       </div>
     </>
   );
