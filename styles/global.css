@@ -3271,6 +3271,45 @@ input::-webkit-inner-spin-button {
   margin: 0 !important;
 }
 
+/* offline mail send */
+
+.offline-mail-send{
+  background-color: var(--white);
+}
+
+.offline-mail-send .confirmation{
+  padding: 1rem;
+}
+
+.offline-mail-send .label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.offline-mail-send .email {
+  width: 50%;
+  padding: 0.2rem;
+}
+
+.offline-mail-send .action-button{
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.offline-mail-send .action-button .send, .offline-mail-send .action-button .cancel{
+border-radius: 4px;
+color: var(--white);
+padding: 0.2rem 0.4rem;
+}
+
+.offline-mail-send .action-button .send{
+  background-color: var(--green-hover);
+}
+
+.offline-mail-send .action-button .cancel{
+  background-color: var(--red);
+}
 /* body end **************** */
 
 /* footer start ************** */

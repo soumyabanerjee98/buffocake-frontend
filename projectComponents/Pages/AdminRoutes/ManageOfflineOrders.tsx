@@ -17,6 +17,7 @@ import {
 import moment from "moment";
 import ToggleButton from "../../UI/ToggleButton";
 import { responseType } from "../../../typings";
+import { messageService } from "../../Functions/messageService";
 
 const dataFetcher = async () => {
   let data = await callApi(processIDs?.get_all_products, {})
@@ -317,6 +318,20 @@ const ManageOfflineOrders = () => {
                   if (res?.status === 200) {
                     if (res?.data?.returnCode) {
                       toast.success(res?.data?.msg);
+                      messageService?.sendMessage(
+                        "offline-order",
+                        // @ts-ignore
+                        {
+                          action: "send-mail",
+                          params: {
+                            oid: body?.oid,
+                            total: body?.total,
+                            address: body?.shippingAddress,
+                            items: body?.items,
+                          },
+                        },
+                        "offline-send-mail"
+                      );
                       setCustomOrder((prev: any) => {
                         return {
                           ...prev,
@@ -373,6 +388,20 @@ const ManageOfflineOrders = () => {
           if (res?.status === 200) {
             if (res?.data?.returnCode) {
               toast.success(res?.data?.msg);
+              messageService?.sendMessage(
+                "offline-order",
+                // @ts-ignore
+                {
+                  action: "send-mail",
+                  params: {
+                    oid: body?.oid,
+                    total: body?.total,
+                    address: body?.shippingAddress,
+                    items: body?.items,
+                  },
+                },
+                "offline-send-mail"
+              );
               setOrder([]);
               setAddress((prev: any) => {
                 return {

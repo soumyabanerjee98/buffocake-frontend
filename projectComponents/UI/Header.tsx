@@ -41,6 +41,7 @@ import AddressCard from "./AddressCard";
 import OrderSuccessCard from "./OrderSuccessCard";
 import OrderReceipt from "./OrderReceipt";
 import Navbar from "./Navbar";
+import SendOfflineMail from "./SendOfflineMail";
 const GetAllCatagories = async () => {
   let catData = await callApi(processIDs?.get_catagory, {})
     .then(
@@ -147,6 +148,13 @@ const Header = () => {
   const [receiptCardOpen, setReceiptCardOpen] = useState({
     state: false,
     order: {},
+  });
+  const [sendOfflineMail, setSendOfflineMail] = useState({
+    state: false,
+    orderId: "",
+    items: [],
+    total: "",
+    address: {},
   });
   const {
     data: products,
@@ -456,6 +464,33 @@ const Header = () => {
         if (m?.message?.action === "close-popup") {
           setNavbarOpen(false);
         }
+      } else if (
+        m?.sender === "offline-order" &&
+        m?.target === "offline-send-mail"
+      ) {
+        if (m?.message?.action === "send-mail") {
+          setSendOfflineMail((prev: any) => {
+            return {
+              ...prev,
+              state: true,
+              orderId: m?.message?.params?.oid,
+              items: m?.message?.params?.items,
+              total: m?.message?.params?.total,
+              address: m?.message?.params?.address,
+            };
+          });
+        } else if (m?.message?.action === "close-pop-up") {
+          setSendOfflineMail((prev: any) => {
+            return {
+              ...prev,
+              state: false,
+              orderId: "",
+              items: [],
+              total: "",
+              address: {},
+            };
+          });
+        }
       }
     });
   }, []);
@@ -712,6 +747,14 @@ const Header = () => {
         <OrderReceipt order={receiptCardOpen?.order} />
       )}
       {navbarOpen && <Navbar products={products} catagories={catagories} />}
+      {sendOfflineMail?.state && (
+        <SendOfflineMail
+          orderId={sendOfflineMail?.orderId}
+          items={sendOfflineMail?.items}
+          address={sendOfflineMail?.address}
+          total={sendOfflineMail?.total}
+        />
+      )}
     </header>
   );
 };
