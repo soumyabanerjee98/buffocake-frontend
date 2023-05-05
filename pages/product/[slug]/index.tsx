@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../../config/processID";
-import { callApi } from "../../../projectComponents/Functions/util";
+import {
+  callApi,
+  metaTitleGenerate,
+  metaUrlGenerate,
+} from "../../../projectComponents/Functions/util";
 import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
 import Products from "../../../projectComponents/Pages/Products";
 
@@ -37,7 +41,7 @@ const ProductPage = (props: any) => {
 
 export async function getStaticProps({ params }: any) {
   let data = await callApi(processIDs?.get_product_details, {
-    productId: params.slug,
+    productMetaTitle: metaTitleGenerate(params.slug),
   }) // @ts-ignore
     .then((res: responseType) => {
       if (res?.status === 200) {
@@ -85,7 +89,7 @@ export async function getStaticPaths() {
       return [];
     });
   const paths = data?.map((i: any) => ({
-    params: { slug: i?._id },
+    params: { slug: metaUrlGenerate(i?.metaHead) },
   }));
   return { paths, fallback: true };
 }

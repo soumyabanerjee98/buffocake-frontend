@@ -5,6 +5,7 @@ import { responseType } from "../../typings";
 import {
   callApi,
   getSessionObjectData,
+  metaUrlGenerate,
   openTab,
   setSessionObjectData,
 } from "../Functions/util";
@@ -69,7 +70,7 @@ const Wishlist = () => {
             className="wishlist-item"
             onClick={(e: any) => {
               if (e.target.nodeName !== "BUTTON") {
-                openTab(`/product/${i?.productId}`);
+                openTab(`/product/${metaUrlGenerate(i?.productMetaTitle)}`);
               }
             }}
           >

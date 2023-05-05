@@ -190,3 +190,11 @@ export const callPaymentApi = (processid: string, datajson: object) => {
 export const openTab = (link: string) => {
   window.open(link, "_blank", "noreferrer");
 };
+
+export const metaUrlGenerate = (metatitle: string) => {
+  return metatitle.split(" ").join("-");
+};
+
+export const metaTitleGenerate = (metaurl: string) => {
+  return metaurl.split("-").join(" ");
+};

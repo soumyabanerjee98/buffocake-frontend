@@ -4,7 +4,7 @@ import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 import MediaCarousel from "../UI/MediaCarousel";
-import { openTab } from "../Functions/util";
+import { metaUrlGenerate, openTab } from "../Functions/util";
 
 export type HomeProps = {
   allProducts: any;
@@ -84,7 +84,7 @@ const Home = (props: HomeProps) => {
                         key={`product-card-${ind}`}
                         className="product-card"
                         onClick={() => {
-                          openTab(`/product/${val?._id}`);
+                          openTab(`/product/${metaUrlGenerate(val?.metaHead)}`);
                         }}
                       >
                         <div className="product-image-container">

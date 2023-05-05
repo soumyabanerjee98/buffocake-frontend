@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useSwr from "swr";
 import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
-import { callApi, openTab } from "../Functions/util";
+import { callApi, metaUrlGenerate, openTab } from "../Functions/util";
 import { messageService } from "../Functions/messageService";
 import { useRouter } from "next/router";
 import { labelConfig } from "../../config/siteConfig";
@@ -177,7 +177,7 @@ const Navbar = (props: NavbarProps) => {
               <div
                 className="search-items"
                 onClick={() => {
-                  openTab(`/product/${i?._id}`);
+                  openTab(`/product/${metaUrlGenerate(i?.metaHead)}`);
                   setSearchTxt("");
                   setSearchResult([]);
                   setCatagorySearchResult((prev: any) => {

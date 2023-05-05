@@ -2,7 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
-import { openTab } from "../Functions/util";
+import { metaUrlGenerate, openTab } from "../Functions/util";
 
 export type CatagoryProps = {
   catagoryName: string;
@@ -24,7 +24,7 @@ const Catagory = (props: CatagoryProps) => {
               key={`product-card-${ind}`}
               className="product-card"
               onClick={() => {
-                openTab(`/product/${val?._id}`);
+                openTab(`/product/${metaUrlGenerate(val?.metaHead)}`);
               }}
             >
               <div className="product-image-container">
