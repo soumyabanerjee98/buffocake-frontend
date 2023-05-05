@@ -186,3 +186,7 @@ export const callPaymentApi = (processid: string, datajson: object) => {
     console.log(error);
   }
 };
+
+export const openTab = (link: string) => {
+  window.open(link, "_blank", "noreferrer");
+};

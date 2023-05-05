@@ -6,6 +6,7 @@ import { messageType, responseType } from "../../typings";
 import {
   callApi,
   getSessionObjectData,
+  openTab,
   setSessionObjectData,
 } from "../Functions/util";
 import Broken from "../Assets/Images/broken.png";
@@ -90,7 +91,7 @@ const Cart = () => {
         <div
           className="buy"
           onClick={() => {
-            router.push("/");
+            navigate("/");
           }}
         >
           Buy products
@@ -109,7 +110,7 @@ const Cart = () => {
               className="cart-item"
               onClick={(e: any) => {
                 if (e.target.nodeName !== "BUTTON") {
-                  navigate(`/product/${i?.productId}`);
+                  openTab(`/product/${i?.productId}`);
                 }
               }}
             >

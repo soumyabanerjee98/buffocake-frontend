@@ -22,6 +22,7 @@ import {
   getSessionObjectData,
   setSessionObjectData,
   removeSessionData,
+  openTab,
 } from "../Functions/util";
 import CartIcon from "./Icons/CartIcon";
 import NameIcon from "./Icons/NameIcon";
@@ -538,7 +539,7 @@ const Header = () => {
                 <div
                   className="search-items"
                   onClick={() => {
-                    navigate(`/product/${i?._id}`);
+                    openTab(`/product/${i?._id}`);
                     setSearchTxt("");
                     setSearchResult([]);
                     setCatagorySearchResult((prev: any) => {

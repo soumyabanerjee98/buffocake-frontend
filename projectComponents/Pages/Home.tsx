@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 import MediaCarousel from "../UI/MediaCarousel";
+import { openTab } from "../Functions/util";
 
 export type HomeProps = {
   allProducts: any;
@@ -83,7 +84,7 @@ const Home = (props: HomeProps) => {
                         key={`product-card-${ind}`}
                         className="product-card"
                         onClick={() => {
-                          navigate(`/product/${val?._id}`);
+                          openTab(`/product/${val?._id}`);
                         }}
                       >
                         <div className="product-image-container">

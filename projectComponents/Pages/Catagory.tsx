@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
+import { openTab } from "../Functions/util";
 
 export type CatagoryProps = {
   catagoryName: string;
@@ -10,14 +10,10 @@ export type CatagoryProps = {
 };
 const Catagory = (props: CatagoryProps) => {
   const { productList, catagoryName } = props;
-  const redirect = useRouter();
   const url =
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
       : serverConfig?.backend_url_server;
-  const navigate = (path: string) => {
-    redirect.push(path);
-  };
   return (
     <div className="catagory-screen">
       <div className="header">{catagoryName}</div>
@@ -28,7 +24,7 @@ const Catagory = (props: CatagoryProps) => {
               key={`product-card-${ind}`}
               className="product-card"
               onClick={() => {
-                navigate(`/product/${val?._id}`);
+                openTab(`/product/${val?._id}`);
               }}
             >
               <div className="product-image-container">

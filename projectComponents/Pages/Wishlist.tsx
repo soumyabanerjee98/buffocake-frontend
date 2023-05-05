@@ -5,16 +5,15 @@ import { responseType } from "../../typings";
 import {
   callApi,
   getSessionObjectData,
+  openTab,
   setSessionObjectData,
 } from "../Functions/util";
 import Broken from "../Assets/Images/broken.png";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import WishlistCard from "../UI/WishlistCard";
 import { toast } from "react-toastify";
 
 const Wishlist = () => {
-  const router = useRouter();
   const [wishList, setWishList] = useState<any>();
 
   useEffect(() => {
@@ -70,7 +69,7 @@ const Wishlist = () => {
             className="wishlist-item"
             onClick={(e: any) => {
               if (e.target.nodeName !== "BUTTON") {
-                router.push(`/product/${i?.productId}`);
+                openTab(`/product/${i?.productId}`);
               }
             }}
           >
