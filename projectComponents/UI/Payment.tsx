@@ -29,10 +29,23 @@ export type PaymentProps = {
   Address: any;
   source: any;
   cart: any;
+  discount: number;
+  couponId: string;
 };
 
 const Payment = (props: PaymentProps) => {
-  const { P_MID, P_MKEY, Total, Address, disable, source, cart } = props;
+  const {
+    P_MID,
+    P_MKEY,
+    Total,
+    Address,
+    disable,
+    source,
+    cart,
+    discount,
+    couponId,
+  } = props;
+  const checkoutvalue = Total - discount;
   const [loading, setLoading] = useState(false);
   const env = process.env.NODE_ENV;
   const paytmbaseurl =
@@ -70,6 +83,7 @@ const Payment = (props: PaymentProps) => {
       items: cartItem,
       shippingAddress: response?.address,
       total: response?.total,
+      discount: response?.discount,
       paymentStatus:
         response?.resultInfo?.resultStatus === "TXN_SUCCESS"
           ? "Completed"
@@ -103,6 +117,7 @@ const Payment = (props: PaymentProps) => {
                           order: {
                             ...response,
                             cart: cartItem,
+                            couponId: couponId,
                           },
                         },
                       },
@@ -121,7 +136,9 @@ const Payment = (props: PaymentProps) => {
                 // @ts-ignore
                 {
                   action: "payment-successfull",
-                  params: { order: { ...response, cart: cartItem } },
+                  params: {
+                    order: { ...response, cart: cartItem, couponId: couponId },
+                  },
                 },
                 "global"
               );
@@ -145,7 +162,7 @@ const Payment = (props: PaymentProps) => {
         mid: encData(P_MID),
         mkey: encData(P_MKEY),
         oid: oid,
-        value: Total,
+        value: checkoutvalue,
         userId: getSessionObjectData(storageConfig?.userProfile)?.id,
       })
         // @ts-ignore
@@ -159,7 +176,7 @@ const Payment = (props: PaymentProps) => {
                   orderId: oid,
                   token: res?.data?.returnData?.txnToken,
                   tokenType: "TXN_TOKEN",
-                  amount: Total,
+                  amount: checkoutvalue,
                 },
                 merchant: {
                   redirect: false,
@@ -190,18 +207,14 @@ const Payment = (props: PaymentProps) => {
                               checkoutFunc({
                                 ...res?.data?.returnData,
                                 address: Address,
-                                total: Total.toString(),
+                                total: Total,
+                                discount: discount,
                               });
                             } else if (
                               res?.data?.returnData?.resultInfo
                                 ?.resultStatus === "TXN_FAILURE"
                             ) {
                               toast.error(`Error: Transaction failed`);
-                              // checkoutFunc({
-                              //   ...res?.data?.returnData,
-                              //   address: Address,
-                              //   total: Total.toString(),
-                              // });
                             }
                           }
                         } else {
@@ -260,7 +273,8 @@ const Payment = (props: PaymentProps) => {
       txnId: "NA",
       items: cartItem,
       shippingAddress: Address,
-      total: Total.toString(),
+      total: Total,
+      discount: discount,
       paymentStatus: "Pending",
       orderStatus: "Accepted",
       orderTimeStamp: moment().format().split("T").join(" "),
@@ -287,8 +301,10 @@ const Payment = (props: PaymentProps) => {
                           order: {
                             orderId: oid,
                             cart: cartItem,
-                            total: Total.toString(),
+                            total: Total,
+                            discount: discount,
                             address: Address,
+                            couponId: couponId,
                           },
                         },
                       },
@@ -311,8 +327,10 @@ const Payment = (props: PaymentProps) => {
                     order: {
                       orderId: oid,
                       cart: cartItem,
-                      total: Total.toString(),
+                      total: Total,
+                      discount: discount,
                       address: Address,
+                      couponId: couponId,
                     },
                   },
                 },
@@ -345,7 +363,7 @@ const Payment = (props: PaymentProps) => {
       <div className="payment">
         <div className="total-payment">
           Total: {labelConfig?.inr_code}
-          {Total}
+          {checkoutvalue}
         </div>
         <button
           className={`payment-button ${disable ? "disable" : ""}`}

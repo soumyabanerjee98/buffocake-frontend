@@ -116,11 +116,17 @@ const OrderCard = (props: OrderCardProps) => {
                 {orderItem?.shippingAddress?.receiverContact}
               </div>
             </div>
+            {orderItem?.discount > 0 && (
+              <div className="discount">
+                Discount: {labelConfig?.inr_code} -{orderItem?.discount}
+              </div>
+            )}
             <div
               className={`payment-status ${orderItem?.paymentStatus?.toLowerCase()}`}
             >
               {orderItem?.paymentStatus} payment {labelConfig?.inr_code}
-              {orderItem?.total}
+              {orderItem?.total -
+                (orderItem?.discount ? orderItem?.discount : 0)}
             </div>
           </div>
         </div>

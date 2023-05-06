@@ -1532,6 +1532,10 @@ input::-webkit-inner-spin-button {
   justify-content: space-between;
   flex-direction: column;
 }
+.order-screen .order-list .order-item .exp .right-col .discount{
+  font-weight: 600;
+  color: var(--green);
+}
 .order-screen
   .order-list
   .order-item
@@ -2399,6 +2403,58 @@ input::-webkit-inner-spin-button {
   border: 1px solid var(--blue);
   transition: all 200ms ease-in-out;
 }
+.manage-coupons{
+  display: flex;
+  justify-content: space-between;
+}
+.manage-coupons .all-coupons{
+  flex-basis: 70%;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  height: 100%;
+  gap: 1rem;
+}
+.manage-coupons .add-coupon{
+  border: 1px solid var(--black-50);
+  border-radius: 6px;
+  flex-basis: 20%;
+  padding: 0.8rem;
+  height: max-content;
+}
+.manage-coupons .header{
+  font-weight: 600;
+  color: var(--chocolate);
+}
+.manage-coupons .no-coupon {
+  opacity: 0.8;
+}
+.manage-coupons .add-coupon input{
+  width: -webkit-fill-available;
+  outline: none;
+}
+.manage-coupons .add{
+  padding: 0.2rem 0.4rem;
+  margin-top: 1rem;
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+}
+.manage-coupons .coupon{
+  border: 1px solid var(--black-50);
+  border-radius: 4px;
+  border-style: dashed;
+  padding: 1rem 1.6rem;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+}
+.manage-coupons .coupon .delete{
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  color: var(--white);
+  background-color: var(--red);
+  border-radius: 4px;
+}
 /* modals */
 .modal {
   position: fixed;
@@ -2830,6 +2886,72 @@ input::-webkit-inner-spin-button {
   padding-bottom: 0.2rem;
 }
 
+.checkout-card .apply-coupon{
+  margin-bottom: 1.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.checkout-card .apply-coupon .error{
+ color: var(--red);
+ position: absolute;
+ right: 5rem;
+ bottom: -1.5rem;
+}
+@media only screen and (max-width: 426px) {
+  .checkout-card .apply-coupon .error {
+    font-size: small;
+    bottom: -1rem;
+  }
+}
+.checkout-card .apply-coupon .label{
+  font-weight: 600;
+  color: var(--chocolate);
+}
+@media only screen and (max-width: 426px) {
+  .checkout-card .apply-coupon .label {
+      font-size: small;
+    }
+}
+
+.checkout-card .apply-coupon .coupon{
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.checkout-card .apply-coupon .coupon input{
+  width: -webkit-fill-available;
+  padding: 0.2rem 0.4rem;
+  outline: none;
+}
+
+.checkout-card .apply-coupon .coupon .apply{
+  font-size: small;
+  color: var(--green);
+  cursor: pointer;
+}
+
+.checkout-card .apply-coupon .coupon .name {
+  color: var(--green);
+}
+
+.checkout-card .apply-coupon .coupon .cancel {
+  font-size: small;
+  color: var(--red);
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 426px) {
+  .checkout-card .apply-coupon .coupon .apply {
+      font-size: 12px;
+    }
+        .checkout-card .apply-coupon .coupon .cancel {
+          font-size: 12px;
+        }
+}
 /* Address card */
 
 .address-card {

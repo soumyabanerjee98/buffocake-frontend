@@ -85,12 +85,22 @@ const OrderAccordion = (props: OrderAccordionProps) => {
               {order?.type}
             </span>
           </div>
+          {order?.discount > 0 && (
+            <div className="order-type">
+              Discount:{" "}
+              <span className={`${order?.type?.toLowerCase()}`}>
+                -{labelConfig?.inr_code}
+                {order?.discount}
+              </span>
+            </div>
+          )}
         </div>
         <div className="status">
           <div
             className={`payment-status ${order?.paymentStatus?.toLowerCase()}`}
           >
-            {order?.paymentStatus}
+            {order?.paymentStatus} {labelConfig?.inr_code}
+            {order?.total - (order?.discount ? order?.discount : 0)}
           </div>
           <div className={`order-status ${order?.orderStatus?.toLowerCase()}`}>
             {order?.orderStatus}

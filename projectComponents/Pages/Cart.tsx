@@ -80,7 +80,7 @@ const Cart = () => {
       cart?.map((i: any) => {
         total = total + i?.subTotal;
       });
-      setGrandTotal(total);
+      setGrandTotal(total.toFixed(2));
     }
   }, [cart]);
   if (cart === undefined) return <>Loading...</>;

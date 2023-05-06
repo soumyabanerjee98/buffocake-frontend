@@ -73,4 +73,8 @@ export const processIDs = {
   get_navbar: "get-navbar",
   add_navbar: "add-navbar",
   delete_navbar: "delete-navbar",
+  get_all_coupons: "get-all-coupons",
+  add_coupon: "add-coupon",
+  delete_coupon: "delete-coupon",
+  use_coupon: "use-coupon",
 };

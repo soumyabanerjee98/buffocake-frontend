@@ -3,7 +3,11 @@ import { messageService } from "../Functions/messageService";
 import Congrats from "../Assets/Images/fireworks.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { getSessionObjectData, weightConverter } from "../Functions/util";
+import {
+  callApi,
+  getSessionObjectData,
+  weightConverter,
+} from "../Functions/util";
 import {
   labelConfig,
   serverConfig,
@@ -12,6 +16,9 @@ import {
 import Script from "next/script";
 import { jsPDF } from "jspdf";
 import { el_email_apiKey, smtp_cred } from "../../config/secret";
+import { processIDs } from "../../config/processID";
+import { responseType } from "../../typings";
+import { toast } from "react-toastify";
 export type OrderSuccessCardProps = {
   order: any;
 };
@@ -37,7 +44,29 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
       closePopUp();
     }
   };
+  const applyCoupon = async () => {
+    const userid: string = getSessionObjectData(storageConfig?.userProfile)?.id;
+    const response = await callApi(processIDs?.use_coupon, {
+      couponId: order?.couponId,
+      user: userid,
+    });
+    const data: responseType = {
+      status: response?.status,
+      data: response?.data,
+    };
+    if (data?.status !== 200) {
+      toast.error(`Error: ${data?.status}`);
+      return;
+    }
+    if (!data?.data?.returnCode) {
+      toast.error(data?.data?.msg);
+      return;
+    }
+  };
   useEffect(() => {
+    if (order?.couponId !== "") {
+      applyCoupon();
+    }
     setMailsent(true);
   }, []);
   useEffect(() => {
@@ -242,10 +271,38 @@ const OrderSuccessCard = (props: OrderSuccessCardProps) => {
                     fontWeight: "600",
                   }}
                 >
-                  Grand Total: {labelConfig?.inr_code}
-                  {order?.total}
+                  Grand total: {labelConfig?.inr_code}
+                  {order?.total - order?.discount}
                 </td>
               </tr>
+              {order?.couponId !== "" && (
+                <>
+                  <tr>
+                    <td
+                      style={{
+                        paddingTop: "0.2rem",
+                        textAlign: "start",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Total: {labelConfig?.inr_code}
+                      {order?.total}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={{
+                        paddingTop: "0.2rem",
+                        textAlign: "start",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Discount: -{labelConfig?.inr_code}
+                      {order?.discount}
+                    </td>
+                  </tr>
+                </>
+              )}
             </table>
             <table style={{ marginTop: "2rem", border: "1px solid black" }}>
               <tr>

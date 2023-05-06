@@ -277,6 +277,7 @@ const ManageOfflineOrders = () => {
       items: cartItem,
       shippingAddress: address,
       total: customerCustom ? customOrder?.subTotal : grandTotal,
+      discount: 0,
       paymentStatus: "Completed",
       orderStatus: "Accepted",
       orderTimeStamp: moment().format().split("T").join(" "),

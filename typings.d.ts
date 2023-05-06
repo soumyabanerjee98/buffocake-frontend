@@ -1,5 +1,5 @@
 export type responseType = {
-    status: number,
+    status: number | undefined,
     data:{
         returnCode: boolean,
         returnData: any,

@@ -119,9 +119,37 @@ const OrderReceipt = (props: OrderReceiptProps) => {
                 }}
               >
                 Grand Total: {labelConfig?.inr_code}
-                {order?.total}
+                {order?.total - order?.discount}
               </td>
             </tr>
+            {order?.discount !== 0 && (
+              <>
+                <tr>
+                  <td
+                    style={{
+                      paddingTop: "0.2rem",
+                      textAlign: "start",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Total: {labelConfig?.inr_code}
+                    {order?.total}
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={{
+                      paddingTop: "0.2rem",
+                      textAlign: "start",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Discount: -{labelConfig?.inr_code}
+                    {order?.discount}
+                  </td>
+                </tr>
+              </>
+            )}
           </table>
           <table style={{ marginTop: "2rem", border: "1px solid black" }}>
             <tr>

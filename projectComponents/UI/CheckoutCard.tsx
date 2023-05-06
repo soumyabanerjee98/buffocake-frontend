@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../config/processID";
@@ -24,7 +23,13 @@ const CheckoutCard = (props: CheckoutCardProps) => {
   const [address, setAddress] = useState<any>();
   const [addressInd, setAddressInd] = useState(0);
   const [grandTotal, setGrandTotal] = useState<any>(null);
-
+  const [coupon, setCoupon] = useState({
+    id: "",
+    field: "",
+    name: "",
+    value: 0,
+    error: "",
+  });
   const closePopUp = () => {
     messageService?.sendMessage(
       "checkout-card",
@@ -58,6 +63,61 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     );
   };
 
+  const applyCoupon = async () => {
+    const response = await callApi(processIDs?.get_all_coupons, {});
+    const data: responseType = {
+      status: response?.status,
+      data: response?.data,
+    };
+    if (data?.status !== 200) {
+      toast.error(`Error: ${data?.status}`);
+      return;
+    }
+    if (!data?.data?.returnCode) {
+      toast.error(data?.data?.msg);
+      return;
+    }
+    const allcoupons = data?.data?.returnData;
+    const appliedCoupon = allcoupons?.find((i: { name: string }) => {
+      return i?.name === coupon?.field;
+    });
+    if (appliedCoupon) {
+      const usedUsers: any[] = appliedCoupon?.usedUser;
+      const userid: string = getSessionObjectData(
+        storageConfig?.userProfile
+      )?.id;
+      if (usedUsers.includes(userid)) {
+        setCoupon((prev: any) => {
+          return { ...prev, error: "Already used!" };
+        });
+        return;
+      }
+      if (grandTotal - appliedCoupon?.value <= 100) {
+        setCoupon((prev: any) => {
+          return { ...prev, error: "Can not be applied!" };
+        });
+        return;
+      }
+      setCoupon((prev: any) => {
+        return {
+          ...prev,
+          id: appliedCoupon?._id,
+          name: appliedCoupon?.name,
+          value: appliedCoupon?.value,
+          field: "",
+        };
+      });
+      return;
+    }
+    setCoupon((prev: any) => {
+      return { ...prev, error: "Invalid coupon!" };
+    });
+  };
+  const cancelCoupon = () => {
+    setCoupon((prev: any) => {
+      return { ...prev, value: 0, name: "", field: "", id: "" };
+    });
+  };
   useEffect(() => {
     if (getSessionObjectData(storageConfig?.address)) {
       let addressArr = [];
@@ -134,7 +194,7 @@ const CheckoutCard = (props: CheckoutCardProps) => {
     cart?.map((i: any) => {
       total = total + i?.subTotal;
     });
-    setGrandTotal(total);
+    setGrandTotal(total.toFixed(2));
   }, []);
 
   return (
@@ -274,6 +334,37 @@ const CheckoutCard = (props: CheckoutCardProps) => {
             </div>
           </div>
         </div>
+        <div className="apply-coupon">
+          <div className="label">Apply Coupon</div>
+          <div className="coupon">
+            {coupon?.value !== 0 ? (
+              <>
+                <div className="name">
+                  {coupon?.name} (-{labelConfig?.inr_code}
+                  {coupon?.value})
+                </div>
+                <div className="cancel" onClick={cancelCoupon}>
+                  Cancel
+                </div>
+              </>
+            ) : (
+              <>
+                <input
+                  value={coupon?.field}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setCoupon((prev: any) => {
+                      return { ...prev, field: e.target.value, error: "" };
+                    });
+                  }}
+                />
+                <div className="apply" onClick={applyCoupon}>
+                  Apply
+                </div>
+              </>
+            )}
+          </div>
+          {coupon?.error !== "" && <div className="error">{coupon?.error}</div>}
+        </div>
         <Payment
           P_MID={
             process.env.NODE_ENV === "production"
@@ -290,6 +381,8 @@ const CheckoutCard = (props: CheckoutCardProps) => {
           Address={address?.[addressInd]}
           cart={cart}
           source={source}
+          discount={coupon?.value}
+          couponId={coupon?.id}
         />
       </div>
     </div>
