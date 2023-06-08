@@ -20,7 +20,7 @@ const Catagory = (props: CatagoryProps) => {
       <div className="catagory-list">
         {productList?.map((val: any, ind: number) => {
           return (
-            <div
+           <a href = {`/product/${metaUrlGenerate(val?.metaHead)}`}  target="_blank" style={{ textDecoration: 'none' }}> <div
               key={`product-card-${ind}`}
               className="product-card"
               onClick={() => {
@@ -56,7 +56,7 @@ const Catagory = (props: CatagoryProps) => {
                   })
                 )}
               </div>
-            </div>
+            </div></a>
           );
         })}
       </div>

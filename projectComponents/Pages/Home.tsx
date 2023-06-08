@@ -4,8 +4,7 @@ import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 import MediaCarousel from "../UI/MediaCarousel";
-import { metaUrlGenerate, openTab } from "../Functions/util";
-
+import { loadURL, metaUrlGenerate, openTab } from "../Functions/util";
 export type HomeProps = {
   allProducts: any;
   carousel: any;
@@ -62,7 +61,7 @@ const Home = (props: HomeProps) => {
                   {i?.cat}
                 </div>
                 {i?.prod?.length > 4 && (
-                  <button
+                  <a href = {`/catagory/${i?.catId}`}  target="_blank" style={{ textDecoration: 'none' }}> <button
                     className="view-all"
                     onClick={() => {
                       if (i?.type === "catagory") {
@@ -73,7 +72,7 @@ const Home = (props: HomeProps) => {
                     }}
                   >
                     {labelConfig?.home_view_all_button}
-                  </button>
+                  </button></a>
                 )}
               </div>
               <div className="catagory-body">
@@ -83,6 +82,7 @@ const Home = (props: HomeProps) => {
                   })
                   ?.map((val: any, ind: any) => {
                     return (
+		    <a href = {`/product/${metaUrlGenerate(val?.metaHead)}`}  target="_blank" style={{ textDecoration: 'none' }}>
                       <div
                         key={`product-card-${ind}`}
                         className="product-card"
@@ -92,11 +92,11 @@ const Home = (props: HomeProps) => {
                       >
                         <div className="product-image-container">
                           {val?.productImage?.length > 0 ? (
-                            <img
-                              src={`${url}${val?.productImage?.[0]?.mediaPath}`}
-                              alt={labelConfig?.image_not_loaded}
-                              className="product-image"
-                            />
+                           <img
+                            src={`${url}${val?.productImage?.[0]?.mediaPath}`}
+                            alt={labelConfig?.image_not_loaded}
+                            className="product-image"
+                          />
                           ) : (
                             <Image
                               src={NoIMage}
@@ -119,7 +119,7 @@ const Home = (props: HomeProps) => {
                             })
                           )}
                         </div>
-                      </div>
+                      </div></a>
                     );
                   })}
               </div>

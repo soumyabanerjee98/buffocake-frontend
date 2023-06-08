@@ -518,7 +518,7 @@ const Products = (props: ProductProps) => {
       }
     }
   };
-
+ 
   return (
     <div className="product-screen">
       <div className="left-column">
@@ -661,6 +661,8 @@ const Products = (props: ProductProps) => {
             {err?.available && (
               <div className="error">Unavailable at this pincode</div>
             )}
+            <div style={{display:'flex', gap:'3rem'}}>
+            {/* delivery date and time */}
             <div className="section">
               <div className="label">
                 {labelConfig?.product_delivery_date_label}
@@ -715,7 +717,7 @@ const Products = (props: ProductProps) => {
                 )}
               </div>
             </div>
-            <div className="section">
+            {checkOutDetails.deliveryDate.toString().split(' ',4)[2] === today.toString().split(' ',4)[2] ? null : <div className="section">
               <div className="label">
                 {labelConfig?.product_delivery_time_label}
                 <span style={{ color: "red" }}> *</span>
@@ -738,10 +740,11 @@ const Products = (props: ProductProps) => {
                 />
               </div>
             </div>
+            }
             {err?.time && (
               <div className="error">Please select a delivery time</div>
             )}
-
+            </div>
             <div className="section">
               <div className="label">
                 {labelConfig?.product_available_flavours_label}
