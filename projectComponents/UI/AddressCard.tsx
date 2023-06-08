@@ -65,8 +65,12 @@ const AddressCard = (props: AddressCardProps) => {
       closePopUp();
     }
   };
-  const submit = () => {
-    let processId =
+  const submit = async () => {
+    const checkPin = await callApi(processIDs.get_pincodes,{})
+    
+    const pinArray = checkPin?.data.returnData
+    if(pinArray.includes(parseInt(formData.pin))){
+      let processId =
       action === "add-address"
         ? processIDs?.add_address
         : processIDs?.edit_address;
@@ -162,6 +166,11 @@ const AddressCard = (props: AddressCardProps) => {
           toast.error(`Error: ${err?.message}`);
         });
     }
+    return
+    }
+    toast.error("Pincode is not available for delivery")
+
+    
   };
   return (
     <div className="modal" onClick={clickOutSide}>

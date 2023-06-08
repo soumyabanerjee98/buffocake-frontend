@@ -27,7 +27,7 @@ const Admin = () => {
       }
       return { id: idx, type: i, active: false };
     });
-    if (getSessionObjectData(storageConfig?.userProfile)?.superAdmin) {
+    if (getSessionObjectData(storageConfig?.userProfile)?.admin) {
       arr.push({ id: arr.length, type: "User management", active: false });
     }
     return arr;

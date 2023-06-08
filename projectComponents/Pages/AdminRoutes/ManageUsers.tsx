@@ -186,7 +186,7 @@ const ManageUsers = () => {
                 <span style={{ opacity: "0.6" }}>No email registered</span>
               )}
             </div>
-            <div className="user-auth">
+            {getSessionObjectData(storageConfig?.userProfile)?.superAdmin && <div className="user-auth">
               <div className="admin">
                 <div className="label">Admin</div>
                 <input
@@ -217,7 +217,8 @@ const ManageUsers = () => {
                   }}
                 />
               </div>
-            </div>
+            </div>}
+            
           </div>
         ))}
       </div>
