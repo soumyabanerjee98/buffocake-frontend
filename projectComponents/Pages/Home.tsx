@@ -61,18 +61,25 @@ const Home = (props: HomeProps) => {
                   {i?.cat}
                 </div>
                 {i?.prod?.length > 4 && (
-                  <a href = {`/catagory/${i?.catId}`}  target="_blank" style={{ textDecoration: 'none' }}> <button
-                    className="view-all"
-                    onClick={() => {
-                      if (i?.type === "catagory") {
-                        navigate(`/catagory/${i?.catId}`);
-                      } else {
-                        navigate(`/subcatagory/${i?.catId}`);
-                      }
-                    }}
+                  <a
+                    href={`/catagory/${metaUrlGenerate(i?.cat)}`}
+                    target="_blank"
+                    style={{ textDecoration: "none" }}
                   >
-                    {labelConfig?.home_view_all_button}
-                  </button></a>
+                    {" "}
+                    <button
+                      className="view-all"
+                      onClick={() => {
+                        if (i?.type === "catagory") {
+                          navigate(`/catagory/${metaUrlGenerate(i?.cat)}`);
+                        } else {
+                          navigate(`/subcatagory/${metaUrlGenerate(i?.cat)}`);
+                        }
+                      }}
+                    >
+                      {labelConfig?.home_view_all_button}
+                    </button>
+                  </a>
                 )}
               </div>
               <div className="catagory-body">
@@ -82,44 +89,53 @@ const Home = (props: HomeProps) => {
                   })
                   ?.map((val: any, ind: any) => {
                     return (
-		    <a href = {`/product/${metaUrlGenerate(val?.metaHead)}`}  target="_blank" style={{ textDecoration: 'none' }}>
-                      <div
-                        key={`product-card-${ind}`}
-                        className="product-card"
-                        onClick={() => {
-                          openTab(`/product/${metaUrlGenerate(val?.metaHead)}`);
-                        }}
+                      <a
+                        href={`/product/${metaUrlGenerate(val?.metaHead)}`}
+                        target="_blank"
+                        style={{ textDecoration: "none" }}
                       >
-                        <div className="product-image-container">
-                          {val?.productImage?.length > 0 ? (
-                           <img
-                            src={`${url}${val?.productImage?.[0]?.mediaPath}`}
-                            alt={labelConfig?.image_not_loaded}
-                            className="product-image"
-                          />
-                          ) : (
-                            <Image
-                              src={NoIMage}
-                              alt={labelConfig?.image_not_loaded}
-                              className="product-image"
-                            />
-                          )}
+                        <div
+                          key={`product-card-${ind}`}
+                          className="product-card"
+                          onClick={() => {
+                            openTab(
+                              `/product/${metaUrlGenerate(val?.metaHead)}`
+                            );
+                          }}
+                        >
+                          <div className="product-image-container">
+                            {val?.productImage?.length > 0 ? (
+                              <img
+                                src={`${url}${val?.productImage?.[0]?.mediaPath}`}
+                                alt={labelConfig?.image_not_loaded}
+                                className="product-image"
+                              />
+                            ) : (
+                              <Image
+                                src={NoIMage}
+                                alt={labelConfig?.image_not_loaded}
+                                className="product-image"
+                              />
+                            )}
+                          </div>
+                          <div className="same-day-container">
+                            {val?.sameDay && (
+                              <span className="same-day">
+                                Same day delivery
+                              </span>
+                            )}
+                          </div>
+                          <div className="product-name">{val?.title}</div>
+                          <div className="product-price">
+                            &#8377;
+                            {Math.min(
+                              ...val?.weight?.map((i: any) => {
+                                return i?.value;
+                              })
+                            )}
+                          </div>
                         </div>
-                        <div className="same-day-container">
-                          {val?.sameDay && (
-                            <span className="same-day">Same day delivery</span>
-                          )}
-                        </div>
-                        <div className="product-name">{val?.title}</div>
-                        <div className="product-price">
-                          &#8377;
-                          {Math.min(
-                            ...val?.weight?.map((i: any) => {
-                              return i?.value;
-                            })
-                          )}
-                        </div>
-                      </div></a>
+                      </a>
                     );
                   })}
               </div>

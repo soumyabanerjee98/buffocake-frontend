@@ -3,9 +3,13 @@ import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../../config/processID";
-import { callApi } from "../../../projectComponents/Functions/util";
+import {
+  callApi,
+  metaTitleGenerate,
+} from "../../../projectComponents/Functions/util";
 import Catagory from "../../../projectComponents/Pages/Catagory";
 import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
+import { metaUrlGenerate } from "../../../projectComponents/Functions/util";
 
 const CatagoryPage = (props: any) => {
   const { catagoryProducts, catagoryName } = props;
@@ -60,7 +64,7 @@ export async function getStaticProps({ params }: any) {
   let catagoryName = "";
   data?.map((v: any) => {
     v?.catagory?.map((w: any) => {
-      if (w?.catagoryId === params?.slug) {
+      if (w?.catagoryName === metaTitleGenerate(params?.slug)) {
         arr.push(v);
         catagoryName = w?.catagoryName;
       }
@@ -98,7 +102,7 @@ export async function getStaticPaths() {
       return [];
     });
   const paths = data?.map((i: any) => ({
-    params: { slug: i?._id },
+    params: { slug: metaUrlGenerate(i?.catagory) },
   }));
   return { paths, fallback: true };
 }

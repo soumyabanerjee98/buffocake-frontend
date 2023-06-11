@@ -599,7 +599,7 @@ const Header = () => {
                     <div
                       className="search-items"
                       onClick={() => {
-                        navigate(`/catagory/${i?._id}`);
+                        navigate(`/catagory/${metaUrlGenerate(i?.cat)}`);
                         setSearchTxt("");
                         setSearchResult([]);
                         setCatagorySearchResult((prev: any) => {

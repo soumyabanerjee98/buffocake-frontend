@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
 import { processIDs } from "../../../config/processID";
-import { callApi } from "../../../projectComponents/Functions/util";
+import {
+  callApi,
+  metaTitleGenerate,
+  metaUrlGenerate,
+} from "../../../projectComponents/Functions/util";
 import Catagory from "../../../projectComponents/Pages/Catagory";
 import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
 
@@ -60,7 +64,7 @@ export async function getStaticProps({ params }: any) {
   let subCatagoryName = "";
   data?.map((v: any) => {
     v?.subCatagory?.map((w: any) => {
-      if (w?.subCatagoryId === params?.slug) {
+      if (w?.subCatagoryName === metaTitleGenerate(params?.slug)) {
         arr.push(v);
         subCatagoryName = w?.subCatagoryName;
       }
@@ -98,7 +102,7 @@ export async function getStaticPaths() {
       return [];
     });
   const paths = data?.map((i: any) => ({
-    params: { slug: i?._id },
+    params: { slug: metaUrlGenerate(i?.subCatagory) },
   }));
 
   return { paths, fallback: true };

@@ -201,7 +201,7 @@ const Navbar = (props: NavbarProps) => {
                   <div
                     className="search-items"
                     onClick={() => {
-                      redirect(`/catagory/${i?._id}`);
+                      redirect(`/catagory/${metaUrlGenerate(i?.cat)}`);
                       setSearchTxt("");
                       setSearchResult([]);
                       setCatagorySearchResult((prev: any) => {
@@ -227,7 +227,7 @@ const Navbar = (props: NavbarProps) => {
             <div
               className="catagory"
               onClick={() => {
-                redirect(`/catagory/${i?.catagory?._id}`);
+                redirect(`/catagory/${metaUrlGenerate(i?.catagory?.catagory)}`);
                 closePopUp();
               }}
             >
@@ -238,7 +238,9 @@ const Navbar = (props: NavbarProps) => {
                 <div
                   className="sub-item"
                   onClick={() => {
-                    redirect(`/subcatagory/${v?.subCatagoryId}`);
+                    redirect(
+                      `/subcatagory/${metaUrlGenerate(v?.subCatagoryName)}`
+                    );
                     closePopUp();
                   }}
                 >
