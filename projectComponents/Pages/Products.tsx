@@ -85,6 +85,7 @@ const Products = (props: ProductProps) => {
     allergyLimit: productConfig?.allergyFieldLimit,
     customLimit: productConfig?.customFieldLimit,
   });
+  const [expand, setExpand] = useState(false);
   const url =
     process?.env?.NODE_ENV === "development"
       ? serverConfig?.backend_url_test
@@ -518,7 +519,7 @@ const Products = (props: ProductProps) => {
       }
     }
   };
- 
+
   return (
     <div className="product-screen">
       <div className="left-column">
@@ -607,10 +608,20 @@ const Products = (props: ProductProps) => {
               Inclusive of all taxes
             </span>
           </div>
-          <div
-            className="description"
-            dangerouslySetInnerHTML={{ __html: productDetails?.description }}
-          />
+          <div className={expand ? "description" : "description-small"}>
+            <div
+              dangerouslySetInnerHTML={{ __html: productDetails?.description }}
+            />
+            <div
+              className="see-more"
+              onClick={() => {
+                setExpand((prev) => !prev);
+              }}
+            >
+              {expand ? "See less" : "See more"}
+            </div>
+          </div>
+
           <div className="customise">
             <div className="section">
               <div className="label">{labelConfig?.product_weight_label}</div>
@@ -661,89 +672,93 @@ const Products = (props: ProductProps) => {
             {err?.available && (
               <div className="error">Unavailable at this pincode</div>
             )}
-            <div style={{display:'flex', gap:'3rem'}}>
-            {/* delivery date and time */}
-            <div className="section">
-              <div className="label">
-                {labelConfig?.product_delivery_date_label}
+            <div style={{ display: "flex", gap: "3rem" }}>
+              {/* delivery date and time */}
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_delivery_date_label}
+                </div>
+                <div className="calendar-section">
+                  {calendarOpen ? (
+                    <>
+                      <Calendar
+                        onChange={(e: any) => {
+                          setCheckOutDetails((prev: any) => {
+                            return {
+                              ...prev,
+                              deliveryDate: e,
+                            };
+                          });
+                          setCalendarOpen(false);
+                        }}
+                        minDate={productDetails?.sameDay ? today : minDate}
+                        maxDate={maxDate}
+                        value={checkOutDetails?.deliveryDate}
+                        className="calendar"
+                      />
+                      <i
+                        className="fa-solid fa-xmark cross"
+                        onClick={() => {
+                          setCalendarOpen(false);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        {checkOutDetails?.deliveryDate.toDateString()}
+                        {productDetails?.sameDay && (
+                          <>
+                            <span
+                              style={{ color: "green", marginLeft: "1rem" }}
+                            >
+                              (Same day delivery available)
+                            </span>
+                            <span style={{ color: "red" }}> *</span>
+                          </>
+                        )}
+                      </div>
+                      <button
+                        className="calendar-popup"
+                        onClick={() => {
+                          setCalendarOpen(true);
+                        }}
+                      >
+                        Select date
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="calendar-section">
-                {calendarOpen ? (
-                  <>
-                    <Calendar
+              {checkOutDetails.deliveryDate.toString().split(" ", 4)[2] ===
+              today.toString().split(" ", 4)[2] ? null : (
+                <div className="section">
+                  <div className="label">
+                    {labelConfig?.product_delivery_time_label}
+                    <span style={{ color: "red" }}> *</span>
+                  </div>
+                  <div className="time-section">
+                    <Select
+                      className="time-picker"
+                      isSearchable={false}
+                      placeholder={"Select delivery time"}
+                      defaultValue={checkOutDetails?.deliveryTime}
                       onChange={(e: any) => {
-                        setCheckOutDetails((prev: any) => {
-                          return {
-                            ...prev,
-                            deliveryDate: e,
-                          };
+                        setErr((prev: any) => {
+                          return { ...prev, time: false };
                         });
-                        setCalendarOpen(false);
+                        setCheckOutDetails((prev: any) => {
+                          return { ...prev, deliveryTime: e?.value };
+                        });
                       }}
-                      minDate={productDetails?.sameDay ? today : minDate}
-                      maxDate={maxDate}
-                      value={checkOutDetails?.deliveryDate}
-                      className="calendar"
+                      options={serverConfig?.del_time_arr}
                     />
-                    <i
-                      className="fa-solid fa-xmark cross"
-                      onClick={() => {
-                        setCalendarOpen(false);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      {checkOutDetails?.deliveryDate.toDateString()}
-                      {productDetails?.sameDay && (
-                        <>
-                          <span style={{ color: "green", marginLeft: "1rem" }}>
-                            (Same day delivery available)
-                          </span>
-                          <span style={{ color: "red" }}> *</span>
-                        </>
-                      )}
-                    </div>
-                    <button
-                      className="calendar-popup"
-                      onClick={() => {
-                        setCalendarOpen(true);
-                      }}
-                    >
-                      Select date
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-            {checkOutDetails.deliveryDate.toString().split(' ',4)[2] === today.toString().split(' ',4)[2] ? null : <div className="section">
-              <div className="label">
-                {labelConfig?.product_delivery_time_label}
-                <span style={{ color: "red" }}> *</span>
-              </div>
-              <div className="time-section">
-                <Select
-                  className="time-picker"
-                  isSearchable={false}
-                  placeholder={"Select delivery time"}
-                  defaultValue={checkOutDetails?.deliveryTime}
-                  onChange={(e: any) => {
-                    setErr((prev: any) => {
-                      return { ...prev, time: false };
-                    });
-                    setCheckOutDetails((prev: any) => {
-                      return { ...prev, deliveryTime: e?.value };
-                    });
-                  }}
-                  options={serverConfig?.del_time_arr}
-                />
-              </div>
-            </div>
-            }
-            {err?.time && (
-              <div className="error">Please select a delivery time</div>
-            )}
+                  </div>
+                </div>
+              )}
+              {err?.time && (
+                <div className="error">Please select a delivery time</div>
+              )}
             </div>
             <div className="section">
               <div className="label">

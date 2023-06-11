@@ -596,6 +596,14 @@ input::-webkit-inner-spin-button {
   justify-content: space-between;
 }
 
+.product-screen .details-section .info-section .see-more{
+  position: absolute;
+  color: var(--blue);
+  cursor: pointer;
+  right: 5rem;
+  bottom: 0;
+}
+
 @media only screen and (max-width: 426px) {
   .product-screen .details-section {
     width: -webkit-fill-available;
@@ -620,6 +628,15 @@ input::-webkit-inner-spin-button {
 
 .product-screen .description {
   padding: 2rem 0;
+  position: relative;
+}
+
+.product-screen .description-small {
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  height: 5rem;
+  overflow-y: hidden;
+  position: relative;
 }
 
 .product-screen .label {
