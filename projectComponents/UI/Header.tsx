@@ -617,6 +617,34 @@ const Header = () => {
                 })}
               </>
             )}
+            {catagorySearchResult?.subCat?.length > 0 && (
+              <>
+                <div className="division-title">Sub Catagories</div>
+                {catagorySearchResult?.subCat?.map((i: any) => {
+                  return (
+                    <div
+                      className="search-items"
+                      onClick={() => {
+                        navigate(
+                          `/subcatagory/${metaUrlGenerate(i?.subCatagory)}`
+                        );
+                        setSearchTxt("");
+                        setSearchResult([]);
+                        setCatagorySearchResult((prev: any) => {
+                          return {
+                            ...prev,
+                            cat: [],
+                            subCat: [],
+                          };
+                        });
+                      }}
+                    >
+                      {i?.subCatagory}
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
       </div>
