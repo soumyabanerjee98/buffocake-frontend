@@ -3483,6 +3483,37 @@ padding: 0.2rem 0.4rem;
   width: 100%;
 }
 
+.main-footer .second-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+  align-items: baseline;
+  width: 100%;
+  margin: 2rem;
+}
+
+.main-footer .second-row .cat-name {
+  font-size: large;
+  color: var(--chocolate);
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  transition: all 200ms ease-in-out;
+}
+
+.main-footer .second-row .subcat-name {
+  font-size: small;
+  cursor: pointer;
+  font-weight: 400;
+  margin-bottom: 0.2rem;
+  transition: all 200ms ease-in-out;
+}
+
+.main-footer .second-row .cat-name:hover, .main-footer .second-row .subcat-name:hover{
+  color: var(--blue);
+  transition: all 200ms ease-in-out;
+}
+
 .main-footer .row-item {
   width: 33.33%;
   display: flex;
@@ -3506,3 +3537,83 @@ padding: 0.2rem 0.4rem;
 }
 
 /* footer end *************** */
+
+/* flavour circle */
+.flavour-scroll-heading{
+  text-align: center;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--chocolate);
+  margin-top: 8rem;
+}
+
+.flavour-scroll{
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  margin: 2rem 5rem 8rem 5rem;
+}
+
+@media only screen and (max-width: 426px) {
+  .flavour-scroll {
+      margin: 2rem 1rem 8rem 1rem;
+      overflow-y: scroll;
+      align-items: center;
+    }
+}
+
+.flavour-circle{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: var(--chocolate);
+  font-weight: 600;
+}
+.flavour-image {
+  border-radius: 50%;
+}
+.flavour-name{
+  text-align: center;
+}
+
+.nav-card-container{
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  align-items: center;
+  margin: 0 4rem;
+}
+@media only screen and (max-width: 426px) {
+  .nav-card-container {
+      grid-template-columns: repeat(2, auto);
+      margin: 1rem;
+    }
+}
+.nav-card-item{
+  border: 1px solid var(--pink-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--chocolate);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 200ms ease-in-out;
+}
+.nav-card-item:hover {
+  border-color: var(--blue);
+  transition: all 200ms ease-in-out;
+}
+.nav-card-name{
+  margin-top: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+    overflow: hidden;
+}
+.nav-card-icon{
+  scale: 1.5;
+  margin: 1rem;
+}

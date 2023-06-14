@@ -4,7 +4,9 @@ import React from "react";
 import { labelConfig, serverConfig } from "../../config/siteConfig";
 import NoIMage from "../Assets/Images/no-image.png";
 import MediaCarousel from "../UI/MediaCarousel";
-import { loadURL, metaUrlGenerate, openTab } from "../Functions/util";
+import { metaUrlGenerate } from "../Functions/util";
+import FlavourScroll from "../UI/FlavourScroll";
+import NavCard from "../UI/NavCard";
 export type HomeProps = {
   allProducts: any;
   carousel: any;
@@ -28,6 +30,7 @@ const Home = (props: HomeProps) => {
   return (
     <>
       <div className="home-screen">
+        <NavCard />
         <MediaCarousel
           elementArr={carousel?.map((i: any) => {
             if (i?.link) {
@@ -51,6 +54,7 @@ const Home = (props: HomeProps) => {
             }
           })}
         />
+        <FlavourScroll />
         <div className="header">Our Products</div>
         {allProducts?.map((i: any) => {
           return (
@@ -93,15 +97,11 @@ const Home = (props: HomeProps) => {
                         href={`/product/${metaUrlGenerate(val?.metaHead)}`}
                         target="_blank"
                         style={{ textDecoration: "none" }}
+                        onClick={() => {}}
                       >
                         <div
                           key={`product-card-${ind}`}
                           className="product-card"
-                          onClick={() => {
-                            openTab(
-                              `/product/${metaUrlGenerate(val?.metaHead)}`
-                            );
-                          }}
                         >
                           <div className="product-image-container">
                             {val?.productImage?.length > 0 ? (
