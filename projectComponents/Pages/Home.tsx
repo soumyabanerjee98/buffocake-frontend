@@ -27,6 +27,7 @@ const Home = (props: HomeProps) => {
 
   return (
     <>
+    <head><div className="taggbox" style={{width:100}} data-widget-id="134786" data-tags="false" ></div><script src="https://widget.taggbox.com/embed-lite.min.js" type="text/javascript"></script></head>
       <div className="home-screen">
         <MediaCarousel
           elementArr={carousel?.map((i: any) => {
@@ -129,6 +130,7 @@ const Home = (props: HomeProps) => {
         <div className="scroll-to-top" onClick={scrolltoTop}>
           <i className="fa-solid fa-arrow-up scroll-arrow" />
         </div>
+        <div className="taggbox" style={{ width: '100%', height: '100%' }} data-widget-id="134786" data-tags="false"></div>
       </div>
     </>
   );
