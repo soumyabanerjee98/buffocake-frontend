@@ -12,7 +12,7 @@ import PageNotFound from "../../../projectComponents/Pages/PageNotFound";
 import Products from "../../../projectComponents/Pages/Products";
 
 const ProductPage = (props: any) => {
-  const { productDetails } = props;
+  const { productDetails, allProd } = props;
   const router = useRouter();
   if (router.isFallback || productDetails === undefined) {
     return <>Loading...</>;
@@ -30,7 +30,7 @@ const ProductPage = (props: any) => {
               content="width=device-width, initial-scale=1"
             />
           </Head>
-          <Products productDetails={productDetails} />
+          <Products productDetails={productDetails} allProd={allProd} />
         </>
       ) : (
         <PageNotFound />
@@ -59,9 +59,31 @@ export async function getStaticProps({ params }: any) {
       toast.error(`Error: ${err?.message}`);
       return undefined;
     });
+  let allProd = await callApi(processIDs?.get_all_products, {})
+    .then(
+      // @ts-ignore
+      (res: responseType) => {
+        if (res?.status === 200) {
+          if (res?.data?.returnCode) {
+            return res?.data?.returnData;
+          } else {
+            toast.error(`${res?.data?.msg}`);
+            return [];
+          }
+        } else {
+          toast.error(`Error: ${res?.status}`);
+          return [];
+        }
+      }
+    )
+    .catch((err: any) => {
+      toast.error(`Error: ${err?.message}`);
+      return [];
+    });
   return {
     props: {
       productDetails: data,
+      allProd: allProd,
     },
     revalidate: 60,
   };

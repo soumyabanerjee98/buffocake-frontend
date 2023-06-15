@@ -5,6 +5,7 @@ import Home from "../projectComponents/Pages/Home";
 import { callApi } from "../projectComponents/Functions/util";
 import { responseType } from "../typings";
 import { toast } from "react-toastify";
+import Script from "next/script";
 
 const HomePage = (props: any) => {
   const { allProducts, carousel } = props;
@@ -15,6 +16,10 @@ const HomePage = (props: any) => {
         <meta name="description" content={metaConfig?.home_desc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+      <Script
+        src="https://widget.taggbox.com/embed-lite.min.js"
+        type="text/javascript"
+      />
       <Home allProducts={allProducts} carousel={carousel} />
     </>
   );

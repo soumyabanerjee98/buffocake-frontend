@@ -15,6 +15,7 @@ import NoIMage from "../Assets/Images/no-image.png";
 import {
   callApi,
   getSessionObjectData,
+  metaUrlGenerate,
   setSessionObjectData,
   weightConverter,
 } from "../Functions/util";
@@ -28,10 +29,28 @@ import VegSign from "../Assets/Images/veg-small.png";
 
 export type ProductProps = {
   productDetails: any;
+  allProd: any;
 };
 
 const Products = (props: ProductProps) => {
-  const { productDetails } = props;
+  let count = 0;
+  const { productDetails, allProd } = props;
+  const [similarProd, setSimilarProd] = useState<any[]>([]);
+  const randomIntFromInterval = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+  useEffect(() => {
+    const similarProducts: any[] = [];
+    allProd?.map((i: any) => {
+      const randomnumber = randomIntFromInterval(0, allProd?.length - 1);
+      if (count < 4 && i?._id !== productDetails?._id) {
+        similarProducts.push(allProd?.[randomnumber]);
+        count++;
+      }
+    });
+    setSimilarProd(similarProducts);
+  }, [allProd]);
+
   const router = useRouter();
   const minDate = new Date();
   const today = new Date();
@@ -521,389 +540,444 @@ const Products = (props: ProductProps) => {
   };
 
   return (
-    <div className="product-screen">
-      <div className="left-column">
-        <div className="image-section">
-          {productDetails?.productImage?.length > 0 ? (
-            productDetails?.productImage?.length === 1 ? (
-              <img
-                src={`${url}${productDetails?.productImage?.[0]?.mediaPath}`}
-                alt={labelConfig?.image_not_loaded}
-                className="product-image"
-              />
+    <>
+      <div className="product-screen">
+        <div className="left-column">
+          <div className="image-section">
+            {productDetails?.productImage?.length > 0 ? (
+              productDetails?.productImage?.length === 1 ? (
+                <img
+                  src={`${url}${productDetails?.productImage?.[0]?.mediaPath}`}
+                  alt={labelConfig?.image_not_loaded}
+                  className="product-image"
+                />
+              ) : (
+                <img
+                  src={`${url}${productDetails?.productImage?.[imageArrInd]?.mediaPath}`}
+                  alt={labelConfig?.image_not_loaded}
+                  className="product-image"
+                />
+              )
             ) : (
-              <img
-                src={`${url}${productDetails?.productImage?.[imageArrInd]?.mediaPath}`}
+              <Image
+                src={NoIMage}
                 alt={labelConfig?.image_not_loaded}
                 className="product-image"
               />
-            )
-          ) : (
-            <Image
-              src={NoIMage}
-              alt={labelConfig?.image_not_loaded}
-              className="product-image"
-            />
-          )}
-          {fav === undefined || loader?.fav ? (
-            <div className="fav-loader">
-              <Loading className="spinner" />
-            </div>
-          ) : (
-            <div className="fav" onClick={favSelect}>
-              <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+            )}
+            {fav === undefined || loader?.fav ? (
+              <div className="fav-loader">
+                <Loading className="spinner" />
+              </div>
+            ) : (
+              <div className="fav" onClick={favSelect}>
+                <HeartIcon className="heart" fill={fav ? "red" : "white"} />
+              </div>
+            )}
+          </div>
+          {productDetails?.productImage?.length > 1 && (
+            <div className="image-carousel">
+              {productDetails?.productImage?.map((i: any, ind: number) => {
+                return (
+                  <img
+                    key={`product-image-carousel-${ind}`}
+                    src={`${url}${i?.mediaPath}`}
+                    alt={labelConfig?.image_not_loaded}
+                    height={50}
+                    className={"preview-image"}
+                    onClick={() => {
+                      setImageArrInd(ind);
+                    }}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
-        {productDetails?.productImage?.length > 1 && (
-          <div className="image-carousel">
-            {productDetails?.productImage?.map((i: any, ind: number) => {
-              return (
-                <img
-                  key={`product-image-carousel-${ind}`}
-                  src={`${url}${i?.mediaPath}`}
-                  alt={labelConfig?.image_not_loaded}
-                  height={50}
-                  className={"preview-image"}
-                  onClick={() => {
-                    setImageArrInd(ind);
-                  }}
+        <div className="details-section">
+          <div className="info-section">
+            <div className="title">
+              {productDetails?.title}{" "}
+              <span>
+                <Image
+                  src={VegSign}
+                  alt="Veg"
+                  height={20}
+                  style={{ marginBottom: "1rem" }}
                 />
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="details-section">
-        <div className="info-section">
-          <div className="title">
-            {productDetails?.title}{" "}
-            <span>
-              <Image
-                src={VegSign}
-                alt="Veg"
-                height={20}
-                style={{ marginBottom: "1rem" }}
-              />
-            </span>
-          </div>
-          <div className="subtotal">
-            {labelConfig?.inr_code}
-            {checkOutDetails?.subTotal +
-              checkOutDetails?.additionalValueFlavour +
-              checkOutDetails?.additionalValueGourmet +
-              ((checkOutDetails?.subTotal +
+              </span>
+            </div>
+            <div className="subtotal">
+              {labelConfig?.inr_code}
+              {checkOutDetails?.subTotal +
                 checkOutDetails?.additionalValueFlavour +
-                checkOutDetails?.additionalValueGourmet) *
-                productConfig?.deliveryCharge) /
-                100}
-            <span
-              style={{
-                fontSize: "0.8rem",
-                marginLeft: "1rem",
-                color: "red",
-              }}
-            >
-              Inclusive of all taxes
-            </span>
-          </div>
-          <div className={expand ? "description" : "description-small"}>
-            <div
-              dangerouslySetInnerHTML={{ __html: productDetails?.description }}
-            />
-            <div
-              className="see-more"
-              onClick={() => {
-                setExpand((prev) => !prev);
-              }}
-            >
-              {expand ? "See less" : "See more"}
+                checkOutDetails?.additionalValueGourmet +
+                ((checkOutDetails?.subTotal +
+                  checkOutDetails?.additionalValueFlavour +
+                  checkOutDetails?.additionalValueGourmet) *
+                  productConfig?.deliveryCharge) /
+                  100}
+              <span
+                style={{
+                  fontSize: "0.8rem",
+                  marginLeft: "1rem",
+                  color: "red",
+                }}
+              >
+                Inclusive of all taxes
+              </span>
             </div>
-          </div>
-
-          <div className="customise">
-            <div className="section">
-              <div className="label">{labelConfig?.product_weight_label}</div>
-              <div className="available-options">
-                {productDetails?.weight
-                  ?.sort((a: any, b: any) => {
-                    return a?.value - b?.value;
-                  })
-                  ?.map((i: any, idx: number) => (
-                    <div
-                      id={`product-weight-${idx}`}
-                      className={`options ${
-                        idx === 0 ? "selected-option" : ""
-                      }`}
-                      key={`weight-${idx}`}
-                      onClick={() => {
-                        selectWeight(i, idx);
-                      }}
-                    >
-                      {weightConverter(i?.label)}
-                      <div className="variant-price">
-                        {labelConfig?.inr_code}
-                        {i?.value}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">
-                {labelConfig?.product_delivery_pin_availibility}
-                <span style={{ color: "red" }}> *</span>
-              </div>
-              <input
-                id="check-pin"
-                type={"number"}
-                placeholder="Check pin code"
-                className="check-pin"
-                value={checkOutDetails?.pin}
-                onChange={checkPin}
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === ".") {
-                    e.preventDefault();
-                  }
+            <div className={expand ? "description" : "description-small"}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: productDetails?.description,
                 }}
               />
+              <div
+                className="see-more"
+                onClick={() => {
+                  setExpand((prev) => !prev);
+                }}
+              >
+                {expand ? "See less" : "See more"}
+              </div>
             </div>
-            {err?.available && (
-              <div className="error">Unavailable at this pincode</div>
-            )}
-            <div style={{ display: "flex", gap: "3rem" }}>
-              {/* delivery date and time */}
+
+            <div className="customise">
               <div className="section">
-                <div className="label">
-                  {labelConfig?.product_delivery_date_label}
-                </div>
-                <div className="calendar-section">
-                  {calendarOpen ? (
-                    <>
-                      <Calendar
-                        onChange={(e: any) => {
-                          setCheckOutDetails((prev: any) => {
-                            return {
-                              ...prev,
-                              deliveryDate: e,
-                            };
-                          });
-                          setCalendarOpen(false);
-                        }}
-                        minDate={productDetails?.sameDay ? today : minDate}
-                        maxDate={maxDate}
-                        value={checkOutDetails?.deliveryDate}
-                        className="calendar"
-                      />
-                      <i
-                        className="fa-solid fa-xmark cross"
-                        onClick={() => {
-                          setCalendarOpen(false);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        {checkOutDetails?.deliveryDate.toDateString()}
-                        {productDetails?.sameDay && (
-                          <>
-                            <span
-                              style={{ color: "green", marginLeft: "1rem" }}
-                            >
-                              (Same day delivery available)
-                            </span>
-                            <span style={{ color: "red" }}> *</span>
-                          </>
-                        )}
-                      </div>
-                      <button
-                        className="calendar-popup"
-                        onClick={() => {
-                          setCalendarOpen(true);
-                        }}
-                      >
-                        Select date
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-              {checkOutDetails.deliveryDate.toString().split(" ", 4)[2] ===
-              today.toString().split(" ", 4)[2] ? null : (
-                <div className="section">
-                  <div className="label">
-                    {labelConfig?.product_delivery_time_label}
-                    <span style={{ color: "red" }}> *</span>
-                  </div>
-                  <div className="time-section">
-                    <Select
-                      className="time-picker"
-                      isSearchable={false}
-                      placeholder={"Select delivery time"}
-                      defaultValue={checkOutDetails?.deliveryTime}
-                      onChange={(e: any) => {
-                        setErr((prev: any) => {
-                          return { ...prev, time: false };
-                        });
-                        setCheckOutDetails((prev: any) => {
-                          return { ...prev, deliveryTime: e?.value };
-                        });
-                      }}
-                      options={serverConfig?.del_time_arr}
-                    />
-                  </div>
-                </div>
-              )}
-              {err?.time && (
-                <div className="error">Please select a delivery time</div>
-              )}
-            </div>
-            <div className="section">
-              <div className="label">
-                {labelConfig?.product_available_flavours_label}
-              </div>
-              {productDetails?.availableFlavours?.length > 0 ? (
+                <div className="label">{labelConfig?.product_weight_label}</div>
                 <div className="available-options">
-                  {productDetails?.availableFlavours
+                  {productDetails?.weight
                     ?.sort((a: any, b: any) => {
                       return a?.value - b?.value;
                     })
                     ?.map((i: any, idx: number) => (
                       <div
-                        id={`product-flavour-${idx}`}
+                        id={`product-weight-${idx}`}
                         className={`options ${
                           idx === 0 ? "selected-option" : ""
                         }`}
-                        key={`flavour-${idx}`}
+                        key={`weight-${idx}`}
                         onClick={() => {
-                          selectFlavour(i, idx);
+                          selectWeight(i, idx);
                         }}
                       >
-                        {i?.flavour}
-                        {i?.value !== 0 && (
-                          <div className="variant-price">
-                            {labelConfig?.inr_code}
-                            {i?.value}
-                          </div>
-                        )}
+                        {weightConverter(i?.label)}
+                        <div className="variant-price">
+                          {labelConfig?.inr_code}
+                          {i?.value}
+                        </div>
                       </div>
                     ))}
                 </div>
-              ) : (
-                <div className="no-option">
-                  {labelConfig?.product_no_flavours_label}
+              </div>
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_delivery_pin_availibility}
+                  <span style={{ color: "red" }}> *</span>
                 </div>
+                <input
+                  id="check-pin"
+                  type={"number"}
+                  placeholder="Check pin code"
+                  className="check-pin"
+                  value={checkOutDetails?.pin}
+                  onChange={checkPin}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === ".") {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+              {err?.available && (
+                <div className="error">Unavailable at this pincode</div>
               )}
-            </div>
-
-            <div className="section">
-              <div className="label">{labelConfig?.product_message_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.message}
-                  className="text"
-                  onChange={messageOnCake}
-                  placeholder={labelConfig?.product_message_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.messageLimit}/
-                  {productConfig?.messageFieldLimit}
+              <div style={{ display: "flex", gap: "3rem" }}>
+                {/* delivery date and time */}
+                <div className="section">
+                  <div className="label">
+                    {labelConfig?.product_delivery_date_label}
+                  </div>
+                  <div className="calendar-section">
+                    {calendarOpen ? (
+                      <>
+                        <Calendar
+                          onChange={(e: any) => {
+                            setCheckOutDetails((prev: any) => {
+                              return {
+                                ...prev,
+                                deliveryDate: e,
+                              };
+                            });
+                            setCalendarOpen(false);
+                          }}
+                          minDate={productDetails?.sameDay ? today : minDate}
+                          maxDate={maxDate}
+                          value={checkOutDetails?.deliveryDate}
+                          className="calendar"
+                        />
+                        <i
+                          className="fa-solid fa-xmark cross"
+                          onClick={() => {
+                            setCalendarOpen(false);
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          {checkOutDetails?.deliveryDate.toDateString()}
+                          {productDetails?.sameDay && (
+                            <>
+                              <span
+                                style={{ color: "green", marginLeft: "1rem" }}
+                              >
+                                (Same day delivery available)
+                              </span>
+                              <span style={{ color: "red" }}> *</span>
+                            </>
+                          )}
+                        </div>
+                        <button
+                          className="calendar-popup"
+                          onClick={() => {
+                            setCalendarOpen(true);
+                          }}
+                        >
+                          Select date
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_custom_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.customization}
-                  className="text"
-                  onChange={custom}
-                  placeholder={labelConfig?.product_custom_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.customLimit}/
-                  {productConfig?.customFieldLimit}
-                </div>
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_allergy_label}</div>
-              <div className="text-section">
-                <textarea
-                  value={checkOutDetails?.allergy}
-                  className="text"
-                  onChange={allergyText}
-                  placeholder={labelConfig?.product_allergy_placeholder}
-                />
-                <div className="text-limit">
-                  {textFieldLimits?.allergyLimit}/
-                  {productConfig?.allergyFieldLimit}
-                </div>
-              </div>
-            </div>
-            <div className="section">
-              <div className="label">{labelConfig?.product_gourmet_label}</div>
-              {productDetails?.gourmetOptions?.length > 0 ? (
-                <div className="available-options">
-                  {productDetails?.gourmetOptions?.map(
-                    (i: any, idx: number) => (
-                      <div
-                        id={`product-gourmet-${idx}`}
-                        className="options"
-                        key={`gourmet-${idx}`}
-                        onClick={() => {
-                          selectGourmet(i, idx);
+                {checkOutDetails.deliveryDate.toString().split(" ", 4)[2] ===
+                today.toString().split(" ", 4)[2] ? null : (
+                  <div className="section">
+                    <div className="label">
+                      {labelConfig?.product_delivery_time_label}
+                      <span style={{ color: "red" }}> *</span>
+                    </div>
+                    <div className="time-section">
+                      <Select
+                        className="time-picker"
+                        isSearchable={false}
+                        placeholder={"Select delivery time"}
+                        defaultValue={checkOutDetails?.deliveryTime}
+                        onChange={(e: any) => {
+                          setErr((prev: any) => {
+                            return { ...prev, time: false };
+                          });
+                          setCheckOutDetails((prev: any) => {
+                            return { ...prev, deliveryTime: e?.value };
+                          });
                         }}
-                      >
-                        {i?.option}
-                        {i?.value !== 0 && (
-                          <div className="variant-price">
-                            {labelConfig?.inr_code}
-                            {i?.value}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  )}
+                        options={serverConfig?.del_time_arr}
+                      />
+                    </div>
+                  </div>
+                )}
+                {err?.time && (
+                  <div className="error">Please select a delivery time</div>
+                )}
+              </div>
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_available_flavours_label}
                 </div>
-              ) : (
-                <div className="no-option">
-                  {labelConfig?.product_no_gourmet_label}
+                {productDetails?.availableFlavours?.length > 0 ? (
+                  <div className="available-options">
+                    {productDetails?.availableFlavours
+                      ?.sort((a: any, b: any) => {
+                        return a?.value - b?.value;
+                      })
+                      ?.map((i: any, idx: number) => (
+                        <div
+                          id={`product-flavour-${idx}`}
+                          className={`options ${
+                            idx === 0 ? "selected-option" : ""
+                          }`}
+                          key={`flavour-${idx}`}
+                          onClick={() => {
+                            selectFlavour(i, idx);
+                          }}
+                        >
+                          {i?.flavour}
+                          {i?.value !== 0 && (
+                            <div className="variant-price">
+                              {labelConfig?.inr_code}
+                              {i?.value}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <div className="no-option">
+                    {labelConfig?.product_no_flavours_label}
+                  </div>
+                )}
+              </div>
+
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_message_label}
                 </div>
-              )}
+                <div className="text-section">
+                  <textarea
+                    value={checkOutDetails?.message}
+                    className="text"
+                    onChange={messageOnCake}
+                    placeholder={labelConfig?.product_message_placeholder}
+                  />
+                  <div className="text-limit">
+                    {textFieldLimits?.messageLimit}/
+                    {productConfig?.messageFieldLimit}
+                  </div>
+                </div>
+              </div>
+              <div className="section">
+                <div className="label">{labelConfig?.product_custom_label}</div>
+                <div className="text-section">
+                  <textarea
+                    value={checkOutDetails?.customization}
+                    className="text"
+                    onChange={custom}
+                    placeholder={labelConfig?.product_custom_placeholder}
+                  />
+                  <div className="text-limit">
+                    {textFieldLimits?.customLimit}/
+                    {productConfig?.customFieldLimit}
+                  </div>
+                </div>
+              </div>
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_allergy_label}
+                </div>
+                <div className="text-section">
+                  <textarea
+                    value={checkOutDetails?.allergy}
+                    className="text"
+                    onChange={allergyText}
+                    placeholder={labelConfig?.product_allergy_placeholder}
+                  />
+                  <div className="text-limit">
+                    {textFieldLimits?.allergyLimit}/
+                    {productConfig?.allergyFieldLimit}
+                  </div>
+                </div>
+              </div>
+              <div className="section">
+                <div className="label">
+                  {labelConfig?.product_gourmet_label}
+                </div>
+                {productDetails?.gourmetOptions?.length > 0 ? (
+                  <div className="available-options">
+                    {productDetails?.gourmetOptions?.map(
+                      (i: any, idx: number) => (
+                        <div
+                          id={`product-gourmet-${idx}`}
+                          className="options"
+                          key={`gourmet-${idx}`}
+                          onClick={() => {
+                            selectGourmet(i, idx);
+                          }}
+                        >
+                          {i?.option}
+                          {i?.value !== 0 && (
+                            <div className="variant-price">
+                              {labelConfig?.inr_code}
+                              {i?.value}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <div className="no-option">
+                    {labelConfig?.product_no_gourmet_label}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="button-section">
-          <button
-            className="action-button add-cart"
-            type="button"
-            onClick={addToCart}
-            disabled={loader?.cart}
-          >
-            {loader?.cart ? (
-              <Loading className="dot-flashing" />
-            ) : (
-              labelConfig?.product_add_to_cart
-            )}
-          </button>
-          <button
-            className="action-button buy-now"
-            type="button"
-            onClick={placeOrder}
-            disabled={loader?.buy}
-          >
-            {loader?.buy ? (
-              <Loading className="dot-flashing" />
-            ) : (
-              labelConfig?.product_buy_now
-            )}
-          </button>
+          <div className="button-section">
+            <button
+              className="action-button add-cart"
+              type="button"
+              onClick={addToCart}
+              disabled={loader?.cart}
+            >
+              {loader?.cart ? (
+                <Loading className="dot-flashing" />
+              ) : (
+                labelConfig?.product_add_to_cart
+              )}
+            </button>
+            <button
+              className="action-button buy-now"
+              type="button"
+              onClick={placeOrder}
+              disabled={loader?.buy}
+            >
+              {loader?.buy ? (
+                <Loading className="dot-flashing" />
+              ) : (
+                labelConfig?.product_buy_now
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <div className="similar-products">
+        <div className="heading">Similar Products</div>
+        <div className="catagory-list">
+          {similarProd?.map((val: any, ind: number) => (
+            // write code design
+            <a
+              href={`/product/${metaUrlGenerate(val?.metaHead)}`}
+              target="_blank"
+              style={{ textDecoration: "none" }}
+            >
+              {" "}
+              <div key={`product-card-${ind}`} className="product-card">
+                <div className="product-image-container">
+                  {val?.productImage?.length > 0 ? (
+                    <img
+                      src={`${url}${val?.productImage?.[0]?.mediaPath}`}
+                      alt={labelConfig?.image_not_loaded}
+                      className="product-image"
+                    />
+                  ) : (
+                    <Image
+                      src={NoIMage}
+                      alt={labelConfig?.image_not_loaded}
+                      className="product-image"
+                    />
+                  )}
+                </div>
+                <div className="same-day-container">
+                  {val?.sameDay && (
+                    <span className="same-day">Same day delivery</span>
+                  )}
+                </div>
+                <div className="product-name">{val?.title}</div>
+                <div className="product-price">
+                  &#8377;
+                  {Math.min(
+                    ...val?.weight?.map((i: any) => {
+                      return i?.value;
+                    })
+                  )}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 

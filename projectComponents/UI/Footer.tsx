@@ -7,6 +7,7 @@ import { callApi, metaUrlGenerate } from "../Functions/util";
 import { processIDs } from "../../config/processID";
 import { toast } from "react-toastify";
 import useSwr from "swr";
+import Script from "next/script";
 
 const GetAllCatagories = async () => {
   let catData = await callApi(processIDs?.get_catagory, {})
@@ -50,6 +51,7 @@ const Footer = () => {
   }, [catagories]);
   return (
     <footer className="main-footer">
+      <Script src="//code.tidio.co/dolbxbptgr4kyiaaqrgjnm2oa17nzqvl.js" async />
       <div className="first-row">
         <div className="row-item">
           <ShieldIcon className="footer-banner-icon" fill={colorConfig?.s_3} />

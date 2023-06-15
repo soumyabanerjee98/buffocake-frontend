@@ -18,7 +18,12 @@ const OrderCard = (props: OrderCardProps) => {
   };
   return (
     <div className="order-item">
-      <div className="non-exp">
+      <div
+        className="non-exp"
+        onClick={() => {
+          setExpand((prev) => !prev);
+        }}
+      >
         <div className="left-col">
           <div className="order-id">
             Order Id: <span className="id">#{orderItem?.orderId}</span>
