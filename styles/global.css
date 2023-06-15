@@ -3642,6 +3642,7 @@ input::-webkit-inner-spin-button {
 }
 .home-grid-view{
   display: flex;
+  justify-content: space-evenly;
 }
 @media only screen and (max-width: 426px) {
   .home-grid-view {
