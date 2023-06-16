@@ -16,7 +16,7 @@ const NavCard = () => {
       {navjson?.map((i) => (
         <a
           className="nav-card-item"
-          href={`/subcatagory/${metaUrlGenerate(i?.name)}`}
+          href={`/catagory/${metaUrlGenerate(i?.name)}`}
           target="_blank"
         >
           <i className={`${i?.image} nav-card-icon`}></i>
